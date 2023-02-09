@@ -1,0 +1,39 @@
+<nav class="navF1">
+    <ul>
+        <li *ngFor="let season of seasons">
+            <a (click)="getDrivers(season)" [ngClass]="{'active': selectedSeason === season}">{{season}}</a>
+        </li>
+    </ul>
+</nav>
+
+<ng-container *ngIf="drivers && drivers.length > 0">
+    <input [(ngModel)]="searchTerm" (keyup)="searchDrivers()" placeholder="Search by driver name">
+</ng-container>
+
+
+<table mat-table [dataSource]="dataSource">
+
+    <!-- Column for Family Name -->
+    <ng-container matColumnDef="familyName">
+      <th mat-header-cell *matHeaderCellDef> Family Name </th>
+      <td mat-cell *matCellDef="let driver"> {{driver.familyName}} </td>
+    </ng-container>
+  
+    <!-- Column for Given Name -->
+    <ng-container matColumnDef="givenName">
+      <th mat-header-cell *matHeaderCellDef> Given Name </th>
+      <td mat-cell *matCellDef="let driver"> {{driver.givenName}} </td>
+    </ng-container>
+  
+    <!-- Column for Image -->
+    <ng-container matColumnDef="image">
+      <th mat-header-cell *matHeaderCellDef> Image </th>
+      <td mat-cell *matCellDef="let driver"> 
+        <img [src]="getDriverImage(driver)" alt="Driver image">
+      </td>
+    </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  
+  </table>

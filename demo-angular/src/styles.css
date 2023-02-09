@@ -1,0 +1,38 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~bootstrap/dist/css/bootstrap.min.css";
+
+.footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+
+.navF1 {
+    float: left;
+    width: 20%;
+    position: fixed;
+    left: 0;
+  }
+
+  nav a.active {
+    color: blue;
+  }
+  
+.pagination-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+  }
+.driver-image {
+  max-width: 50px;
+  height: auto;
+}
+  
