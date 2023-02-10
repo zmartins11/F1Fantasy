@@ -1,0 +1,9 @@
+#div3{height:500px;width:100px;border: solid 1px #000; display:inline-block; background:red;}
+
+#div1{height:30px;width:700px;border: solid 1px #000; position:absolute; top:0; background:blue;}
+#div2{height:400px;width:700px;border: solid 1px #000; position:absolute; bottom:0; background:green;}
+
+#div1_2{display:inline-block; vertical-align:top;}
+
+
+.con { position:relative; }
