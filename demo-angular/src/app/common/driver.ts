@@ -7,6 +7,9 @@ export class Driver{
     familyName! : string;
     dateOfBirth! : Date;
     nationality! :string;
+    flagCode! : string;
+    constructorId! : string;
+    winsSeason! : string;
 
     constructor() {}
 }

@@ -1,9 +1,0 @@
-.dropdown {
-    height: 34px; /* adjust this value as desired */
-    padding: 2px 7px; /* adjust this value as desired */
-    font-size: 14px; /* adjust this value as desired */
-  }
-  .form-control-sm {
-    max-height: 50px;
-    overflow-y: scroll;
-  }

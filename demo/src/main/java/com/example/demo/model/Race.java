@@ -2,12 +2,14 @@ package com.example.demo.model;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 import com.example.utils.LocalDateDeserializer;
 import com.example.utils.LocalDateSerializer;
 import com.example.utils.LocalTimeDeserializer;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -18,6 +20,9 @@ public class Race {
 	private String round;
 	private String url;
 	private String raceName;
+	
+	@JsonIgnoreProperties({"Results"})
+	private List<Results> results;
 	
     @JsonDeserialize(using = LocalDateDeserializer.class)
 	private LocalDate date;
@@ -131,5 +136,25 @@ public class Race {
 	public void setUrl(String url) {
 		this.url = url;
 	}
+
+	
+
+	public List<Results> getResults() {
+		return results;
+	}
+
+	public void setResults(List<Results> results) {
+		this.results = results;
+	}
+
+	public Sprint getSpring() {
+		return spring;
+	}
+
+	public void setSpring(Sprint spring) {
+		this.spring = spring;
+	}
+	
+	
 
 }

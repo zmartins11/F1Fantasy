@@ -12,6 +12,9 @@ public class Driver {
 	private String familyName;
 	private Date dateOfBirth;
 	private String nationality;
+	private String flagCode;
+	private String constructorId;
+	private String winsSeason;
 	
 	
 	
@@ -63,6 +66,26 @@ public class Driver {
 	public void setNationality(String nationality) {
 		this.nationality = nationality;
 	}
+	public String getFlagCode() {
+		return flagCode;
+	}
+	public void setFlagCode(String flagCode) {
+		this.flagCode = flagCode;
+	}
+	public String getConstructorId() {
+		return constructorId;
+	}
+	public void setConstructorId(String constructor) {
+		this.constructorId = constructor;
+	}
+	public String getWinsSeason() {
+		return winsSeason;
+	}
+	public void setWinsSeason(String winsSeason) {
+		this.winsSeason = winsSeason;
+	}
+	
+	
 	
 	
 	

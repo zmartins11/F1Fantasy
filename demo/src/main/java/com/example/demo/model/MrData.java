@@ -16,6 +16,9 @@ public class MrData {
 	
 	@JsonProperty("DriverTable")
 	private DriverTable driverTable;
+	
+	@JsonProperty("ConstructorTable")
+	private ConstructorTable constructorTable; 
 
 	public String getSeries() {
 		return series;
@@ -79,6 +82,14 @@ public class MrData {
 
 	public void setDriverTable(DriverTable driverTable) {
 		this.driverTable = driverTable;
+	}
+
+	public ConstructorTable getConstructorTable() {
+		return constructorTable;
+	}
+
+	public void setConstructorTable(ConstructorTable constructorTable) {
+		this.constructorTable = constructorTable;
 	}
 	
 	

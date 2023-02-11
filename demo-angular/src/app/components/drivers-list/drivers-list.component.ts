@@ -10,52 +10,48 @@ import { f1Service } from 'src/app/services/f1Service';
   templateUrl: './drivers-list.component.html',
   styleUrls: ['./drivers-list.component.css']
 })
-export class DriversListComponent implements OnInit, AfterViewInit{
+export class DriversListComponent implements OnInit{
 
+  familyName : any;
+  season: any;
+  p : number = 1;
 
-  @Input()
-  season!: number;
+  selectedSeason : any;
 
   dataSource: MatTableDataSource<Driver> = new MatTableDataSource;
   constructor(private f1Service: f1Service) { }
-  selectedSeason!: number;
 
   drivers: Driver[] = [];
-  seasons = [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022];
+  seasons = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022];
 
-
-  @ViewChild(MatSort)
-  sort: MatSort = new MatSort;
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-
-  displayedColumns: string[] = ['image','familyName', 'givenName', 'nationality'];
+  
 
   ngOnInit(): void {
-    this.season = 2022;
+    const currentYear = new Date().getFullYear() - 1;
+    this.season = currentYear.toString();
     this.f1Service.getDriversList(this.season).subscribe(drivers => {
-      this.dataSource = new MatTableDataSource(drivers);
-      this.dataSource.paginator = this.paginator;
+      this.drivers = drivers;
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.dataSource.sort = this.sort;
     
   }
 
-  doFilter(filterValue: string) {
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
-
   getDrivers(season: number) {
-    this.selectedSeason = season;
     this.f1Service.getDriversList(season).subscribe(data => {
       this.drivers = data;
       this.dataSource = new MatTableDataSource(this.drivers);
-     
+     this.selectedSeason = season;
     })
 
+  }
+
+  search(selectedSeason : number) {
+    if(this.familyName == "") {
+      this.getDrivers(selectedSeason);
+    }  else {
+      this.drivers = this.drivers.filter(res =>{
+        return res.familyName.toLocaleLowerCase().match(this.familyName.toLocaleLowerCase());
+      })
+    }
   }
 
 
