@@ -12,6 +12,8 @@ import { f1Service } from 'src/app/services/f1Service';
 })
 export class DriversListComponent implements OnInit{
 
+  
+
   familyName : any;
   season: any;
   p : number = 1;
@@ -22,12 +24,14 @@ export class DriversListComponent implements OnInit{
   constructor(private f1Service: f1Service) { }
 
   drivers: Driver[] = [];
-  seasons = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022];
+  seasons = [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022];
 
   
 
   ngOnInit(): void {
     const currentYear = new Date().getFullYear() - 1;
+    //to show the last season highlit
+    this.selectedSeason = this.seasons[this.seasons.length - 1];
     this.season = currentYear.toString();
     this.f1Service.getDriversList(this.season).subscribe(drivers => {
       this.drivers = drivers;

@@ -1,0 +1,16 @@
+<div class="container" style="padding-top: 40px; background-color: aliceblue;">
+    <div class="row">
+        <div *ngFor="let race of races" class="col-sm-3">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 style="color: blueviolet;">{{race.round}}</h5>
+                    <h5 class="card-title">{{race.raceName}}<span class="flag-icon flag-icon-bh flag-icon-squared"></span></h5>
+                    <p class="card-text">{{race.date}}</p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+                <img src="assets/track.png" class="card-img-top" alt="...">
+            </div>
+        </div>
+        
+    </div>
+</div>

@@ -20,6 +20,10 @@ import { TestCssComponent } from './components/test-css/test-css.component';
 import { Ng2OrderModule } from 'ng2-order-pipe';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { CalendarComponent } from './components/calendar/calendar.component';
+
+
 
 
 
@@ -30,7 +34,8 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
     CreateEmployeeComponent,
     UpdateEmployeeComponent,
     DriversListComponent,
-    TestCssComponent
+    TestCssComponent,
+    CalendarComponent
   ],
   imports: [
     BrowserModule,
@@ -40,7 +45,8 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
     NgxPaginationModule,
     MatInputModule,
     FlexLayoutModule,
-    Ng2SearchPipeModule
+    Ng2SearchPipeModule,
+    NgbModule
   ],
   providers: [],
   bootstrap: [AppComponent]

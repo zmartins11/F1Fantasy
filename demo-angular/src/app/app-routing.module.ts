@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { CalendarComponent } from './components/calendar/calendar.component';
 import { CreateEmployeeComponent } from './components/create-employee/create-employee.component';
 import { DriversListComponent } from './components/drivers-list/drivers-list.component';
 import { EmployeeListComponent } from './components/employee-list/employee-list.component';
@@ -12,6 +13,7 @@ const routes: Routes = [
   {path:'update-employee/:id', component: UpdateEmployeeComponent},
   {path:'drivers-list', component: DriversListComponent},
   {path:'test-css', component: TestCssComponent},
+  {path:'calendar', component: CalendarComponent},
   {path:'', redirectTo:'employees', pathMatch: 'full'}
 ];
 

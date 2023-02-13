@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { map, Observable } from "rxjs";
 import { Driver } from "../common/driver";
+import { Race } from "../common/race";
 
 @Injectable({
     providedIn: 'root'
@@ -15,9 +16,13 @@ export class f1Service {
 
     constructor(private httpClient: HttpClient) { }
 
+
+    getRaces(): Observable<Race[]> {
+        return this.httpClient.get<Race[]>("http://localhost:8080/2022");
+    }
+
     getDriversList(season: number): Observable<Driver[]> {
         const search = `${this.baseUrl}/${season}`;
-        console.log(search);
         return this.httpClient.get<Driver[]>(search);
     }
 
