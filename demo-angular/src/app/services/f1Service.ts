@@ -16,9 +16,18 @@ export class f1Service {
 
     constructor(private httpClient: HttpClient) { }
 
+    raceData : any;
+
+    setRaceData(data: any) {
+        this.raceData = data;
+      }
+    
+    getRaceData() {
+        return this.raceData;
+      }
 
     getRaces(): Observable<Race[]> {
-        return this.httpClient.get<Race[]>("http://localhost:8080/2022");
+        return this.httpClient.get<Race[]>("http://localhost:8080/2023");
     }
 
     getDriversList(season: number): Observable<Driver[]> {

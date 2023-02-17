@@ -1,0 +1,10 @@
+.highlight-card:hover {
+    cursor: pointer;
+    box-shadow: 0 0 10px #ccc;
+    border: 2px solid blue;
+  }
+
+.flag-large {
+    font-size: 2.2em;
+
+  }

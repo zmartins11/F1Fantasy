@@ -22,6 +22,9 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CalendarComponent } from './components/calendar/calendar.component';
+import { RaceDetailsComponent } from './components/race-details/race-details.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 
 
 
@@ -35,7 +38,8 @@ import { CalendarComponent } from './components/calendar/calendar.component';
     UpdateEmployeeComponent,
     DriversListComponent,
     TestCssComponent,
-    CalendarComponent
+    CalendarComponent,
+    RaceDetailsComponent
   ],
   imports: [
     BrowserModule,
@@ -46,9 +50,12 @@ import { CalendarComponent } from './components/calendar/calendar.component';
     MatInputModule,
     FlexLayoutModule,
     Ng2SearchPipeModule,
-    NgbModule
+    NgbModule,
+    ModalModule
   ],
-  providers: [],
+  providers: [
+    BsModalService 
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

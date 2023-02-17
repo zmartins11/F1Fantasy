@@ -1,3 +1,4 @@
+import { Time } from "@angular/common";
 import { Circuit } from "./circuit";
 import { FirstPractice } from "./firstPractice";
 
@@ -33,4 +34,12 @@ export interface Race {
         date: string;
         time: string;
     };
+    Qualifying: {
+      date: string;
+      time: string;
+  };
+  Sprint: {
+    date: string;
+    time: string;
+};
 }

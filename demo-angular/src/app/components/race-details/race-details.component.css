@@ -1,0 +1,23 @@
+td {
+    width: 200px;
+    height: 75px;
+  }
+
+.highlity-month {
+    display: inline-block;
+    padding: 5px;
+    border-radius: 50%;
+    background-color: grey;
+  }
+
+.day-month-raceDetails {
+    font-size: 20px;
+    padding-left: 10px;
+    padding-top: 20px; 
+    padding-bottom: 40px;
+    border-right: 1px dotted black;
+    width: 100px;
+    
+    justify-content: center;
+    align-items: center;
+}

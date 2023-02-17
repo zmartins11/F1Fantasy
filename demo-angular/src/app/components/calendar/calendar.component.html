@@ -1,22 +1,21 @@
-<div class="container" style="padding-top: 40px; background-color: aliceblue;">
+
+<h2>Race Calendar</h2>
     <div class="row">
-        <div *ngFor="let race of races" class="col-sm-3">
+        <div *ngFor="let race of races" class="col-sm-3" >
             <div class="col-12 my-3">
-            <div class="card" style="width: 18rem; height: 350px; overflow: hidden;">
+            <div class="card highlight-card" (click)="openRaceDetails(race)" style="width: 18rem; height: 350px; overflow: hidden;">
                 <div class="card-body">
-                    <h5 style="color: blueviolet;">Round {{race.round}}</h5>
-                    <h5 style="color: blueviolet;">{{race.FirstPractice.date | date: 'd'}}-{{race.date | date : 'd'}}  {{race.FirstPractice.date | date: 'MMM'}} </h5>
+                    <h5 style="color: blue;">Round {{race.round}}</h5> <img src="assets/images/flags/{{race.Circuit.Location.country}}.png" style="position: absolute; top: 20px; right: 20px; padding-right: 25px;width: 100px;height: 37px;">
+                    <h5 style="color: blue;">{{race.FirstPractice.date | date: 'd'}}-{{race.date | date : 'd'}}  {{race.FirstPractice.date | date: 'MMM'}} </h5>
                     <div style="height: 1.6em; overflow: hidden;">
-                        <h5 class="card-title">{{race.raceName}}<span class="flag-icon flag-icon-pt flag-icon-squared"></span></h5>
+                        <h5 class="card-title">{{race.raceName}}</h5>
                     </div>
                     <hr>
-                    <p class="card-text">{{race.date}}</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                    <p class="card-text">{{race.Circuit.circuitName}}</p>
                 </div>
-                <img src="assets/track.png" class="card-img-top float-right" alt="..." style="width: 150px; height: auto;">
+                <img src="assets/images/tracks/{{race.Circuit.circuitId}}.png" class="card-img-top mx-auto" alt="..." style="width: 150px; height: auto; margin-bottom: 35px;">
             </div>
         </div>
         </div>
         
-    </div>
 </div>

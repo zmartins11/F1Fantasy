@@ -60,8 +60,8 @@ export class DriversListComponent implements OnInit{
 
 
   getDriverImage(driver: Driver): string {
-    const imageUrl = `assets/${driver.familyName}.jpg`;
-    return this.checkImageExists(imageUrl) ? imageUrl : 'assets/default.png';
+    const imageUrl = `assets/images/drivers/${driver.familyName}.jpg`;
+    return this.checkImageExists(imageUrl) ? imageUrl : 'assets/images/drivers/default.png';
   }
 
   checkImageExists(url: string): boolean {

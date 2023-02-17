@@ -4,6 +4,7 @@ import { CalendarComponent } from './components/calendar/calendar.component';
 import { CreateEmployeeComponent } from './components/create-employee/create-employee.component';
 import { DriversListComponent } from './components/drivers-list/drivers-list.component';
 import { EmployeeListComponent } from './components/employee-list/employee-list.component';
+import { RaceDetailsComponent } from './components/race-details/race-details.component';
 import { TestCssComponent } from './components/test-css/test-css.component';
 import { UpdateEmployeeComponent } from './components/update-employee/update-employee.component';
 
@@ -14,6 +15,7 @@ const routes: Routes = [
   {path:'drivers-list', component: DriversListComponent},
   {path:'test-css', component: TestCssComponent},
   {path:'calendar', component: CalendarComponent},
+  {path:'race-details', component: RaceDetailsComponent},
   {path:'', redirectTo:'employees', pathMatch: 'full'}
 ];
 
