@@ -1,15 +1,21 @@
 <div class="container" style="padding-top: 40px; background-color: aliceblue;">
     <div class="row">
         <div *ngFor="let race of races" class="col-sm-3">
-            <div class="card" style="width: 18rem;">
+            <div class="col-12 my-3">
+            <div class="card" style="width: 18rem; height: 350px; overflow: hidden;">
                 <div class="card-body">
-                    <h5 style="color: blueviolet;">{{race.round}}</h5>
-                    <h5 class="card-title">{{race.raceName}}<span class="flag-icon flag-icon-bh flag-icon-squared"></span></h5>
+                    <h5 style="color: blueviolet;">Round {{race.round}}</h5>
+                    <h5 style="color: blueviolet;">{{race.FirstPractice.date | date: 'd'}}-{{race.date | date : 'd'}}  {{race.FirstPractice.date | date: 'MMM'}} </h5>
+                    <div style="height: 1.6em; overflow: hidden;">
+                        <h5 class="card-title">{{race.raceName}}<span class="flag-icon flag-icon-pt flag-icon-squared"></span></h5>
+                    </div>
+                    <hr>
                     <p class="card-text">{{race.date}}</p>
                     <a href="#" class="btn btn-primary">Go somewhere</a>
                 </div>
-                <img src="assets/track.png" class="card-img-top" alt="...">
+                <img src="assets/track.png" class="card-img-top float-right" alt="..." style="width: 150px; height: auto;">
             </div>
+        </div>
         </div>
         
     </div>
