@@ -16,6 +16,7 @@ import com.example.demo.model.DriverResponse;
 import com.example.demo.model.Race;
 import com.example.demo.service.ErgastService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 
 @RestController
@@ -50,6 +51,11 @@ public class F1Controller {
 	  @GetMapping("/race/{season}")
 	  public ArrayList<String> getRaceName(@PathVariable String season) throws JsonProcessingException {
 	    return ergastService.getNameRaces(season);
+	  }
+	  
+	  @GetMapping("/raceResult/{season}/{round}")
+	  public Race getRaceResult(@PathVariable String season, @PathVariable String round) throws JsonMappingException, JsonProcessingException {
+		  return ergastService.getRaceResult(season,round);
 	  }
 	  
 	  

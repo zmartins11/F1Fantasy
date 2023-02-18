@@ -11,9 +11,6 @@ export class f1Service {
 
     private baseUrl = "http://localhost:8080/rawData";
 
-    wikipediaBaseUrl = 'https://en.wikipedia.org/w/api.php';
-    private wikipediaUrl = 'https://en.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&titles=';
-
     constructor(private httpClient: HttpClient) { }
 
     raceData : any;
@@ -26,8 +23,8 @@ export class f1Service {
         return this.raceData;
       }
 
-    getRaces(): Observable<Race[]> {
-        return this.httpClient.get<Race[]>("http://localhost:8080/2023");
+    getRaces(season : number): Observable<Race[]> {
+        return this.httpClient.get<Race[]>(`http://localhost:8080/${season}`);
     }
 
     getDriversList(season: number): Observable<Driver[]> {
@@ -35,32 +32,8 @@ export class f1Service {
         return this.httpClient.get<Driver[]>(search);
     }
 
-    getDriverImageExemplo(driverName: string): Observable<any> {
-        const params = new HttpParams()
-            .set('action', 'query')
-            .set('format', 'json')
-            .set('prop', 'pageimages')
-            .set('titles', driverName)
-            .set('pithumbsize', '500');
-
-        return this.httpClient.get<{ query: { pages: { [key: string]: { thumbnail: { source: string } } } } }>(this.wikipediaBaseUrl, { params })
-            .pipe(
-                map((response: { query: { pages: any; }; }) => {
-                    const page = response.query.pages;
-                    const pageId = Object.keys(page)[0];
-                    return page[pageId].thumbnail.source;
-                })
-            );
+    getRaceResult() {
+        
     }
 
-
-    getDriverImage(driver: any) {
-        const givenName = driver.givenName.split(' ').join('_');
-        const familyName = driver.familyName.split(' ').join('_');
-        const url = `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&piprop=original&titles=${givenName}_${familyName}`;
-    
-        return this.httpClient.get<any>(url).pipe(
-          map(res => res['query']['pages'])
-        );
-      }
 }

@@ -21,6 +21,7 @@ import com.example.demo.model.WinsResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -37,12 +38,26 @@ public class ErgastService {
 
 	}
 	
+	public Race getRaceResult(String season, String round) throws JsonMappingException, JsonProcessingException {
+		
+		Race a = null;
+		String urlRaceResult = "http://ergast.com/api/f1/" + season + "/" + round + "/results?limit=3.json";
+		
+		ResponseEntity<String> response = restTemplate.getForEntity(urlRaceResult, String.class);
+		System.out.println(response.getBody());
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonNode rootNode = objectMapper.readTree(response.getBody());
+		
+		String driverName = rootNode.get("MRData").get("RaceTable").get("Races").get(0).get("Results").get(0).get("Driver").get("givenName").asText();
+		return a;
+		
+	}
+	
 	public List<Driver> rawData(String season, String round) throws JsonProcessingException {
 		
 		List<Driver> driversInSeason = null;
 		
-		String url = "http://ergast.com/api/f1/" + season + "/races.json";
-		String urlRound = "http://ergast.com/api/f1/" + season + "/" + round +  "/races.json"; 
 		String urlDriversByYear = "http://ergast.com/api/f1/" + season + "/drivers.json";
 		
 		ResponseEntity<String> response = restTemplate.getForEntity(urlDriversByYear, String.class);

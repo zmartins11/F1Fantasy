@@ -1,21 +1,37 @@
-
-<h2>Race Calendar</h2>
-    <div class="row">
-        <div *ngFor="let race of races" class="col-sm-3" >
-            <div class="col-12 my-3">
-            <div class="card highlight-card" (click)="openRaceDetails(race)" style="width: 18rem; height: 350px; overflow: hidden;">
+<h2>Race Calendar Season: {{currentSeason}}</h2>
+<div class="row">
+    <div *ngFor="let race of races" class="col-sm-3">
+        <div class="col-12 my-3">
+            <div class="card highlight-card" (click)="openRaceDetails(race)"
+                style="width: 18rem; height: 350px; overflow: hidden;">
                 <div class="card-body">
-                    <h5 style="color: blue;">Round {{race.round}}</h5> <img src="assets/images/flags/{{race.Circuit.Location.country}}.png" style="position: absolute; top: 20px; right: 20px; padding-right: 25px;width: 100px;height: 37px;">
-                    <h5 style="color: blue;">{{race.FirstPractice.date | date: 'd'}}-{{race.date | date : 'd'}}  {{race.FirstPractice.date | date: 'MMM'}} </h5>
+                    <h5 style="color: blue;">Round {{race.round}}</h5> <img
+                        src="assets/images/flags/{{race.Circuit.Location.country}}.png"
+                        style="position: absolute; top: 20px; right: 20px; padding-right: 25px;width: 100px;height: 37px;">
+                    <h5 style="color: blue;">{{race.FirstPractice.date | date: 'd'}}-{{race.date | date : 'd'}}
+                        {{race.FirstPractice.date | date: 'MMM'}} </h5>
                     <div style="height: 1.6em; overflow: hidden;">
                         <h5 class="card-title">{{race.raceName}}</h5>
                     </div>
                     <hr>
                     <p class="card-text">{{race.Circuit.circuitName}}</p>
                 </div>
-                <img src="assets/images/tracks/{{race.Circuit.circuitId}}.png" class="card-img-top mx-auto" alt="..." style="width: 150px; height: auto; margin-bottom: 35px;">
+                <ng-container *ngIf="currentSeason === currentYear">
+                    <img src="assets/images/tracks/{{race.Circuit.circuitId}}.png" class="card-img-top mx-auto"
+                        alt="..." style="width: 150px; height: auto; margin-bottom: 35px;">
+                </ng-container>
+                <ng-container *ngIf="currentSeason != currentYear">
+                    {{ getRaceResults(race.season, race.round) }}
+                  </ng-container>
             </div>
         </div>
-        </div>
-        
+    </div>
+
+    <button class="btn btn-secondary" (click)="showPrevSeason();scrollToTop()">Go to Season {{currentSeason -
+        1}}</button>
+    <button class="btn btn-secondary" (click)="showNextSeason();scrollToTop()"
+        [disabled]="currentSeason === currentYear">
+        <ng-container *ngIf="currentSeason != currentYear">Go to Season {{currentSeason + 1}}</ng-container>
+    </button>
+
 </div>
