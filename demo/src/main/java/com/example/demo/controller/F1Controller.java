@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import com.example.demo.model.Driver;
 import com.example.demo.model.DriverResponse;
 import com.example.demo.model.Race;
+import com.example.demo.model.Results;
 import com.example.demo.service.ErgastService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -54,7 +55,7 @@ public class F1Controller {
 	  }
 	  
 	  @GetMapping("/raceResult/{season}/{round}")
-	  public Race getRaceResult(@PathVariable String season, @PathVariable String round) throws JsonMappingException, JsonProcessingException {
+	  public List<Results> getRaceResult(@PathVariable String season, @PathVariable String round) throws JsonMappingException, JsonProcessingException {
 		  return ergastService.getRaceResult(season,round);
 	  }
 	  

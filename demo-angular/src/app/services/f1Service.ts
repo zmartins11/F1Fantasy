@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { map, Observable } from "rxjs";
 import { Driver } from "../common/driver";
 import { Race } from "../common/race";
+import { RaceResults } from "../common/race-results";
 
 @Injectable({
     providedIn: 'root'
@@ -32,8 +33,8 @@ export class f1Service {
         return this.httpClient.get<Driver[]>(search);
     }
 
-    getRaceResult() {
-        
+    getRaceResult(season: string, round: string) {
+        return this.httpClient.get<RaceResults[]>(`http://localhost:8080/raceResult/${season}/${round}`);
     }
 
 }

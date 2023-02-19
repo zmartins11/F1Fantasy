@@ -4,7 +4,7 @@
         <div class="col-12 my-3">
             <div class="card highlight-card" (click)="openRaceDetails(race)"
                 style="width: 18rem; height: 350px; overflow: hidden;">
-                <div class="card-body">
+                <div class="card-body" [style.background-image]="currentSeason != currentYear ? 'url(assets/images/checkeredFlag.jpg)' : ''">
                     <h5 style="color: blue;">Round {{race.round}}</h5> <img
                         src="assets/images/flags/{{race.Circuit.Location.country}}.png"
                         style="position: absolute; top: 20px; right: 20px; padding-right: 25px;width: 100px;height: 37px;">
@@ -16,13 +16,9 @@
                     <hr>
                     <p class="card-text">{{race.Circuit.circuitName}}</p>
                 </div>
-                <ng-container *ngIf="currentSeason === currentYear">
-                    <img src="assets/images/tracks/{{race.Circuit.circuitId}}.png" class="card-img-top mx-auto"
-                        alt="..." style="width: 150px; height: auto; margin-bottom: 35px;">
-                </ng-container>
-                <ng-container *ngIf="currentSeason != currentYear">
-                    {{ getRaceResults(race.season, race.round) }}
-                  </ng-container>
+                <img src="assets/images/tracks/{{race.Circuit.circuitId}}.png" class="card-img-top mx-auto" alt="..."
+                    style="width: 150px; height: auto; margin-bottom: 35px;">
+
             </div>
         </div>
     </div>

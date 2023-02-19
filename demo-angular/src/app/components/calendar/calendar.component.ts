@@ -4,6 +4,8 @@ import { Race } from 'src/app/common/race';
 import { f1Service } from 'src/app/services/f1Service';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { RaceDetailsComponent } from '../race-details/race-details.component';
+import { RaceResults } from 'src/app/common/race-results';
+import { RaceResultsComponent } from '../race-results/race-results.component';
 
 @Component({
   selector: 'app-calendar',
@@ -13,7 +15,8 @@ import { RaceDetailsComponent } from '../race-details/race-details.component';
 export class CalendarComponent implements OnInit {
 
 
-   races : Race[] = [];
+  races : Race[] = [];
+  raceResults : RaceResults[] = [];
   currentSeason! : number;
 
   currentYear = new Date().getFullYear();
@@ -46,10 +49,7 @@ export class CalendarComponent implements OnInit {
   }
 
 
- 
-  getRaceResults(season: string, round :string) {
-   
-  }
+
 
 
 
@@ -57,10 +57,15 @@ export class CalendarComponent implements OnInit {
     this.f1Service.setRaceData(race);
 
     const initialState = {
-      title: race.raceName,
       race: race
     };
-    this.modalService.show(RaceDetailsComponent, { initialState });
+
+    if(this.currentSeason === this.currentYear) {
+      this.modalService.show(RaceDetailsComponent, { initialState });
+    } else {
+      this.modalService.show(RaceResultsComponent, { initialState })
+    }
+    
     
   }
 

@@ -21,7 +21,7 @@ public class Race {
 	private String url;
 	private String raceName;
 	
-	@JsonIgnoreProperties({"Results"})
+	@JsonProperty("Results")
 	private List<Results> results;
 	
     @JsonDeserialize(using = LocalDateDeserializer.class)

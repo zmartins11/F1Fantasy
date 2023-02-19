@@ -16,13 +16,16 @@ import com.example.demo.model.DriverResponse;
 import com.example.demo.model.MrData;
 import com.example.demo.model.Race;
 import com.example.demo.model.RaceResponse;
+import com.example.demo.model.RaceResultsResponse;
 import com.example.demo.model.RaceTable;
+import com.example.demo.model.Results;
 import com.example.demo.model.WinsResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 @Service
 public class ErgastService {
@@ -38,19 +41,20 @@ public class ErgastService {
 
 	}
 	
-	public Race getRaceResult(String season, String round) throws JsonMappingException, JsonProcessingException {
+	public List<Results> getRaceResult(String season, String round) throws JsonMappingException, JsonProcessingException {
 		
-		Race a = null;
-		String urlRaceResult = "http://ergast.com/api/f1/" + season + "/" + round + "/results?limit=3.json";
+		List<Results> resultsRace = null;
+		String urlRaceResult = "http://ergast.com/api/f1/" + season + "/" + round + "/results.json?limit=3";
 		
 		ResponseEntity<String> response = restTemplate.getForEntity(urlRaceResult, String.class);
-		System.out.println(response.getBody());
 		
 		ObjectMapper objectMapper = new ObjectMapper();
-		JsonNode rootNode = objectMapper.readTree(response.getBody());
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		RaceResultsResponse resultsResponse = objectMapper.readValue(response.getBody(),RaceResultsResponse.class);
+	
+		resultsRace = resultsResponse.getMrData().getRaceTable().getRaces().get(0).getResults();
 		
-		String driverName = rootNode.get("MRData").get("RaceTable").get("Races").get(0).get("Results").get(0).get("Driver").get("givenName").asText();
-		return a;
+		return resultsRace;
 		
 	}
 	

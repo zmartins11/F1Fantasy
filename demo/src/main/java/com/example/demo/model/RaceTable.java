@@ -14,6 +14,7 @@ public class RaceTable {
 	 private String season;
 	 private String driverId;
 	 private String position;
+	 private String round;
 
 	  public String getSeason() {
 		return season;
@@ -54,6 +55,15 @@ public class RaceTable {
 	public void setPosition(String position) {
 		this.position = position;
 	}
+
+	public String getRound() {
+		return round;
+	}
+
+	public void setRound(String round) {
+		this.round = round;
+	}
+	
 	
 	
 

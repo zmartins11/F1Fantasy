@@ -25,6 +25,7 @@ import { CalendarComponent } from './components/calendar/calendar.component';
 import { RaceDetailsComponent } from './components/race-details/race-details.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { RaceResultsComponent } from './components/race-results/race-results.component';
 
 
 
@@ -39,7 +40,8 @@ import { BsModalService } from 'ngx-bootstrap/modal';
     DriversListComponent,
     TestCssComponent,
     CalendarComponent,
-    RaceDetailsComponent
+    RaceDetailsComponent,
+    RaceResultsComponent
   ],
   imports: [
     BrowserModule,
