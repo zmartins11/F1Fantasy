@@ -26,6 +26,9 @@ import { RaceDetailsComponent } from './components/race-details/race-details.com
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { RaceResultsComponent } from './components/race-results/race-results.component';
+import { LoginComponent } from './components/login/login.component';
+import { RegisterComponent } from './components/register/register.component';
+import { FantasyHomeComponent } from './components/fantasy-home/fantasy-home.component';
 
 
 
@@ -41,7 +44,10 @@ import { RaceResultsComponent } from './components/race-results/race-results.com
     TestCssComponent,
     CalendarComponent,
     RaceDetailsComponent,
-    RaceResultsComponent
+    RaceResultsComponent,
+    LoginComponent,
+    RegisterComponent,
+    FantasyHomeComponent
   ],
   imports: [
     BrowserModule,
