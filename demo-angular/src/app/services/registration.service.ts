@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { User } from '../common/user';
 import { HttpClient } from '@angular/common/http';
 
@@ -7,6 +7,22 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class RegistrationService {
+
+  private userSubject: BehaviorSubject<User> = new BehaviorSubject<User>({
+    id: 0,
+    emailId: "",
+    userName: "",
+    password: ""
+  });
+
+  setUser(user: User): void {
+    this.userSubject.next(user);
+  }
+
+  getUser(): Observable<User> {
+    return this.userSubject.asObservable();
+  }
+
 
   constructor(private httpClient : HttpClient) { }
 

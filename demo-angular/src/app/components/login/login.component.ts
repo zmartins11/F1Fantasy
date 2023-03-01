@@ -24,7 +24,9 @@ export class LoginComponent implements OnInit {
     this.registrationService.loginUserFromRemote(this.user).subscribe(
       data => {
         console.log('response recieve');
-        this.router.navigate(['/fantasy-home'])
+        this.router.navigate(['/fantasy-home']);
+        this.user = data;
+        this.registrationService.setUser(data);
       },
       error => {
         console.log('expcetion occured');
