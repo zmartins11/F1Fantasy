@@ -13,8 +13,7 @@ import jakarta.persistence.NamedQuery;
  * 
  */
 @Entity
-@NamedQuery(name="Team.findAll", query="SELECT t FROM Team t")
-public class Team implements Serializable {
+public class Constructorf implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -25,7 +24,7 @@ public class Team implements Serializable {
 	@Column(name="photo_url")
 	private String photoUrl;
 
-	public Team() {
+	public Constructorf() {
 	}
 
 	public long getId() {
