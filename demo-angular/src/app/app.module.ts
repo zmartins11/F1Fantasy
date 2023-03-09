@@ -29,6 +29,7 @@ import { RaceResultsComponent } from './components/race-results/race-results.com
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { FantasyHomeComponent } from './components/fantasy-home/fantasy-home.component';
+import { FantasyTeamComponent } from './components/fantasy-team/fantasy-team.component';
 
 
 
@@ -47,7 +48,8 @@ import { FantasyHomeComponent } from './components/fantasy-home/fantasy-home.com
     RaceResultsComponent,
     LoginComponent,
     RegisterComponent,
-    FantasyHomeComponent
+    FantasyHomeComponent,
+    FantasyTeamComponent
   ],
   imports: [
     BrowserModule,

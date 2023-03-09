@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
 
 
 /**
@@ -17,6 +18,7 @@ import jakarta.persistence.NamedQuery;
  */
 @Entity
 @NamedQuery(name="User.findAll", query="SELECT u FROM User u")
+@Table(name = "users")
 public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -29,8 +31,6 @@ public class User implements Serializable {
 
 	private String password;
 
-	@Column(name="team_id")
-	private BigInteger teamId;
 
 	@Column(name="user_name")
 	private String userName;
@@ -62,13 +62,6 @@ public class User implements Serializable {
 		this.password = password;
 	}
 
-	public BigInteger getTeamId() {
-		return this.teamId;
-	}
-
-	public void setTeamId(BigInteger teamId) {
-		this.teamId = teamId;
-	}
 
 	public String getUserName() {
 		return this.userName;

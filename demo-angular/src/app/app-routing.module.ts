@@ -5,6 +5,7 @@ import { CreateEmployeeComponent } from './components/create-employee/create-emp
 import { DriversListComponent } from './components/drivers-list/drivers-list.component';
 import { EmployeeListComponent } from './components/employee-list/employee-list.component';
 import { FantasyHomeComponent } from './components/fantasy-home/fantasy-home.component';
+import { FantasyTeamComponent } from './components/fantasy-team/fantasy-team.component';
 import { LoginComponent } from './components/login/login.component';
 import { RaceDetailsComponent } from './components/race-details/race-details.component';
 import { RegisterComponent } from './components/register/register.component';
@@ -22,6 +23,7 @@ const routes: Routes = [
   {path:'login', component: LoginComponent},
   {path:'fantasy-home', component: FantasyHomeComponent},
   {path:'register', component: RegisterComponent},
+  {path:'fantasy-team', component: FantasyTeamComponent},
   {path:'', redirectTo:'employees', pathMatch: 'full'}
 ];
 
