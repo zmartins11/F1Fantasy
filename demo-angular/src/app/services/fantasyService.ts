@@ -10,6 +10,8 @@ export class FantasyService {
 
   constructor(private httpClient : HttpClient) { }
 
+  fantasyTeam : any;
+
   private baseUrl = 'http://localhost:8080/fantasy';
 
   public getFantasyTeamByUserId(userId: number):Observable<FantasyTeam> {

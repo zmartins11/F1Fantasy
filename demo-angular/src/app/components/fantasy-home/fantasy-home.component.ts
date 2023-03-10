@@ -25,6 +25,7 @@ export class FantasyHomeComponent implements OnInit {
       console.log(this.user)
       this.getFantasyTeam();
     });
+
   }
 
   logout() {
@@ -37,8 +38,10 @@ export class FantasyHomeComponent implements OnInit {
   }
 
   getFantasyTeam() {
+    console.log(this.user)
     this.fantasyService.getFantasyTeamByUserId(this.user.id).subscribe( fantasyTeam => {
       this.fantasyTeam = fantasyTeam;
+      this.fantasyService.fantasyTeam = fantasyTeam;
     })
   }
   }

@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -42,8 +43,8 @@ public class FantasyController {
 	}
 	
 	@GetMapping("/fantasyTeam/{userId}")
-	public ResponseEntity<FantasyTeam> getFantasyTeam(@PathVariable int userId) {
-		FantasyTeam fTeam = fantasyService.getFantasyTeam(userId);
+	public ResponseEntity<Optional<FantasyTeam>> getFantasyTeam(@PathVariable int userId) {
+		Optional<FantasyTeam> fTeam = fantasyService.getFantasyTeam(userId);
 		return ResponseEntity.ok(fTeam);
 	}
 

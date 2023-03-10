@@ -5,14 +5,13 @@
 
 <div class="card" (click)="goToFantasyTeam()">
   <h3>Current Team</h3>
-  <h5>{{ fantasyTeam.driver1.name }}</h5>
-  <h5>{{ fantasyTeam.driver2.name }}</h5>
+
   <div class="drivers-container">
     <img class="driver-image" src="{{fantasyTeam.driver1.photoUrl }}" alt="Driver 1">
     <img class="driver-image" src="{{fantasyTeam.driver2.photoUrl }}" alt="Driver 2">
     <img class="driver-image" src="{{fantasyTeam.driver3.photoUrl }}" alt="Driver 3">
   </div>
   <div class="team-container">
-    <img class="team-image" src="assets/images/drivers/default.png" alt="Team">
+    <img class="team-image" src="{{fantasyTeam.team.photoUrl }}" alt="Team">
   </div>
 </div>

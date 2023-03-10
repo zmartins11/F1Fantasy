@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,10 +43,9 @@ public class FantasyService {
 		return constructorRepo.findAll();
 	}
 	
-	public FantasyTeam getFantasyTeam(int userId) {
-		List<FantasyTeam> team = fantasyJpa.findAll();
-		FantasyTeam t = team.get(0);
-		return t;
+	public Optional<FantasyTeam> getFantasyTeam(int userId) {
+		Optional<FantasyTeam> team = fantasyJpa.findByUserId(userId);
+		return team;
 	}
 	
 

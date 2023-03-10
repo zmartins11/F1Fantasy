@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FantasyService } from 'src/app/services/fantasyService';
 
 @Component({
   selector: 'app-fantasy-team',
@@ -7,9 +8,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FantasyTeamComponent implements OnInit {
 
-  constructor() { }
+  constructor(private fantasyService: FantasyService) { }
+
+  fantasyTeam: any;
 
   ngOnInit(): void {
+    this.fantasyTeam = this.fantasyService.fantasyTeam;
+    console.log('from team:')
+    console.log(this.fantasyTeam.driver1.name)
   }
 
 }
