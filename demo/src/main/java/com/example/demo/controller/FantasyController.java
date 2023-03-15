@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,5 +48,17 @@ public class FantasyController {
 		Optional<FantasyTeam> fTeam = fantasyService.getFantasyTeam(userId);
 		return ResponseEntity.ok(fTeam);
 	}
+	
+	@PostMapping("/update")
+	public ResponseEntity<FantasyTeam> updateTeam(@RequestBody FantasyTeam team) throws Exception {
+		 FantasyTeam updatedTeam = fantasyService.updateTeam(team);
+		 
+		  if (updatedTeam != null) {
+	            return ResponseEntity.ok(updatedTeam);
+	        } else {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	        }
+	}
+	
 
 }

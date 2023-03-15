@@ -24,7 +24,6 @@
     width: 100px;
     height: 100px;
     object-fit: cover;
-    border-radius: 50%;
   }
   
   .team-container {
@@ -33,8 +32,9 @@
   }
   
   .team-image {
-    width: 110px;
-    height: 110px;
+    
     object-fit: cover;
-    border-radius: 50%;
+    width: 200px; /* set the width to your desired size */
+    height: 100px;
+    height: auto;  /* maintain the aspect ratio */
   }

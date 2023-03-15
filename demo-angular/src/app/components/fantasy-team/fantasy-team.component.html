@@ -1,5 +1,6 @@
-<p>fantasy-team works!</p>
 <button class="btn btn-primary" routerLink="/fantasy-home">Go to Fantasy Home</button>
+<button class="btn btn-primary" (click)="saveTeam(fantasyTeam)">Save Team</button>
+<h4>Budget Remaining : {{ fantasyTeam.budget }} mil</h4>
 <div class="fantasy-team-container">
 <div class="card">
     <h3>Edit Team</h3>
@@ -29,13 +30,13 @@
     <thead>
       <tr>
         <th>Driver Name</th>
-        <th>Id</th>
+        <th>Price</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let driver of driverList">
-        <td (click)="onUpdateDriverImage(driver, fantasyTeam)">{{ driver.name }}</td>
-        <td>{{ driver.id }}</td>
+        <td (click)="onUpdateDriver(driver, fantasyTeam)">{{ driver.name }}</td>
+        <td>{{ driver.price }} mil</td>
       </tr>
     </tbody>
   </table>

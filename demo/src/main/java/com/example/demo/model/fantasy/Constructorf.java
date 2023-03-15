@@ -23,6 +23,8 @@ public class Constructorf implements Serializable {
 
 	@Column(name="photo_url")
 	private String photoUrl;
+	
+	private int price;
 
 	public Constructorf() {
 	}
@@ -50,5 +52,19 @@ public class Constructorf implements Serializable {
 	public void setPhotoUrl(String photoUrl) {
 		this.photoUrl = photoUrl;
 	}
+
+	public int getPrice() {
+		return price;
+	}
+
+	public void setPrice(int price) {
+		this.price = price;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	
+	
 
 }

@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Driverf } from 'src/app/common/fantasy/driverf';
 import { FantasyTeam } from 'src/app/common/fantasy/fantasyTeam';
 import { FantasyService } from 'src/app/services/fantasyService';
+import { NumberLiteralType } from 'typescript';
 
 @Component({
   selector: 'app-fantasy-team',
@@ -10,12 +12,11 @@ import { FantasyService } from 'src/app/services/fantasyService';
 })
 export class FantasyTeamComponent implements OnInit {
 
-  constructor(private fantasyService: FantasyService) { }
+  constructor(private fantasyService: FantasyService,
+              private route: Router) { }
 
   fantasyTeam: any;
-
-
-  driverList : Driverf [] = []; 
+  driverList: Driverf[] = [];
 
   ngOnInit(): void {
     this.fantasyTeam = this.fantasyService.fantasyTeam;
@@ -29,41 +30,62 @@ export class FantasyTeamComponent implements OnInit {
   }
 
 
-  onDeleteDriver(driverNumber : number) {
+  onDeleteDriver(driverNumber: number) {
     this.fantasyTeam[`driver${driverNumber}`].photoUrl = 'assets/images/drivers/default.png';
     this.fantasyTeam[`driver${driverNumber}`].name = '';
     this.fantasyTeam[`driver${driverNumber}`].id = 0;
     this.fantasyTeam[`driver${driverNumber}`].defaultImageUsed = true;
+    this.fantasyTeam.budget = this.fantasyTeam.budget + this.fantasyTeam[`driver${driverNumber}`].price;
   }
 
-  onUpdateDriverImage(driver : Driverf, team : FantasyTeam) {
+  onUpdateDriver(driver: Driverf, team: FantasyTeam) {
     const errorMessageElement = document.getElementById('error-message')!;
-   
-    if(team.driver1.id == 0 )  {
-      if(team.driver2.id != driver.id && team.driver3.id != driver.id) {
+    errorMessageElement.innerHTML = '';
+
+    if (team.driver1.id == 0) {
+      if (team.driver2.id == driver.id || team.driver3.id == driver.id) {
         errorMessageElement.innerHTML = 'Driver already exists in team';
-      }  else {
-      team.driver1.photoUrl = driver.photoUrl;
-      team.driver1.id = driver.id;
-      team.driver1.name = driver.name;
+      } else {
+        team.driver1.photoUrl = driver.photoUrl;
+        team.driver1.id = driver.id;
+        team.driver1.name = driver.name;
+        team.budget = team.budget - driver.price;
+      }
     }
-  }
-    if(team.driver2.id == 0) {
-      if(team.driver1.id != driver.id && team.driver3.id != driver.id) {
+    if (team.driver2.id == 0) {
+      if (team.driver1.id == driver.id || team.driver3.id == driver.id) {
         errorMessageElement.innerHTML = 'Driver already exists in team';
       } else {
         team.driver2.photoUrl = driver.photoUrl;
         team.driver2.id = driver.id;
         team.driver2.name = driver.name;
-      }  
+        team.budget = team.budget - driver.price;
+      }
+    }
+    if (team.driver3.id == 0) {
+      if (team.driver2.id == driver.id || team.driver1.id == driver.id) {
+        errorMessageElement.innerHTML = 'Driver already exists in team';
+      } else {
+        team.driver3.photoUrl = driver.photoUrl;
+        team.driver3.id = driver.id;
+        team.driver3.name = driver.name;
+        team.budget = team.budget - driver.price;
+      }
+    }
+
+    
   }
-  if(team.driver3.id == 0) {
-    team.driver3.photoUrl = driver.photoUrl;
-    team.driver3.id = driver.id;
-    team.driver3.name = driver.name;
 
-}
-
+  saveTeam(fantasyTeam: FantasyTeam) {
+    const errorMessageElement = document.getElementById('error-message')!;
+    console.log(fantasyTeam.budget);
+    if(fantasyTeam.budget < 0) {
+      errorMessageElement.innerHTML = 'check budget!';
+    } else {
+      this.fantasyService.updateTeam(fantasyTeam).subscribe(
+        response => this.route.navigate(['/fantasy-home']), 
+        error => errorMessageElement.innerHTML = 'error Updating team');
+    }
   }
 
 

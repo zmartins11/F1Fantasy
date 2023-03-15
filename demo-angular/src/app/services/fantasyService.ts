@@ -9,11 +9,13 @@ import { Driverf } from '../common/fantasy/driverf';
 })
 export class FantasyService {
 
+
   constructor(private httpClient : HttpClient) { }
 
   fantasyTeam : any;
-
+  
   private baseUrl = 'http://localhost:8080/fantasy';
+  //http://localhost:8080/fantasy/update
 
   public getFantasyTeamByUserId(userId: number):Observable<FantasyTeam> {
     return this.httpClient.get<FantasyTeam>(`${this.baseUrl}/fantasyTeam/${userId}`);
@@ -23,5 +25,9 @@ export class FantasyService {
     return this.httpClient.get<Driverf[]>(`${this.baseUrl}/drivers`);
   }
 
+    
+  public updateTeam(fantasyTeam: FantasyTeam): Observable<FantasyTeam> {
+    return this.httpClient.post<FantasyTeam>(`${this.baseUrl}/update`, fantasyTeam);
+  }
  
 }

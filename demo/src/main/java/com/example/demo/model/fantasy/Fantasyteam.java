@@ -45,6 +45,8 @@ public class FantasyTeam implements Serializable {
     @ManyToOne()
     @JoinColumn(name = "driver3_id")
     private Driverf driver3;
+    
+    private int budget;
 
 	public int getId() {
 		return id;
@@ -96,6 +98,14 @@ public class FantasyTeam implements Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public int getBudget() {
+		return budget;
+	}
+
+	public void setBudget(int budget) {
+		this.budget = budget;
 	}
     
     
