@@ -1,7 +1,45 @@
 <p>fantasy-team works!</p>
 <button class="btn btn-primary" routerLink="/fantasy-home">Go to Fantasy Home</button>
-<h1>teste</h1>nome: {{fantasyTeam.driver1.name}}
-{{fantasyTeam.driver1.photoUrl}}
-{{fantasyTeam.driver2.photoUrl}}
-{{fantasyTeam.driver3.photoUrl}}
-{{fantasyTeam.team.photoUrl}}
+<div class="fantasy-team-container">
+<div class="card">
+    <h3>Edit Team</h3>
+    <div id="error-message"></div>
+    <div class="drivers-container">
+    <div class="driver-card">
+      <img class="driver-image" src="{{fantasyTeam.driver1.photoUrl }}" alt="Driver 1">
+      <button class="delete-button" (click)="onDeleteDriver(1)">&times;</button>
+      </div>
+      <div class="driver-card">
+        <img class="driver-image" src="{{fantasyTeam.driver2.photoUrl }}" alt="Driver 2">
+        <button class="delete-button" (click)="onDeleteDriver(2)">&times;</button>
+        </div>
+        <div class="driver-card">
+            <img class="driver-image" src="{{fantasyTeam.driver3.photoUrl }}" alt="Driver 3">
+            <button class="delete-button" (click)="onDeleteDriver(3)">&times;</button>
+            </div>
+    </div>
+    <div class="team-container">
+      <img class="team-image" src="{{fantasyTeam.team.photoUrl }}" alt="Team">
+    </div>
+
+
+  </div>
+  <div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Driver Name</th>
+        <th>Id</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let driver of driverList">
+        <td (click)="onUpdateDriverImage(driver, fantasyTeam)">{{ driver.name }}</td>
+        <td>{{ driver.id }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+
+</div>

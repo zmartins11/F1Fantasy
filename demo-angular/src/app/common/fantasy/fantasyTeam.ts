@@ -9,4 +9,5 @@ export interface FantasyTeam {
   driver1: Driverf;
   driver2: Driverf;
   driver3: Driverf;
+  defaultImageUsed: boolean;
 }
