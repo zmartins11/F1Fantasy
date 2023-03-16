@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Driverf } from 'src/app/common/fantasy/driverf';
 import { FantasyTeam } from 'src/app/common/fantasy/fantasyTeam';
+import { Team } from 'src/app/common/fantasy/teamf';
 import { FantasyService } from 'src/app/services/fantasyService';
 import { NumberLiteralType } from 'typescript';
 
@@ -17,16 +18,29 @@ export class FantasyTeamComponent implements OnInit {
 
   fantasyTeam: any;
   driverList: Driverf[] = [];
+  constructorList: Team[] = [];
+  showDriverTable = true;
 
   ngOnInit(): void {
     this.fantasyTeam = this.fantasyService.fantasyTeam;
     this.getAllDrivers();
+    this.getAllConstructor();
   }
 
   getAllDrivers() {
     this.fantasyService.getAllDrivers().subscribe((data: Driverf[]) => {
       this.driverList = data;
     });
+  }
+
+  getAllConstructor() {
+    this.fantasyService.getAllConstructors().subscribe((data : Team[]) => {
+      this.constructorList = data;
+    })
+  }
+
+  toggleTable() {
+    this.showDriverTable = !this.showDriverTable;
   }
 
 
@@ -36,6 +50,13 @@ export class FantasyTeamComponent implements OnInit {
     this.fantasyTeam[`driver${driverNumber}`].id = 0;
     this.fantasyTeam[`driver${driverNumber}`].defaultImageUsed = true;
     this.fantasyTeam.budget = this.fantasyTeam.budget + this.fantasyTeam[`driver${driverNumber}`].price;
+  }
+
+  onDeleteConstructor(team : Team) {
+    team.id = 0;
+    team.name = '';
+    team.photoUrl = 'assets/images/fantasy/teams/default.png';
+    team.price = 0;
   }
 
   onUpdateDriver(driver: Driverf, team: FantasyTeam) {

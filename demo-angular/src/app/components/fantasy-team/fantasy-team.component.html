@@ -1,46 +1,63 @@
 <button class="btn btn-primary" routerLink="/fantasy-home">Go to Fantasy Home</button>
 <button class="btn btn-primary" (click)="saveTeam(fantasyTeam)">Save Team</button>
-<h4>Budget Remaining : {{ fantasyTeam.budget }} mil</h4>
+<h4>Budget: {{ fantasyTeam.budget }} mil</h4>
 <div class="fantasy-team-container">
-<div class="card">
+  <div class="card">
     <h3>Edit Team</h3>
     <div id="error-message"></div>
     <div class="drivers-container">
-    <div class="driver-card">
-      <img class="driver-image" src="{{fantasyTeam.driver1.photoUrl }}" alt="Driver 1">
-      <button class="delete-button" (click)="onDeleteDriver(1)">&times;</button>
+      <div class="driver-card">
+        <img class="driver-image" src="{{fantasyTeam.driver1.photoUrl }}" alt="Driver 1">
+        <button class="delete-button" (click)="onDeleteDriver(1)">&times;</button>
       </div>
       <div class="driver-card">
         <img class="driver-image" src="{{fantasyTeam.driver2.photoUrl }}" alt="Driver 2">
         <button class="delete-button" (click)="onDeleteDriver(2)">&times;</button>
-        </div>
-        <div class="driver-card">
-            <img class="driver-image" src="{{fantasyTeam.driver3.photoUrl }}" alt="Driver 3">
-            <button class="delete-button" (click)="onDeleteDriver(3)">&times;</button>
-            </div>
+      </div>
+      <div class="driver-card">
+        <img class="driver-image" src="{{fantasyTeam.driver3.photoUrl }}" alt="Driver 3">
+        <button class="delete-button" (click)="onDeleteDriver(3)">&times;</button>
+      </div>
     </div>
     <div class="team-container">
       <img class="team-image" src="{{fantasyTeam.team.photoUrl }}" alt="Team">
+      <button class="delete-button" (click)="onDeleteConstructor(fantasyTeam.team)">&times;</button>
     </div>
 
 
   </div>
-  <div class="table-container">
-  <table>
-    <thead>
-      <tr>
-        <th>Driver Name</th>
-        <th>Price</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let driver of driverList">
-        <td (click)="onUpdateDriver(driver, fantasyTeam)">{{ driver.name }}</td>
-        <td>{{ driver.price }} mil</td>
-      </tr>
-    </tbody>
-  </table>
+  <button (click)="toggleTable()">Toggle Table</button>
+  <div class="table-container" style="background-color: brown;" *ngIf="showDriverTable">
+    <table>
+      <thead>
+        <tr>
+          <th>Driver Name</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let driver of driverList">
+          <td (click)="onUpdateDriver(driver, fantasyTeam)">{{ driver.name }}</td>
+          <td>{{ driver.price }} mil</td>
+        </tr>
+      </tbody>
+    </table>
 
-</div>
-
+  </div>
+  <div class="table-container" style="background-color: rgb(29, 94, 235);" *ngIf="!showDriverTable">
+    <table>
+      <thead>
+        <tr>
+          <th>Driver Name</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let constructor of constructorList">
+          <td>{{ constructor.name }}</td>
+          <td>{{ constructor.price }} mil</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

@@ -3,6 +3,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { FantasyTeam } from '../common/fantasy/fantasyTeam';
 import { HttpClient } from '@angular/common/http';
 import { Driverf } from '../common/fantasy/driverf';
+import { Team } from '../common/fantasy/teamf';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +24,10 @@ export class FantasyService {
 
   public getAllDrivers():Observable<Driverf[]> {
     return this.httpClient.get<Driverf[]>(`${this.baseUrl}/drivers`);
+  }
+
+  public getAllConstructors():Observable<Team[]> {
+    return this.httpClient.get<Team[]>(`${this.baseUrl}/teams`);
   }
 
     
