@@ -26,22 +26,26 @@ public class F1Controller {
 	
 	private final ErgastService ergastService;
 	
-	private final RestTemplate restTemplate;
 	
 	 public F1Controller(RestTemplateBuilder restTemplateBuilder) {
 		    this.ergastService = new ErgastService();
-			this.restTemplate = restTemplateBuilder.build();
 		  }
+	 
+	 @GetMapping("/teste")
+	 public String teste() {
+		 return "testing docker";
+	 }
+	 
+	 @GetMapping("/testeV2")
+	 public String teste2() {
+		 return "testing docker Versao 2";
+	 }
 	  
 	  @GetMapping("/{season}")
 	  public List<Race> getRaces(@PathVariable String season) throws JsonProcessingException {
 	    return ergastService.getRaces(season);
 	  }
 	  
-//	  @GetMapping("/rawData/{season}")
-//	  public ResponseEntity<String> rawData(@PathVariable String season, @PathVariable String round) throws JsonProcessingException {
-//		  return ergastService.rawData(season, round);
-//	  }
 	  
 	  @GetMapping("/rawData/{season}")
 	  public List<Driver> rawDataDrivers(@PathVariable String season) throws JsonProcessingException {
