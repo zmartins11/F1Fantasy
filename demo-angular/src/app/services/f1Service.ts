@@ -10,7 +10,7 @@ import { RaceResults } from "../common/race-results";
 })
 export class f1Service {
 
-    private baseUrl = "http://localhost:8080/rawData";
+    private baseUrl = "http://ec2-16-16-76-107.eu-north-1.compute.amazonaws.com/rawData";
 
     constructor(private httpClient: HttpClient) { }
 
@@ -25,7 +25,7 @@ export class f1Service {
       }
 
     getRaces(season : number): Observable<Race[]> {
-        return this.httpClient.get<Race[]>(`http://localhost:8080/${season}`);
+        return this.httpClient.get<Race[]>(`http://ec2-16-16-76-107.eu-north-1.compute.amazonaws.com/${season}`);
     }
 
     getDriversList(season: number): Observable<Driver[]> {
@@ -34,7 +34,7 @@ export class f1Service {
     }
 
     getRaceResult(season: string, round: string) {
-        return this.httpClient.get<RaceResults[]>(`http://localhost:8080/raceResult/${season}/${round}`);
+        return this.httpClient.get<RaceResults[]>(`http://ec2-16-16-76-107.eu-north-1.compute.amazonaws.com/raceResult/${season}/${round}`);
     }
 
 }

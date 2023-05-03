@@ -27,10 +27,10 @@ export class RegistrationService {
   constructor(private httpClient : HttpClient) { }
 
   public loginUserFromRemote(user: User):Observable<any> {
-    return this.httpClient.post<any>("http://localhost:8080/login", user);
+    return this.httpClient.post<any>("http://ec2-16-16-76-107.eu-north-1.compute.amazonaws.com/login", user);
   }
 
   public registerUserFromRemote(user : User):Observable<any> {
-    return this.httpClient.post<any>("http://localhost:8080/registerUser", user);
+    return this.httpClient.post<any>("http://ec2-16-16-76-107.eu-north-1.compute.amazonaws.com/registerUser", user);
   }
 }

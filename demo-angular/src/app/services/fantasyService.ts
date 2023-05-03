@@ -15,8 +15,9 @@ export class FantasyService {
 
   fantasyTeam : any;
   
-  private baseUrl = 'http://localhost:8080/fantasy';
+  private baseUrl = 'http://ec2-16-16-76-107.eu-north-1.compute.amazonaws.com/fantasy';
   //http://localhost:8080/fantasy/update
+  private baseUrlLocal = 'http://localhost:8080/fantasy/';
 
   public getFantasyTeamByUserId(userId: number):Observable<FantasyTeam> {
     return this.httpClient.get<FantasyTeam>(`${this.baseUrl}/fantasyTeam/${userId}`);

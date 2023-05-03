@@ -54,7 +54,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let constructor of constructorList">
-          <td>{{ constructor.name }}</td>
+          <td (click)="onUpdateTeam(constructor, fantasyTeam)">{{ constructor.name }}</td>
           <td>{{ constructor.price }} mil</td>
         </tr>
       </tbody>
