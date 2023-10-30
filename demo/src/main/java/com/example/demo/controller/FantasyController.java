@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.fantasy.Driverf;
-import com.example.demo.model.fantasy.FantasyTeam;
+import com.example.demo.model.fantasy.Fantasyteam;
 import com.example.demo.model.fantasy.Constructorf;
 import com.example.demo.service.FantasyService;
 
@@ -44,14 +43,14 @@ public class FantasyController {
 	}
 	
 	@GetMapping("/fantasyTeam/{userId}")
-	public ResponseEntity<Optional<FantasyTeam>> getFantasyTeam(@PathVariable int userId) {
-		Optional<FantasyTeam> fTeam = fantasyService.getFantasyTeam(userId);
+	public ResponseEntity<Optional<Fantasyteam>> getFantasyTeam(@PathVariable int userId) {
+		Optional<Fantasyteam> fTeam = fantasyService.getFantasyTeam(userId);
 		return ResponseEntity.ok(fTeam);
 	}
 	
 	@PostMapping("/update")
-	public ResponseEntity<FantasyTeam> updateTeam(@RequestBody FantasyTeam team) throws Exception {
-		 FantasyTeam updatedTeam = fantasyService.updateTeam(team);
+	public ResponseEntity<Fantasyteam> updateTeam(@RequestBody Fantasyteam team) throws Exception {
+		 Fantasyteam updatedTeam = fantasyService.updateTeam(team);
 		 
 		  if (updatedTeam != null) {
 	            return ResponseEntity.ok(updatedTeam);

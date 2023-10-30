@@ -8,7 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import com.example.demo.model.fantasy.FantasyTeam;
+import com.example.demo.model.fantasy.Fantasyteam;
 
 @Repository
 public class FantasyTeamRepository {
@@ -17,10 +17,10 @@ public class FantasyTeamRepository {
 	JdbcTemplate jdbcTemplate;
 	
 
-	public List<FantasyTeam> getFantasyTeamsByUserId(int userId) {
+	public List<Fantasyteam> getFantasyTeamsByUserId(int userId) {
 	    String query = "SELECT * FROM fantasy_team WHERE user_id = ?";
-	    RowMapper<FantasyTeam> rowMapper = new BeanPropertyRowMapper<>(FantasyTeam.class);
-	    List<FantasyTeam> teams = jdbcTemplate.query(query, rowMapper, userId);
+	    RowMapper<Fantasyteam> rowMapper = new BeanPropertyRowMapper<>(Fantasyteam.class);
+	    List<Fantasyteam> teams = jdbcTemplate.query(query, rowMapper, userId);
 	    return teams;
 	}
 

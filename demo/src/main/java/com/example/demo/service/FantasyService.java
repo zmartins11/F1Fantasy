@@ -1,6 +1,5 @@
 package com.example.demo.service;
 
-import java.rmi.NotBoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.model.fantasy.Driverf;
-import com.example.demo.model.fantasy.FantasyTeam;
+import com.example.demo.model.fantasy.Fantasyteam;
 import com.example.demo.model.fantasy.Constructorf;
 import com.example.demo.repository.ConstructorFantasyRepository;
 import com.example.demo.repository.DriverFantasyRepository;
@@ -44,16 +43,16 @@ public class FantasyService {
 		return constructorRepo.findAll();
 	}
 	
-	public Optional<FantasyTeam> getFantasyTeam(int userId) {
-		Optional<FantasyTeam> team = fantasyJpa.findByUserId(userId);
+	public Optional<Fantasyteam> getFantasyTeam(int userId) {
+		Optional<Fantasyteam> team = fantasyJpa.findByUserId(userId);
 		return team;
 	}
 
-	public FantasyTeam updateTeam(FantasyTeam team) throws Exception {
-		Optional<FantasyTeam> optionalTeam = fantasyJpa.findById(team.getId());
+	public Fantasyteam updateTeam(Fantasyteam team) throws Exception {
+		Optional<Fantasyteam> optionalTeam = fantasyJpa.findById(team.getId());
 		
 		if(optionalTeam.isPresent()) {
-			FantasyTeam existingTeam = optionalTeam.get();
+			Fantasyteam existingTeam = optionalTeam.get();
 			
 			 existingTeam.setDriver1(team.getDriver1());
 	         existingTeam.setDriver2(team.getDriver2());
@@ -61,7 +60,7 @@ public class FantasyService {
 	         existingTeam.setTeam(team.getTeam());
 	         existingTeam.setBudget(team.getBudget());
 	         
-	         FantasyTeam updatedTeam = fantasyJpa.save(existingTeam);
+	         Fantasyteam updatedTeam = fantasyJpa.save(existingTeam);
 	         return updatedTeam;
 		} else {
 			 throw new Exception("Team not found with id " + team.getId());

@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.demo.model.fantasy.RaceResult;
+import com.example.utils.RaceResultMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -32,6 +35,13 @@ public class ErgastService {
 
 	private final RestTemplate restTemplate = new RestTemplate();
 
+	@Autowired
+	private PredictService predictService;
+
+
+	private final RaceResultMapper resultMapper = new RaceResultMapper();
+
+
 	public List<Race> getRaces(String season) throws JsonProcessingException {
 		String url = "http://ergast.com/api/f1/" + season + "/races.json";
 		ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
@@ -53,6 +63,8 @@ public class ErgastService {
 		RaceResultsResponse resultsResponse = objectMapper.readValue(response.getBody(),RaceResultsResponse.class);
 	
 		resultsRace = resultsResponse.getMrData().getRaceTable().getRaces().get(0).getResults();
+
+		RaceResult raceResult = resultMapper.map(resultsRace,round);
 		
 		return resultsRace;
 		
