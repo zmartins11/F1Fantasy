@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.model.fantasy.RaceResult;
 import com.example.demo.repository.RaceResultRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,4 +10,14 @@ public class PredictService {
 
     @Autowired
     private RaceResultRepository raceResultRepository;
+
+
+    public void saveRace(RaceResult raceResult) {
+
+        RaceResult existingRaceResult = raceResultRepository.findBySeasonAndRound(raceResult.getSeason(), raceResult.getRound());
+        if(existingRaceResult != null) {
+            return;
+        }
+        raceResultRepository.save(raceResult);
+    }
 }

@@ -35,12 +35,15 @@ public class ErgastService {
 
 	private final RestTemplate restTemplate = new RestTemplate();
 
-	@Autowired
-	private PredictService predictService;
+
+	private final PredictService predictService;
 
 
 	private final RaceResultMapper resultMapper = new RaceResultMapper();
-
+	@Autowired
+	public ErgastService(PredictService predictService) {
+		this.predictService = predictService;
+	}
 
 	public List<Race> getRaces(String season) throws JsonProcessingException {
 		String url = "http://ergast.com/api/f1/" + season + "/races.json";
@@ -64,7 +67,9 @@ public class ErgastService {
 	
 		resultsRace = resultsResponse.getMrData().getRaceTable().getRaces().get(0).getResults();
 
-		RaceResult raceResult = resultMapper.map(resultsRace,round);
+		RaceResult raceResult = resultMapper.map(resultsRace,round, season);
+
+		predictService.saveRace(raceResult);
 		
 		return resultsRace;
 		

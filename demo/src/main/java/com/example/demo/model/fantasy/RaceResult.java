@@ -1,24 +1,28 @@
 package com.example.demo.model.fantasy;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
 public class RaceResult {
 
     @Id
-    private String id;
+    @GeneratedValue()
+    private Integer id;
     private String round;
     private String circuit;
+    private String season;
     private String first;
     private String second;
     private String third;
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -60,5 +64,13 @@ public class RaceResult {
 
     public void setThird(String third) {
         this.third = third;
+    }
+
+    public String getSeason() {
+        return season;
+    }
+
+    public void setSeason(String season) {
+        this.season = season;
     }
 }

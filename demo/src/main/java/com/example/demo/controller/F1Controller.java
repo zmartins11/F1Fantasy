@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,12 +24,12 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 @RestController
 public class F1Controller {
 
-	
-	private final ErgastService ergastService;
+
+	@Autowired
+	private ErgastService ergastService;
 	
 	
 	 public F1Controller(RestTemplateBuilder restTemplateBuilder) {
-		    this.ergastService = new ErgastService();
 		  }
 	 
 	 @GetMapping("/teste")
