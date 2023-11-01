@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface RaceResultRepository extends JpaRepository<RaceResult, String> {
+public interface RaceResultRepository extends JpaRepository<RaceResult, Integer> {
 
     public RaceResult findBySeasonAndRound(String season, String round);
 }
