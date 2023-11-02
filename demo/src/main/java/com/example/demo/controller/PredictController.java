@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Year;
+import java.util.HashMap;
 
 import static org.apache.coyote.http11.Constants.a;
 
@@ -17,8 +18,6 @@ public class PredictController {
 
     @Autowired
     PredictService predictService;
-    @Autowired
-    private ErgastService ergastService;
 
     @PostMapping("/predict")
     private void savePrediction(@RequestParam String round, @RequestBody Prediction prediction) throws Exception {
@@ -50,6 +49,11 @@ public class PredictController {
 
     @GetMapping("/test")
     private void testApi() throws JsonProcessingException {
-        ergastService.testApiGetResult("String test");
+        HashMap<Integer, Integer> result = new HashMap<>();
+//        ergastService.testApiGetResult("String test");
+        String user = "testUser";
+        String round = "20";
+        String season = "2023";
+        predictService.testCalculate(user, round, season);
     }
 }

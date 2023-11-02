@@ -23,17 +23,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ErgastService {
 
 	private final RestTemplate restTemplate = new RestTemplate();
-	private final PredictService predictService;
 
 	private final static String SEASON_2023 = "2023";
 	private final static String SEASON_2022 = "2022";
 
 
 	private final RaceResultMapper resultMapper = new RaceResultMapper();
-	@Autowired
-	public ErgastService(PredictService predictService) {
-		this.predictService = predictService;
-	}
+
 
 	public List<Race> getRaces(String season) throws JsonProcessingException {
 		String url = "http://ergast.com/api/f1/" + season + "/races.json";
@@ -59,7 +55,6 @@ public class ErgastService {
 
 		RaceResult raceResult = resultMapper.map(resultsRace,round, season);
 
-		predictService.saveRace(raceResult);
 		
 		return resultsRace;
 		
@@ -162,13 +157,14 @@ public class ErgastService {
 		return names;
 	}
 
-	public HashMap<Integer,Integer> testApiGetResult(String position) throws JsonProcessingException {
+	public HashMap<Integer,Integer> testApiGetResult(String position, Integer racesCurrentSeason, String driver) throws JsonProcessingException {
 		HashMap<Integer,Integer> resultSeason = new HashMap<>();
-		int racesCurrentSeason = predictService.getSeasonRaces(SEASON_2023);
+
 		int races2022Season = 22;
+		racesCurrentSeason = 19;
 
 		int numberResult = 0;
-		String winsUrl  = "http://ergast.com/api/f1/" + SEASON_2023 + "/drivers/" + Formula1DriverEnum.PEREZ.getName().toLowerCase() + "/results/1.json";
+		String winsUrl  = "http://ergast.com/api/f1/" + SEASON_2023 + "/drivers/" + driver.toLowerCase() + "/results/"+ position + ".json";
 
 		ResponseEntity<String> responseWins = restTemplate.getForEntity(winsUrl,String.class);
 		ObjectMapper mapperW = new ObjectMapper();
@@ -180,7 +176,7 @@ public class ErgastService {
 		resultSeason.put(numberResult, racesCurrentSeason);
 
 		if (racesCurrentSeason < 20) {
-			String winsUrlLastSeason  = "http://ergast.com/api/f1/" + SEASON_2022 + "/drivers/" + Formula1DriverEnum.PEREZ.getName().toLowerCase() + "/results/1.json";
+			String winsUrlLastSeason  = "http://ergast.com/api/f1/" + SEASON_2022 + "/drivers/" + driver.toLowerCase() + "/results/" + position + ".json";
 
 			ResponseEntity<String> responseWinsLastSeason = restTemplate.getForEntity(winsUrlLastSeason,String.class);
 			ObjectMapper mapperWLastSeason = new ObjectMapper();
@@ -188,6 +184,7 @@ public class ErgastService {
 
 			WinsResponse dataLastSeason = mapperWLastSeason.readValue(responseWinsLastSeason.getBody(),WinsResponse.class);
 			int resultLastSeason = dataLastSeason.getMrData().getTotal();
+			resultSeason.remove(numberResult);
 			numberResult += resultLastSeason;
 			resultSeason.put(numberResult, racesCurrentSeason + races2022Season);
 		}
