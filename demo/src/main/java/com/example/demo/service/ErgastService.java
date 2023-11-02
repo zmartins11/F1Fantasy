@@ -162,10 +162,11 @@ public class ErgastService {
 		return names;
 	}
 
-	public int testApiGetResult(String position) throws JsonProcessingException {
-		///GET WINS
-//			http://ergast.com/api/f1/2010/drivers/alonso/results/1
+	public HashMap<Integer,Integer> testApiGetResult(String position) throws JsonProcessingException {
+		HashMap<Integer,Integer> resultSeason = new HashMap<>();
 		int racesCurrentSeason = predictService.getSeasonRaces(SEASON_2023);
+		int races2022Season = 22;
+
 		int numberResult = 0;
 		String winsUrl  = "http://ergast.com/api/f1/" + SEASON_2023 + "/drivers/" + Formula1DriverEnum.PEREZ.getName().toLowerCase() + "/results/1.json";
 
@@ -175,6 +176,8 @@ public class ErgastService {
 
 		WinsResponse data = mapperW.readValue(responseWins.getBody(),WinsResponse.class);
 		numberResult = data.getMrData().getTotal();
+
+		resultSeason.put(numberResult, racesCurrentSeason);
 
 		if (racesCurrentSeason < 20) {
 			String winsUrlLastSeason  = "http://ergast.com/api/f1/" + SEASON_2022 + "/drivers/" + Formula1DriverEnum.PEREZ.getName().toLowerCase() + "/results/1.json";
@@ -186,8 +189,9 @@ public class ErgastService {
 			WinsResponse dataLastSeason = mapperWLastSeason.readValue(responseWinsLastSeason.getBody(),WinsResponse.class);
 			int resultLastSeason = dataLastSeason.getMrData().getTotal();
 			numberResult += resultLastSeason;
+			resultSeason.put(numberResult, racesCurrentSeason + races2022Season);
 		}
-		return numberResult;
+		return resultSeason;
 	}
 
 }
