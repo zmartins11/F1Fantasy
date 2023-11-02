@@ -2,17 +2,23 @@ package com.example.demo.controller;
 
 import com.example.demo.model.fantasy.Prediction;
 import com.example.demo.model.fantasy.RaceResult;
+import com.example.demo.service.ErgastService;
 import com.example.demo.service.PredictService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Year;
+
+import static org.apache.coyote.http11.Constants.a;
 
 @RestController
 public class PredictController {
 
     @Autowired
     PredictService predictService;
+    @Autowired
+    private ErgastService ergastService;
 
     @PostMapping("/predict")
     private void savePrediction(@RequestParam String round, @RequestBody Prediction prediction) throws Exception {
@@ -40,5 +46,10 @@ public class PredictController {
         }
         RaceResult raceResult = predictService.getRace(season, round);
         //TODO
+    }
+
+    @GetMapping("/test")
+    private void testApi() throws JsonProcessingException {
+        ergastService.testApiGetResult("String test");
     }
 }

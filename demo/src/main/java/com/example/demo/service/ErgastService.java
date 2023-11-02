@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.demo.enums.Formula1DriverEnum;
+import com.example.demo.model.*;
 import com.example.demo.model.fantasy.RaceResult;
 import com.example.utils.RaceResultMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,31 +14,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.example.demo.model.ConstructorResponse;
-import com.example.demo.model.Constructor;
-import com.example.demo.model.Driver;
-import com.example.demo.model.DriverResponse;
-import com.example.demo.model.MrData;
-import com.example.demo.model.Race;
-import com.example.demo.model.RaceResponse;
-import com.example.demo.model.RaceResultsResponse;
-import com.example.demo.model.RaceTable;
-import com.example.demo.model.Results;
-import com.example.demo.model.WinsResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 
 @Service
 public class ErgastService {
 
 	private final RestTemplate restTemplate = new RestTemplate();
-
-
 	private final PredictService predictService;
+
+	private final static String SEASON_2023 = "2023";
+	private final static String SEASON_2022 = "2022";
 
 
 	private final RaceResultMapper resultMapper = new RaceResultMapper();
@@ -102,16 +92,12 @@ public class ErgastService {
 			
 			ObjectMapper mapperC = new ObjectMapper();
 			ConstructorResponse constructorResponse = mapperC.readValue(responseConstructor.getBody(), ConstructorResponse.class);
-			
-			
+
 			constructorReturned = constructorResponse.getMrData().getConstructorTable().getConstructors().get(0).getName();
 			
 			if(constructorReturned != null) {
 				driver.setConstructorId(constructorReturned);
 			}
-			
-			
-			
 			///GET WINS 
 //			http://ergast.com/api/f1/2010/drivers/alonso/results/1
 			String winsUrl  = "http://ergast.com/api/f1/" + season + "/drivers/" + driver.getDriverId() + "/results/1.json";
@@ -126,17 +112,8 @@ public class ErgastService {
 			if (winsSeason != null ) {
 				driver.setWinsSeason(winsSeason);
 			}
-		
-			
-		
 		}
-		
-	
-		
 		return driversInSeason;
-		
-		
-
 	}
 	
 	private void getFlagCode(List<Driver> driversInSeason) {
@@ -184,4 +161,33 @@ public class ErgastService {
 		
 		return names;
 	}
+
+	public int testApiGetResult(String position) throws JsonProcessingException {
+		///GET WINS
+//			http://ergast.com/api/f1/2010/drivers/alonso/results/1
+		int racesCurrentSeason = predictService.getSeasonRaces(SEASON_2023);
+		int numberResult = 0;
+		String winsUrl  = "http://ergast.com/api/f1/" + SEASON_2023 + "/drivers/" + Formula1DriverEnum.PEREZ.getName().toLowerCase() + "/results/1.json";
+
+		ResponseEntity<String> responseWins = restTemplate.getForEntity(winsUrl,String.class);
+		ObjectMapper mapperW = new ObjectMapper();
+		mapperW.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+		WinsResponse data = mapperW.readValue(responseWins.getBody(),WinsResponse.class);
+		numberResult = data.getMrData().getTotal();
+
+		if (racesCurrentSeason < 20) {
+			String winsUrlLastSeason  = "http://ergast.com/api/f1/" + SEASON_2022 + "/drivers/" + Formula1DriverEnum.PEREZ.getName().toLowerCase() + "/results/1.json";
+
+			ResponseEntity<String> responseWinsLastSeason = restTemplate.getForEntity(winsUrlLastSeason,String.class);
+			ObjectMapper mapperWLastSeason = new ObjectMapper();
+			mapperWLastSeason.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+			WinsResponse dataLastSeason = mapperWLastSeason.readValue(responseWinsLastSeason.getBody(),WinsResponse.class);
+			int resultLastSeason = dataLastSeason.getMrData().getTotal();
+			numberResult += resultLastSeason;
+		}
+		return numberResult;
+	}
+
 }

@@ -7,6 +7,8 @@ import com.example.demo.repository.RaceResultRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PredictService {
 
@@ -47,7 +49,11 @@ public class PredictService {
 
     public int calculate(Prediction prediction, RaceResult raceResult) {
         int points = 0;
-
         return points;
+    }
+
+    public int getSeasonRaces(String season) {
+        List<RaceResult> racesBySeason = raceResultRepository.findBySeason(season);
+        return racesBySeason.size();
     }
 }
