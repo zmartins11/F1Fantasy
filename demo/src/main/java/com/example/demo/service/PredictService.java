@@ -2,8 +2,10 @@ package com.example.demo.service;
 
 import com.example.demo.enums.Formula1DriverEnum;
 import com.example.demo.model.fantasy.Prediction;
+import com.example.demo.model.fantasy.PredictionResult;
 import com.example.demo.model.fantasy.RaceResult;
 import com.example.demo.repository.PredictRepository;
+import com.example.demo.repository.PredictionResultRepository;
 import com.example.demo.repository.RaceResultRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ public class PredictService {
     private PredictRepository predictRepository;
     @Autowired
     private ErgastService ergastService;
+    @Autowired
+    private PredictionResultRepository predictionResultRepository;
 
     private final static String SEASON_2023 = "2023";
     private final static String SEASON_2022 = "2022";
@@ -127,15 +131,20 @@ public class PredictService {
         return racesBySeason.size();
     }
 
+    // metodo devera sr chamado atraves de cronjob aquando ultima corrida terminada
+    // adicionar coluna boolean : calculado
     public void testCalculate(String user, String round, String season) throws JsonProcessingException {
         RaceResult race  = raceResultRepository.findBySeasonAndRound(season, round);
         Prediction prediction = null;
         if (race.getFirst() != null) {
-             prediction = predictRepository.findByUserIdAndRaceId(user, String.valueOf(race.getId()));
+            prediction = predictRepository.findByUserIdAndRaceId(user, String.valueOf(race.getId()));
+            int pointsPrediction = calculate(prediction, race);
+            PredictionResult predictionResult = new PredictionResult();
+            predictionResult.setUserId(user);
+            predictionResult.setRaceId(String.valueOf(race.getId()));
+            predictionResult.setPoints(pointsPrediction);
+            predictionResultRepository.save(predictionResult);
         }
-
-        calculate(prediction, race);
-
         //TODO : save points
 
     }
