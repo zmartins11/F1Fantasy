@@ -35,7 +35,7 @@ public class PredictController {
     }
 
     @GetMapping("/predictResult")
-    private void predictResult(@RequestParam String round) throws Exception {
+    private void getPrediction(@RequestParam String round) throws Exception {
         Year currentYear = Year.now();
         String season = String.valueOf(currentYear.getValue());
         //check if raceFinished

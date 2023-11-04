@@ -51,10 +51,7 @@ public class PredictService {
 
     public boolean checkRaceFinished(String season, String round) {
         RaceResult race = getRace(season, round);
-        if (race != null) {
-            return race.getFirst() != null;
-        }
-        return false;
+        return race.isRaceFinished();
     }
 
     public void savePrediction(Prediction prediction) {

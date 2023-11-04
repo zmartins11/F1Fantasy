@@ -40,7 +40,7 @@ public class ErgastService {
 
 	}
 	
-	public List<Results> getRaceResult(String season, String round) throws JsonMappingException, JsonProcessingException {
+	public RaceResult getRaceResult(String season, String round) throws JsonMappingException, JsonProcessingException {
 		
 		List<Results> resultsRace = null;
 		String urlRaceResult = "http://ergast.com/api/f1/" + season + "/" + round + "/results.json?limit=3";
@@ -56,7 +56,7 @@ public class ErgastService {
 		RaceResult raceResult = resultMapper.map(resultsRace,round, season);
 
 		
-		return resultsRace;
+		return raceResult;
 		
 	}
 	

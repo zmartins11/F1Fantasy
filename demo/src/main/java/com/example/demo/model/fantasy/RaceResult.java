@@ -17,6 +17,7 @@ public class RaceResult {
     private String first;
     private String second;
     private String third;
+    private boolean raceFinished;
 
     public Integer getId() {
         return id;
@@ -72,5 +73,13 @@ public class RaceResult {
 
     public void setSeason(String season) {
         this.season = season;
+    }
+
+    public boolean isRaceFinished() {
+        return raceFinished;
+    }
+
+    public void setRaceFinished(boolean raceFinished) {
+        this.raceFinished = raceFinished;
     }
 }
