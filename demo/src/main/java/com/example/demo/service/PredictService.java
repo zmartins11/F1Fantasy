@@ -58,6 +58,7 @@ public class PredictService {
         predictRepository.save(prediction);
     }
 
+    // método chamado quando o RaceResult com o race_id da prediction é preenchido
     public int calculate(Prediction prediction, RaceResult raceResult) throws JsonProcessingException {
         int points = 0;
         HashMap<Integer, Integer> resultsPercentage = new HashMap<>();

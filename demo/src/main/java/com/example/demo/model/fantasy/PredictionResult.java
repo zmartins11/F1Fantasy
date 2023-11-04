@@ -13,6 +13,7 @@ public class PredictionResult {
     private String userId;
     private String raceId;
     private Integer points;
+    private String predictionId;
 
     public Integer getId() {
         return id;
@@ -44,5 +45,13 @@ public class PredictionResult {
 
     public void setPoints(Integer points) {
         this.points = points;
+    }
+
+    public String getPredictionId() {
+        return predictionId;
+    }
+
+    public void setPredictionId(String predictionId) {
+        this.predictionId = predictionId;
     }
 }

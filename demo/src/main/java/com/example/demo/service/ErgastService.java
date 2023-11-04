@@ -52,10 +52,8 @@ public class ErgastService {
 		RaceResultsResponse resultsResponse = objectMapper.readValue(response.getBody(),RaceResultsResponse.class);
 	
 		resultsRace = resultsResponse.getMrData().getRaceTable().getRaces().get(0).getResults();
-
 		RaceResult raceResult = resultMapper.map(resultsRace,round, season);
 
-		
 		return raceResult;
 		
 	}
