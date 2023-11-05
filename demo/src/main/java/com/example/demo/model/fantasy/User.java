@@ -2,14 +2,10 @@ package com.example.demo.model.fantasy;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.NamedQuery;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 
 /**
@@ -30,6 +26,10 @@ public class User implements Serializable {
 	private int id;
 
 	private String password;
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinTable(name="user_roles", joinColumns = @JoinColumn(name="user_id", referencedColumnName = "id"),
+	inverseJoinColumns = @JoinColumn(name= "role_id", referencedColumnName = "id"))
+	private List<Roles> roles = new ArrayList<>();
 
 
 	@Column(name="user_name")
@@ -71,4 +71,11 @@ public class User implements Serializable {
 		this.userName = userName;
 	}
 
+	public List<Roles> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Roles> roles) {
+		this.roles = roles;
+	}
 }

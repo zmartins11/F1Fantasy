@@ -41,7 +41,6 @@ public class ErgastService {
 	}
 	
 	public RaceResult getRaceResult(String season, String round) throws JsonMappingException, JsonProcessingException {
-		
 		List<Results> resultsRace = null;
 		String urlRaceResult = "http://ergast.com/api/f1/" + season + "/" + round + "/results.json?limit=3";
 		

@@ -66,8 +66,6 @@ public class ScheduleRaceResult {
                                 predictionResultRepository.save(predictionResult);
                             }
                         }
-
-
                     }
                 } catch (Exception e) {
                     System.out.print("race not finished!");
@@ -75,6 +73,5 @@ public class ScheduleRaceResult {
 
             }
         }
-
     }
 }
