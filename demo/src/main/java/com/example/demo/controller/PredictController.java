@@ -48,12 +48,7 @@ public class PredictController {
     }
 
     @GetMapping("/test")
-    private void testApi() throws JsonProcessingException {
-        HashMap<Integer, Integer> result = new HashMap<>();
-//        ergastService.testApiGetResult("String test");
-        String user = "testUser";
-        String round = "20";
-        String season = "2023";
-        predictService.testCalculate(user, round, season);
+    private String testApi() throws JsonProcessingException {
+        return "logged in success inside app";
     }
 }

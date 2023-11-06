@@ -68,7 +68,7 @@ public class ScheduleRaceResult {
                         }
                     }
                 } catch (Exception e) {
-                    System.out.print("race not finished!");
+                    System.out.println("Round - " + raceResult.getRound() + " not finished!");
                 }
 
             }

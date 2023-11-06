@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,9 @@ import org.springframework.web.bind.annotation.*;
 import com.example.demo.model.fantasy.User;
 import com.example.demo.service.AuthenticationService;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 
 @RestController
 @CrossOrigin("*")
@@ -51,8 +54,17 @@ public class AuthenticationController {
 						loginDto.getUserName(),
 						loginDto.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
+		AuthReponseDto authReponseDto = new AuthReponseDto();
 		String token = jwtGenerator.generateToken(authentication);
-		return new ResponseEntity<>(new AuthReponseDto(token), HttpStatus.OK);
+		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
+		if (iterator.hasNext()) {
+			GrantedAuthority authority = iterator.next();
+			authReponseDto.setAuthorities(authority.getAuthority());
+		}
+		authReponseDto.setAccessToken(token);
+
+		return new ResponseEntity<>(authReponseDto, HttpStatus.OK);
 	}
 
 	@PostMapping("register")
