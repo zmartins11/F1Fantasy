@@ -7,9 +7,9 @@ import com.example.demo.model.fantasy.Roles;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JWTGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,7 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.model.fantasy.User;
-import com.example.demo.service.AuthenticationService;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +50,7 @@ public class AuthenticationController {
 	public ResponseEntity<AuthReponseDto> login(@RequestBody LoginDto loginDto) {
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(
-						loginDto.getUserName(),
+						loginDto.getUsername(),
 						loginDto.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		AuthReponseDto authReponseDto = new AuthReponseDto();
@@ -60,9 +59,10 @@ public class AuthenticationController {
 		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
 		if (iterator.hasNext()) {
 			GrantedAuthority authority = iterator.next();
-			authReponseDto.setAuthorities(authority.getAuthority());
+			authReponseDto.setRole(authority.getAuthority());
 		}
 		authReponseDto.setAccessToken(token);
+		authReponseDto.setUsername(loginDto.getUsername());
 
 		return new ResponseEntity<>(authReponseDto, HttpStatus.OK);
 	}
@@ -76,12 +76,18 @@ public class AuthenticationController {
 		User user = new User();
 		user.setUserName(registerDto.getUserName());
 		user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+		user.setEmailId(registerDto.getEmail());
 
 		Roles roles = roleRepository.findByName("USER").get();
 		user.setRoles(Collections.singletonList(roles));
 
 		userRepository.save(user);
 		return new ResponseEntity<>("User registered success!!", HttpStatus.OK);
+	}
+
+	@GetMapping("/test")
+	private String testApi() throws JsonProcessingException {
+		return "Testing home Page";
 	}
 
 }

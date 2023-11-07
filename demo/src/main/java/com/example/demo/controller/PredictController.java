@@ -47,8 +47,4 @@ public class PredictController {
         //TODO
     }
 
-    @GetMapping("/test")
-    private String testApi() throws JsonProcessingException {
-        return "logged in success inside app";
-    }
 }
