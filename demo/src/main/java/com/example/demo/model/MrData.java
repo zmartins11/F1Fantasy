@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class MrData {
@@ -13,11 +14,9 @@ public class MrData {
 	
 	@JsonProperty("RaceTable")
 	private RaceTable raceTable;
-	
-	@JsonProperty("DriverTable")
+
 	private DriverTable driverTable;
-	
-	@JsonProperty("ConstructorTable")
+
 	private ConstructorTable constructorTable; 
 
 	public String getSeries() {
@@ -91,9 +90,6 @@ public class MrData {
 	public void setConstructorTable(ConstructorTable constructorTable) {
 		this.constructorTable = constructorTable;
 	}
-	
-	
-	
-	
+
 	
 }

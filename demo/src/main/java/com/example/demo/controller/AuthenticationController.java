@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.AuthReponseDto;
 import com.example.demo.dto.LoginDto;
 import com.example.demo.dto.RegisterDto;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.fantasy.Roles;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
@@ -48,23 +49,27 @@ public class AuthenticationController {
 
 	@PostMapping("login")
 	public ResponseEntity<AuthReponseDto> login(@RequestBody LoginDto loginDto) {
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(
-						loginDto.getUsername(),
-						loginDto.getPassword()));
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		AuthReponseDto authReponseDto = new AuthReponseDto();
-		String token = jwtGenerator.generateToken(authentication);
-		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-		if (iterator.hasNext()) {
-			GrantedAuthority authority = iterator.next();
-			authReponseDto.setRole(authority.getAuthority());
-		}
-		authReponseDto.setAccessToken(token);
-		authReponseDto.setUsername(loginDto.getUsername());
+		try {
+			Authentication authentication = authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(
+							loginDto.getUsername(),
+							loginDto.getPassword()));
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			AuthReponseDto authReponseDto = new AuthReponseDto();
+			String token = jwtGenerator.generateToken(authentication);
+			Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+			Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
+			if (iterator.hasNext()) {
+				GrantedAuthority authority = iterator.next();
+				authReponseDto.setRole(authority.getAuthority());
+			}
+			authReponseDto.setAccessToken(token);
+			authReponseDto.setUsername(loginDto.getUsername());
 
-		return new ResponseEntity<>(authReponseDto, HttpStatus.OK);
+			return new ResponseEntity<>(authReponseDto, HttpStatus.OK);
+		} catch (Exception e) {
+			throw new ResourceNotFoundException("Something wrong with login. Check username and password");
+		}
 	}
 
 	@PostMapping("register")

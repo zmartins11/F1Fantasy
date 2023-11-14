@@ -12,7 +12,6 @@ public class RaceResponse {
 
 	@JsonProperty("Race")
 	List<Race> races;
-	
 
 
 	public List<Race> getRaces() {

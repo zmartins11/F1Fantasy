@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.demo.dto.DateTimeResponseDto;
 import com.example.demo.model.fantasy.RaceResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -28,6 +29,7 @@ public class F1Controller {
 
 	@Autowired
 	private ErgastService ergastService;
+
 	
 	
 	 public F1Controller(RestTemplateBuilder restTemplateBuilder) {
@@ -64,6 +66,6 @@ public class F1Controller {
 	  public RaceResult getRaceResult(@PathVariable String season, @PathVariable String round) throws JsonMappingException, JsonProcessingException {
 		  return ergastService.getRaceResult(season,round);
 	  }
-	  
+
 	  
 }

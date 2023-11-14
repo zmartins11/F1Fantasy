@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.DateTimeResponseDto;
 import com.example.demo.model.fantasy.Prediction;
 import com.example.demo.model.fantasy.RaceResult;
 import com.example.demo.service.ErgastService;
@@ -18,6 +19,8 @@ public class PredictController {
 
     @Autowired
     PredictService predictService;
+    @Autowired
+    private ErgastService ergastService;
 
     @PostMapping("/predict")
     private void savePrediction(@RequestParam String round, @RequestBody Prediction prediction) throws Exception {
@@ -46,5 +49,12 @@ public class PredictController {
         RaceResult raceResult = predictService.getRace(season, round);
         //TODO
     }
+
+    @GetMapping("/raceSchedule")
+    private DateTimeResponseDto getRaceSchedule() throws JsonProcessingException {
+        return ergastService.getScheduleRace();
+    }
+
+
 
 }
