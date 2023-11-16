@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.DateTimeResponseDto;
+import com.example.demo.dto.NextRaceInfoDto;
 import com.example.demo.model.fantasy.Prediction;
 import com.example.demo.model.fantasy.RaceResult;
 import com.example.demo.service.ErgastService;
@@ -9,10 +9,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.time.Year;
-import java.util.HashMap;
-
-import static org.apache.coyote.http11.Constants.a;
 
 @RestController
 public class PredictController {
@@ -28,6 +26,7 @@ public class PredictController {
         Year currentYear = Year.now();
         String season = String.valueOf(currentYear.getValue());
         //check if raceFinished
+        //TODO: GET THE ROUND STRING FOR PREDICTION OBJECT
         boolean raceFinished = predictService.checkRaceFinished(season, round);
         if (raceFinished) {
             throw new Exception("race already finish");
@@ -51,7 +50,7 @@ public class PredictController {
     }
 
     @GetMapping("/raceSchedule")
-    private DateTimeResponseDto getRaceSchedule() throws JsonProcessingException {
+    private NextRaceInfoDto getRaceSchedule() throws JsonProcessingException {
         return ergastService.getScheduleRace();
     }
 

@@ -40,9 +40,11 @@ onSubmit(): void {
 
       this.isLoginFailed = false;
       this.isLoggedIn = true;
-      this.roles = data.role; 
+      this.roles = data.role;
+      this.router.navigate(['/home']);
     },
     err => {
+      console.log(err);
       this.errorMessage = err.error.message;
       this.isLoginFailed = true;
     }

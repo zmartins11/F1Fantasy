@@ -3,6 +3,7 @@ import { TokenStorageService } from './_services/token-storage.service';
 import { User } from './model/user';
 import { Router } from '@angular/router';
 import { AuthService } from './_services/auth.service';
+import { DateTimeServiceService } from './_services/date-time-service.service';
 
 @Component({
   selector: 'app-root',
@@ -15,18 +16,18 @@ export class AppComponent implements OnInit {
   isLoggedIn = false;
   showAdminBoard = false;
   showModeratorBoard = false;
-  username?: string;
+  username: string = '';
   user : User | null | undefined;
-  
-  constructor(private authService: AuthService, private router: Router) { }
+
+  constructor(private authService: AuthService, private router: Router,
+              private dateTimeService : DateTimeServiceService) { }
 
   ngOnInit(): void {
         this.user= this.authService.getUser();
         if(this.user) {
           this.isLoggedIn = true;
           console.log(this.isLoggedIn);
-          this.roles = this.user.role; 
-          this.username = this.user.username;
+          this.roles = this.user.role;
           this.showAdminBoard = this.roles.includes('ADMIN');
           this.showModeratorBoard = this.roles.includes('ROLE_MODERATOR');
         }
@@ -35,6 +36,22 @@ export class AppComponent implements OnInit {
   logout(): void {
     this.authService.signOut();
     window.location.reload();
+  }
+
+  checkLogin(): boolean {
+    if(this.authService.getToken()) {
+      return true;
+    } else {
+      return false;
+    };
+  }
+
+  getUsername(): String {
+    this.user = this.authService.getUser();
+    if(this.user!= null) {
+      return this.username = this.user.username;
+    }
+    return '';
   }
 
 

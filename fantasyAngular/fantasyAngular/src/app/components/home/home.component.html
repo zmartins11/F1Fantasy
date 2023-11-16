@@ -1,6 +1,21 @@
 <div class="container">
-    <header class="jumbotron">
-      <p *ngIf="!isLoggedIn">Welcome to the app. Please log in to access all the content available</p>
-      <p *ngIf="isLoggedIn">Hello {{user}}. Please wait for more features!</p>
-    </header>
+  <header class="jumbotron">
+    <p *ngIf="!isLoggedIn">Welcome to the app. Please log in to access all the content available</p>
+    <p *ngIf="isLoggedIn">Hello {{user}}. Please wait for more features!</p>
+  </header>
+  <div *ngIf="isLoggedIn">
+    <p>Next race : {{ nameRace }} || Round : {{round}}</p>
+    <p>Days: {{ timeRemaining.days }}</p>
+    <p>Hours: {{ timeRemaining.hours }}</p>
+    <p>Minutes: {{ timeRemaining.minutes }}</p>
+    <p>Seconds: {{ timeRemaining.seconds }}</p>
+    <button (click)="showDrivers = !showDrivers">Make your prediction for the podium</button>
+    <button *ngIf="areAllDriversSelected()" (click)="resetPredictions()">Reset Predictions</button>
+    <button *ngIf="areAllDriversSelected()" (click)="savePredictions()">Save Predictions</button>
+    <ul *ngIf="showDrivers">
+      <li *ngFor="let driver of drivers" (click)="selectDriver(driver)">
+        {{ driver.name }} {{ driver.selection }}
+      </li>
+    </ul>
   </div>
+</div>
