@@ -7,6 +7,7 @@ import com.example.demo.service.ErgastService;
 import com.example.demo.service.PredictService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -51,7 +52,14 @@ public class PredictController {
 
     @GetMapping("/raceSchedule")
     private NextRaceInfoDto getRaceSchedule() throws JsonProcessingException {
-        return ergastService.getScheduleRace();
+        try {
+            return ergastService.getScheduleRace();
+        } catch (Exception e) {
+            System.out.print("error");
+        }
+        return null;
+
+
     }
 
 
