@@ -38,7 +38,7 @@ public class GlobalExpeptionHandler {
     public ResponseEntity<ErrorObject> handleAuthenticationException(Exception ex) {
 
         ErrorObject re = new ErrorObject(HttpStatus.UNAUTHORIZED.toString(),
-                "Authentication failed at controller advice: CUSTOM", new Date());
+                "Your session expired, please return to login page", new Date());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(re);
     }
 

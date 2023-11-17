@@ -1,8 +1,6 @@
 package com.example.demo.service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -201,11 +199,12 @@ public class ErgastService {
 		LocalDate qualiDate = racesResponse.getMrData().getRaceTable().getRaces().get(0).getQualifying().getDate();
 		LocalTime qualiTime = racesResponse.getMrData().getRaceTable().getRaces().get(0).getQualifying().getTime();
 
-		DateTimeResponseDto responseDateTime = new DateTimeResponseDto();
-		responseDateTime.setDate(qualiDate);
-		responseDateTime.setTime(qualiTime);
+		//convert time to gmt
+		LocalDateTime raceDateTime = LocalDateTime.of(2023, 1, 1, qualiTime.getHour(), qualiTime.getMinute(), qualiTime.getSecond());
+		ZonedDateTime gmtQualiDateTime = ZonedDateTime.of(raceDateTime, ZoneId.of("GMT"));
+		LocalTime gmtQualiTime = gmtQualiDateTime.toLocalTime();
 
- 		LocalDateTime localDateTime = LocalDateTime.of(qualiDate, qualiTime);
+ 		LocalDateTime localDateTime = LocalDateTime.of(qualiDate, gmtQualiTime);
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
 		NextRaceInfoDto nextRaceInfo = new NextRaceInfoDto();
 		nextRaceInfo.setTime(localDateTime.format(dateTimeFormatter));

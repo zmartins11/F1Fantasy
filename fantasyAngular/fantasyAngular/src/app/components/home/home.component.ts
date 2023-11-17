@@ -28,6 +28,8 @@ export class HomeComponent implements OnInit {
   drivers: Formula1Driver[]= [];
   saveDriversToPredict : Formula1Driver[] = [];
   showDrivers = false;
+  errorMessage = null;
+  formattedDate: Date| any;
 
   ngOnInit(): void {
     this.updateCountdown();
@@ -53,14 +55,20 @@ export class HomeComponent implements OnInit {
         this.raceDate = response.time;
         this.nameRace = response.nameRace;
         this.round = response.round;
+        //testCoundtow
+        this.formattedDate = new Date(this.raceDate);
         console.log(response);
 
+      }, 
+      error => {
+        this.errorMessage = error.error.message;
+        console.log(error.error.message);
       });
       if (userString) {
         this.user = userString.username;
       }
     }
-  }
+  } 
   updateCountdown() {
     const currentDate = moment();
     const targetDate = moment(this.raceDate, 'YYYYMMDDHHmm');
