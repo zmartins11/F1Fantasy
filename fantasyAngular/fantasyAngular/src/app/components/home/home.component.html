@@ -1,4 +1,7 @@
 <div class="container">
+  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+    {{ errorMessage}}
+  </div>
   <header class="jumbotron">
     <p *ngIf="!isLoggedIn">Welcome to the app. Please log in to access all the content available</p>
     <p *ngIf="isLoggedIn">Hello {{user}}. Please wait for more features!</p>

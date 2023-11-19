@@ -1,33 +1,13 @@
 package com.example.demo.dto;
 
+import lombok.Data;
+
+@Data
 public class NextRaceInfoDto {
 
     private String nameRace;
     private String time;
-
     private String round;
+    private Boolean predictionLocked;
 
-    public String getNameRace() {
-        return nameRace;
-    }
-
-    public void setNameRace(String nameRace) {
-        this.nameRace = nameRace;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public String getRound() {
-        return round;
-    }
-
-    public void setRound(String round) {
-        this.round = round;
-    }
 }

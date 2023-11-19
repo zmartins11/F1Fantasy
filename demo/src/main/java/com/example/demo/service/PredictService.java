@@ -11,10 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class PredictService {
@@ -144,6 +141,13 @@ public class PredictService {
             predictionResultRepository.save(predictionResult);
         }
         //TODO : save points
+    }
 
+    public Optional<RaceResult> getNextRaceInfo() {
+        Optional<RaceResult> nextRace = raceResultRepository.findTopByRaceFinishedFalseOrderByRoundAsc();
+        if (nextRace != null) {
+            return nextRace;
+        }
+        return null;
     }
 }

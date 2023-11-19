@@ -39,7 +39,7 @@ public class ScheduleRaceResult {
 
 
     //correr a cada domingo
-//    @Scheduled(fixedRate = 30 * 60 * 1000)
+    @Scheduled(fixedRate = 30 * 60 * 1000)
     public void populateRaceResult() throws JsonProcessingException {
         List<RaceResult> racesNotFinished = raceResultRepository.findByRaceFinishedFalse();
         if (racesNotFinished != null) {

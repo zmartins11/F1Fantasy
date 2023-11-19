@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.NextRaceInfoDto;
+import com.example.demo.model.Race;
 import com.example.demo.model.fantasy.Prediction;
 import com.example.demo.model.fantasy.RaceResult;
 import com.example.demo.service.ErgastService;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.Year;
+import java.util.Optional;
 
 @RestController
 public class PredictController {
@@ -53,7 +55,8 @@ public class PredictController {
     @GetMapping("/raceSchedule")
     private NextRaceInfoDto getRaceSchedule() throws JsonProcessingException {
         try {
-            return ergastService.getScheduleRace();
+            Optional<RaceResult> nextRaceInfo = predictService.getNextRaceInfo();
+            return ergastService.getScheduleRace(nextRaceInfo);
         } catch (Exception e) {
             System.out.print("error");
         }
