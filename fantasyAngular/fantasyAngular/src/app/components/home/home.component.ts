@@ -7,6 +7,7 @@ import { UserService } from 'src/app/_services/user.service';
 import { DateTimeResponse } from 'src/app/model/DateTimeResponse';
 import * as moment from 'moment';
 import { Formula1Driver, Formula1Drivers } from 'src/app/model/Formula1Drivers';
+import { LoadingService } from 'src/app/_services/loading.service';
 
 @Component({
   selector: 'app-home',
@@ -16,7 +17,7 @@ import { Formula1Driver, Formula1Drivers } from 'src/app/model/Formula1Drivers';
 export class HomeComponent implements OnInit {
 
   constructor(private userService: UserService, private authService: AuthService,
-    private dateTimeService: DateTimeServiceService) { }
+    private dateTimeService: DateTimeServiceService, private loadingService: LoadingService) { }
 
   content: String | undefined;
   isLoggedIn: Boolean = false;
@@ -29,9 +30,13 @@ export class HomeComponent implements OnInit {
   saveDriversToPredict : Formula1Driver[] = [];
   showDrivers = false;
   errorMessage = null;
-  formattedDate: Date| any;
+  formattedDate: Date | any;
+  isLoading = false;
 
   ngOnInit(): void {
+    this.loadingService.isLoading$.subscribe((isLoading) => {
+      this.isLoading = isLoading;
+    })
     this.updateCountdown();
     setInterval(() => {
       this.updateCountdown();
@@ -51,7 +56,7 @@ export class HomeComponent implements OnInit {
       //getting all drivers
       this.drivers = Formula1Drivers;
       //getting info for nexRace
-      this.dateTimeService.getDateTime().subscribe(response => {
+      this.dateTimeService.getNextRaceInfo().subscribe(response => {
         this.raceDate = response.time;
         this.nameRace = response.nameRace;
         this.round = response.round;

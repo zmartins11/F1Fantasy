@@ -4,7 +4,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
+@Data
+@Getter
+@Setter
 @Entity
 public class RaceResult {
 
@@ -18,68 +24,6 @@ public class RaceResult {
     private String second;
     private String third;
     private boolean raceFinished;
+    private boolean predictionLocked;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getRound() {
-        return round;
-    }
-
-    public void setRound(String round) {
-        this.round = round;
-    }
-
-    public String getCircuit() {
-        return circuit;
-    }
-
-    public void setCircuit(String circuit) {
-        this.circuit = circuit;
-    }
-
-    public String getFirst() {
-        return first;
-    }
-
-    public void setFirst(String first) {
-        this.first = first;
-    }
-
-    public String getSecond() {
-        return second;
-    }
-
-    public void setSecond(String second) {
-        this.second = second;
-    }
-
-    public String getThird() {
-        return third;
-    }
-
-    public void setThird(String third) {
-        this.third = third;
-    }
-
-    public String getSeason() {
-        return season;
-    }
-
-    public void setSeason(String season) {
-        this.season = season;
-    }
-
-    public boolean isRaceFinished() {
-        return raceFinished;
-    }
-
-    public void setRaceFinished(boolean raceFinished) {
-        this.raceFinished = raceFinished;
-    }
 }

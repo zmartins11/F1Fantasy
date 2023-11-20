@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 public class PredictController {
@@ -53,16 +54,22 @@ public class PredictController {
     }
 
     @GetMapping("/raceSchedule")
-    private NextRaceInfoDto getRaceSchedule() throws JsonProcessingException {
-        try {
-            Optional<RaceResult> nextRaceInfo = predictService.getNextRaceInfo();
-            return ergastService.getScheduleRace(nextRaceInfo);
-        } catch (Exception e) {
-            System.out.print("error");
+    private NextRaceInfoDto getRaceInfo() throws JsonProcessingException, InterruptedException {
+        TimeUnit.SECONDS.sleep(5);
+        Optional<RaceResult> nextRaceInfo = predictService.getNextRaceInfo();
+        NextRaceInfoDto nextRaceInfoDto = ergastService.getScheduleRace(nextRaceInfo);
+
+        //houve atualizacao do predictionLocked
+        if (!nextRaceInfoDto.getPredictionLocked().equals(nextRaceInfo.get().isPredictionLocked())) {
+            nextRaceInfo.get().setPredictionLocked(nextRaceInfoDto.getPredictionLocked());
+            predictService.updatePredictionLocked(nextRaceInfoDto);
         }
-        return null;
+        return nextRaceInfoDto;
+    }
 
-
+    @GetMapping("/test")
+    private String test() {
+        return "teste";
     }
 
 

@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.NextRaceInfoDto;
 import com.example.demo.enums.Formula1DriverEnum;
 import com.example.demo.model.fantasy.Prediction;
 import com.example.demo.model.fantasy.PredictionResult;
@@ -144,10 +145,13 @@ public class PredictService {
     }
 
     public Optional<RaceResult> getNextRaceInfo() {
-        Optional<RaceResult> nextRace = raceResultRepository.findTopByRaceFinishedFalseOrderByRoundAsc();
-        if (nextRace != null) {
-            return nextRace;
-        }
-        return null;
+        return raceResultRepository.findTopByRaceFinishedFalseOrderByRoundAsc();
+    }
+
+    public void updatePredictionLocked(NextRaceInfoDto nextRaceInfo) {
+        RaceResult raceResult = raceResultRepository.findByRound(nextRaceInfo.getRound());
+        raceResult.setPredictionLocked(nextRaceInfo.getPredictionLocked());
+        raceResultRepository.save(raceResult);
+
     }
 }

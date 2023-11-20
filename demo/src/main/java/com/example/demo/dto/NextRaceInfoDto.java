@@ -9,5 +9,4 @@ public class NextRaceInfoDto {
     private String time;
     private String round;
     private Boolean predictionLocked;
-
 }

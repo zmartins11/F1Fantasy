@@ -9,8 +9,10 @@ import com.example.demo.dto.NextRaceInfoDto;
 import com.example.demo.model.*;
 import com.example.demo.model.fantasy.RaceResult;
 import com.example.utils.RaceResultMapper;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -189,10 +191,21 @@ public class ErgastService {
 
     public NextRaceInfoDto getScheduleRace(Optional<RaceResult> nextRace) throws JsonProcessingException {
 
+		NextRaceInfoDto nextRaceInfo = new NextRaceInfoDto();
+		LocalDateTime currentDateTime = LocalDateTime.now();
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+
+		ResponseEntity<String> response = null;
+
 		//get next race info
 		String round = nextRace.get().getRound();
 		String url = "http://ergast.com/api/f1/2023/" + round + ".json";
-		ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+		try {
+			response = restTemplate.getForEntity(url, String.class);
+		} catch (HttpServerErrorException e){
+			e.printStackTrace();
+			throw new HttpServerErrorException(HttpStatusCode.valueOf(500));
+		}
 		ObjectMapper mapper = new ObjectMapper();
 		RaceResponse racesResponse = mapper.readValue(response.getBody(), RaceResponse.class);
 		LocalDate qualiDate = racesResponse.getMrData().getRaceTable().getRaces().get(0).getQualifying().getDate();
@@ -203,10 +216,18 @@ public class ErgastService {
 		ZonedDateTime gmtQualiDateTime = ZonedDateTime.of(raceDateTime, ZoneId.of("GMT"));
 		LocalTime gmtQualiTime = gmtQualiDateTime.toLocalTime();
 
- 		LocalDateTime localDateTime = LocalDateTime.of(qualiDate, gmtQualiTime);
-		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
-		NextRaceInfoDto nextRaceInfo = new NextRaceInfoDto();
-		nextRaceInfo.setTime(localDateTime.format(dateTimeFormatter));
+
+ 		LocalDateTime localDateTimeQuali = LocalDateTime.of(qualiDate, gmtQualiTime);
+
+		//check if have to lock the predicion
+
+		if (currentDateTime.isAfter(localDateTimeQuali)) {
+			nextRaceInfo.setPredictionLocked(Boolean.TRUE);
+		} else {
+			nextRaceInfo.setPredictionLocked(Boolean.FALSE);
+		}
+
+		nextRaceInfo.setTime(localDateTimeQuali.format(dateTimeFormatter));
 		nextRaceInfo.setNameRace(racesResponse.getMrData().getRaceTable().getRaces().get(0).getRaceName());
 		nextRaceInfo.setRound(racesResponse.getMrData().getRaceTable().getRaces().get(0).getRound());
 		return nextRaceInfo;
