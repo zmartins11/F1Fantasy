@@ -7,7 +7,8 @@ import { UserService } from 'src/app/_services/user.service';
 import { DateTimeResponse } from 'src/app/model/DateTimeResponse';
 import * as moment from 'moment';
 import { Formula1Driver, Formula1Drivers } from 'src/app/model/Formula1Drivers';
-import { LoadingService } from 'src/app/_services/loading.service';
+import { SipnnerService } from 'src/app/_services/SpinnerService';
+import { PredictService } from 'src/app/_services/predict.service';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +18,8 @@ import { LoadingService } from 'src/app/_services/loading.service';
 export class HomeComponent implements OnInit {
 
   constructor(private userService: UserService, private authService: AuthService,
-    private dateTimeService: DateTimeServiceService, private loadingService: LoadingService) { }
+    private dateTimeService: DateTimeServiceService, private loadingService: SipnnerService,
+    private predictService: PredictService ) { }
 
   content: String | undefined;
   isLoggedIn: Boolean = false;
@@ -32,11 +34,13 @@ export class HomeComponent implements OnInit {
   errorMessage = null;
   formattedDate: Date | any;
   isLoading = false;
+  predictionLocked : Boolean = false;
+  first: number = 0;
+  second: number = 0;
+  third: number = 0;
+
 
   ngOnInit(): void {
-    this.loadingService.isLoading$.subscribe((isLoading) => {
-      this.isLoading = isLoading;
-    })
     this.updateCountdown();
     setInterval(() => {
       this.updateCountdown();
@@ -60,6 +64,7 @@ export class HomeComponent implements OnInit {
         this.raceDate = response.time;
         this.nameRace = response.nameRace;
         this.round = response.round;
+        this.predictionLocked = response.predictionLocked;
         //testCoundtow
         this.formattedDate = new Date(this.raceDate);
         console.log(response);
@@ -99,18 +104,44 @@ export class HomeComponent implements OnInit {
       if (this.drivers[index].selection) {
         // If already selected, remove the selection (if driver is already selectd this if removes the selectd driver)
         this.drivers[index].selection = undefined;
+        this.removeDriverFromSelection(selectDriver);
       } else {
         // Otherwise, assign the appropriate selection (1st, 2nd, or 3rd)
         this.drivers[index].selection = numberOfSelections + 1;
+        this.addDriverToSelection(selectDriver, numberOfSelections + 1);
       }
     }
-    console.log(selectDriver);
+  }
+
+  addDriverToSelection(driver: Formula1Driver, position: number) {
+    switch (position) {
+      case 1:
+        this.first = driver.number;
+        break;
+      case 2:
+        this.second = driver.number;
+        break;
+      case 3:
+        this.third = driver.number;
+        break;
+      default:
+        // Handle unexpected position
+        break;
+    }
+  }
+  removeDriverFromSelection(driver: Formula1Driver) {
+    if (this.first === driver.number) {
+    this.first = 0;
+  } else if (this.second === driver.number) {
+    this.second = 0;
+  } else if (this.third === driver.number) {
+    this.third = 0;
+  }
   }
 
   resetPredictions(): void {
     // Reset selections for all drivers
     this.drivers.forEach(driver => {
-      console.log(driver);
       driver.selection = undefined;
     });
   }
@@ -122,10 +153,18 @@ export class HomeComponent implements OnInit {
 
   savePredictions() {
     this.saveDriversToPredict = this.drivers.filter(driver => driver.selection !== undefined);
-    console.log(this.saveDriversToPredict);
-    console.log(this.authService.getUser()?.username);
+    const selectedDriverNumbers = this.saveDriversToPredict.map(driver => driver.number);
+    console.log(this.first);
+    console.log(this.second);
+    console.log(this.third);
 
-    //TODO : nextRaceInfo object : add the round of the race
+
+    this.predictService.savePrediction(this.first, this.second, this.third, this.user, this.round)
+    .subscribe(response => {
+      console.log(response)
+    }, error => {
+      console.log(error);
+    });
   }
 
 

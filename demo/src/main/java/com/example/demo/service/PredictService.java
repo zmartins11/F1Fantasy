@@ -152,6 +152,6 @@ public class PredictService {
         RaceResult raceResult = raceResultRepository.findByRound(nextRaceInfo.getRound());
         raceResult.setPredictionLocked(nextRaceInfo.getPredictionLocked());
         raceResultRepository.save(raceResult);
-
+        
     }
 }

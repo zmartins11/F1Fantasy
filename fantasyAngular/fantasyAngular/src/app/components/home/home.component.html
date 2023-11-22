@@ -12,7 +12,7 @@
     <p>Hours: {{ timeRemaining.hours }}</p>
     <p>Minutes: {{ timeRemaining.minutes }}</p>
     <p>Seconds: {{ timeRemaining.seconds }}</p>
-    <button (click)="showDrivers = !showDrivers">Make your prediction for the podium</button>
+    <button *ngIf="!predictionLocked" (click)="showDrivers = !showDrivers">Make your prediction for the podium</button>
     <button *ngIf="areAllDriversSelected()" (click)="resetPredictions()">Reset Predictions</button>
     <button *ngIf="areAllDriversSelected()" (click)="savePredictions()">Save Predictions</button>
     <ul *ngIf="showDrivers">

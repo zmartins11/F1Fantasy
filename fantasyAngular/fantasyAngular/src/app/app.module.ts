@@ -14,6 +14,7 @@ import { BoardModeratorComponent } from './components/board-moderator/board-mode
 import { BoardUserComponent } from './components/board-user/board-user.component';
 import { authInterceptorProviders } from 'src/_helpers/auth.interceptor';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
+import { SpinnerComponent } from './components/spinner/spinner.component';
 
 
 
@@ -29,7 +30,8 @@ import { NavBarComponent } from './components/nav-bar/nav-bar.component';
     BoardAdminComponent,
     BoardModeratorComponent,
     BoardUserComponent,
-    NavBarComponent
+    NavBarComponent,
+    SpinnerComponent
   ],
   imports: [
     BrowserModule,
