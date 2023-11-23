@@ -8,4 +8,6 @@ import java.util.List;
 public interface PredictRepository extends JpaRepository<Prediction, Integer> {
     public Prediction findByUserIdAndRaceId(String userId, String raceId);
     public List<Prediction> findByRaceId(String raceId);
+
+    public Prediction findByUserIdAndRound(String userId, String round);
 }

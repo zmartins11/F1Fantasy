@@ -9,6 +9,7 @@ import * as moment from 'moment';
 import { Formula1Driver, Formula1Drivers } from 'src/app/model/Formula1Drivers';
 import { SipnnerService } from 'src/app/_services/SpinnerService';
 import { PredictService } from 'src/app/_services/predict.service';
+import { Prediction } from 'src/app/model/Prediction';
 
 @Component({
   selector: 'app-home',
@@ -39,6 +40,12 @@ export class HomeComponent implements OnInit {
   second: number = 0;
   third: number = 0;
 
+  //results
+  userHasPrediction: Boolean = false;
+  pFirst: string = "";
+  pSecond: string = "";
+  pThird: string = "";
+
 
   ngOnInit(): void {
     this.updateCountdown();
@@ -57,14 +64,24 @@ export class HomeComponent implements OnInit {
     if (this.authService.getToken()) {
       this.isLoggedIn = true;
       const userString = this.authService.getUser();
+      if (userString) {
+        this.user = userString.username;
+      }
       //getting all drivers
       this.drivers = Formula1Drivers;
       //getting info for nexRace
-      this.dateTimeService.getNextRaceInfo().subscribe(response => {
+      this.dateTimeService.getNextRaceInfo(this.user).subscribe(response => {
         this.raceDate = response.time;
         this.nameRace = response.nameRace;
         this.round = response.round;
         this.predictionLocked = response.predictionLocked;
+        if (response.userHavePrediction) {
+          this.userHasPrediction = true;
+          this.pFirst = response.first;
+          this.pSecond = response.second;
+          this.pThird = response.third;
+        }
+        
         //testCoundtow
         this.formattedDate = new Date(this.raceDate);
         console.log(response);
@@ -74,9 +91,7 @@ export class HomeComponent implements OnInit {
         this.errorMessage = error.error.message;
         console.log(error.error.message);
       });
-      if (userString) {
-        this.user = userString.username;
-      }
+      
     }
   } 
   updateCountdown() {
@@ -154,19 +169,17 @@ export class HomeComponent implements OnInit {
   savePredictions() {
     this.saveDriversToPredict = this.drivers.filter(driver => driver.selection !== undefined);
     const selectedDriverNumbers = this.saveDriversToPredict.map(driver => driver.number);
-    console.log(this.first);
-    console.log(this.second);
-    console.log(this.third);
-
 
     this.predictService.savePrediction(this.first, this.second, this.third, this.user, this.round)
     .subscribe(response => {
-      console.log(response)
+      this.pFirst = response.first;
+      this.pSecond = response.second;
+      this.pThird = response.third
     }, error => {
       console.log(error);
+      this.errorMessage = error.error.message;
     });
   }
 
-
-
 }
+

@@ -9,4 +9,8 @@ public class NextRaceInfoDto {
     private String time;
     private String round;
     private Boolean predictionLocked;
+    private Boolean userHavePrediction;
+    private String first;
+    private String second;
+    private String third;
 }

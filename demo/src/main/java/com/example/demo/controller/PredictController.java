@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.NextRaceInfoDto;
 import com.example.demo.dto.PredictionDto;
+import com.example.demo.exception.SavePredictionException;
 import com.example.demo.model.Race;
 import com.example.demo.model.fantasy.Prediction;
 import com.example.demo.model.fantasy.RaceResult;
@@ -26,7 +27,7 @@ public class PredictController {
     private ErgastService ergastService;
 
     @PostMapping("/predict")
-    private void savePrediction(@RequestBody PredictionDto prediction) throws Exception {
+    private PredictionDto savePrediction(@RequestBody PredictionDto prediction) throws Exception {
         //season static value
         Year currentYear = Year.now();
         String season = String.valueOf(currentYear.getValue());
@@ -34,11 +35,10 @@ public class PredictController {
         //TODO: GET THE ROUND STRING FOR PREDICTION OBJECT
         boolean raceFinished = predictService.checkRaceFinished(season, prediction.getRound());
         if (raceFinished) {
-            throw new Exception("race already finish");
+            throw new SavePredictionException("race already finish");
         }
-        RaceResult raceResult = predictService.getRace(season, prediction.getRound());
-//        prediction.setRaceId(String.valueOf(raceResult.getId()));
-//        predictService.savePrediction(prediction);
+        predictService.savePrediction(prediction);
+        return prediction;
     }
 
     @GetMapping("/predictResult")
@@ -55,7 +55,7 @@ public class PredictController {
     }
 
     @GetMapping("/raceSchedule")
-    private NextRaceInfoDto getRaceInfo() throws JsonProcessingException, InterruptedException {
+    private NextRaceInfoDto getRaceInfo(@RequestParam String username) throws JsonProcessingException, InterruptedException {
         TimeUnit.SECONDS.sleep(2);
         Optional<RaceResult> nextRaceInfo = predictService.getNextRaceInfo();
         NextRaceInfoDto nextRaceInfoDto = ergastService.getScheduleRace(nextRaceInfo);
@@ -65,6 +65,9 @@ public class PredictController {
             nextRaceInfo.get().setPredictionLocked(nextRaceInfoDto.getPredictionLocked());
             predictService.updatePredictionLocked(nextRaceInfoDto);
         }
+        //checkUserPredictions
+        nextRaceInfoDto = predictService.getUserPrediction(nextRaceInfoDto, username);
+
         return nextRaceInfoDto;
     }
 

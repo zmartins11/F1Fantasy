@@ -46,12 +46,17 @@ public class GlobalExpeptionHandler {
 
     @ExceptionHandler({ HttpServerErrorException.class })
     @ResponseBody
-    public ResponseEntity<ErrorObject> handleHttpServerErrorException(Exception ex) {
+    public ResponseEntity<ErrorObject> handleHttpServerErrorException(HttpServerErrorException ex) {
         ErrorObject re = new ErrorObject(HttpStatus.SERVICE_UNAVAILABLE.toString(),
                 "Failure getting api data. Please try again later.", new Date());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(re);
     }
-
-
+    @ExceptionHandler({SavePredictionException.class})
+    @ResponseBody
+    public ResponseEntity<ErrorObject> handleSavePredictionException(SavePredictionException ext) {
+        ErrorObject re = new ErrorObject(HttpStatus.SERVICE_UNAVAILABLE.toString(),
+                "Error Saving exception from globalHandling", new Date());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(re);
+    }
 }
 

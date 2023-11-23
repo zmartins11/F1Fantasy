@@ -50,7 +50,7 @@ public class JWTGenerator {
                     .parseClaimsJws(token);
             return true;
         } catch (Exception ex) {
-            throw new AuthenticationCredentialsNotFoundException("JWT was expired or incorrect",ex.fillInStackTrace());
+            throw new AuthenticationCredentialsNotFoundException("Your session expired, please return to login page",ex.fillInStackTrace());
         }
     }
 }

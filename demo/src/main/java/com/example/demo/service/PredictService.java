@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.NextRaceInfoDto;
+import com.example.demo.dto.PredictionDto;
 import com.example.demo.enums.Formula1DriverEnum;
 import com.example.demo.model.fantasy.Prediction;
 import com.example.demo.model.fantasy.PredictionResult;
@@ -52,8 +53,20 @@ public class PredictService {
         return race.isRaceFinished();
     }
 
-    public void savePrediction(Prediction prediction) {
-        predictRepository.save(prediction);
+    public Prediction savePrediction(PredictionDto prediction) {
+        Prediction predictionSaved = predictRepository.findByUserIdAndRound(prediction.getUser(), prediction.getRound());
+        if (predictionSaved != null) {
+            predictionSaved.setFirst(prediction.getFirst());
+            predictionSaved.setSecond(prediction.getSecond());
+            predictionSaved.setThird(prediction.getThird());
+            return predictRepository.save(predictionSaved);
+        } else {
+            Prediction newPrediction = new Prediction();
+            newPrediction.setFirst(prediction.getFirst());
+            newPrediction.setSecond(prediction.getSecond());
+            newPrediction.setThird(prediction.getThird());
+            return predictRepository.save(newPrediction);
+        }
     }
 
     // método chamado quando o RaceResult com o race_id da prediction é preenchido
@@ -153,5 +166,18 @@ public class PredictService {
         raceResult.setPredictionLocked(nextRaceInfo.getPredictionLocked());
         raceResultRepository.save(raceResult);
         
+    }
+
+    public NextRaceInfoDto getUserPrediction(NextRaceInfoDto nextRaceInfoDto, String username) {
+        Prediction userPrediction = predictRepository.findByUserIdAndRound(username, nextRaceInfoDto.getRound());
+        if (userPrediction != null) {
+            nextRaceInfoDto.setUserHavePrediction(Boolean.TRUE);
+            nextRaceInfoDto.setFirst(userPrediction.getFirst());
+            nextRaceInfoDto.setSecond(userPrediction.getSecond());
+            nextRaceInfoDto.setThird(userPrediction.getThird());
+        } else {
+            nextRaceInfoDto.setUserHavePrediction(Boolean.FALSE);
+        }
+        return nextRaceInfoDto;
     }
 }

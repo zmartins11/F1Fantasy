@@ -2,9 +2,11 @@
   <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
     {{ errorMessage}}
   </div>
-  <header class="jumbotron">
+  <div *ngIf="predictionLocked" class="alert alert-warning" role="alert">
+    You no longer can make a prediction. Quali has already started!
+  </div>
+  <header *ngIf="!isLoggedIn" class="jumbotron">
     <p *ngIf="!isLoggedIn">Welcome to the app. Please log in to access all the content available</p>
-    <p *ngIf="isLoggedIn">Hello {{user}}. Please wait for more features!</p>
   </header>
   <div *ngIf="isLoggedIn">
     <p>Next race : {{ nameRace }} || Round : {{round}}</p>
@@ -20,5 +22,10 @@
         {{ driver.name }} {{ driver.selection }}
       </li>
     </ul>
+  </div>
+  <div *ngIf="userHasPrediction">
+    first : {{ pFirst }}
+    second : {{ pSecond }}
+    third : {{ pThird }}
   </div>
 </div>
