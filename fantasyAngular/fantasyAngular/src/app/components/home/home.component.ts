@@ -10,6 +10,8 @@ import { Formula1Driver, Formula1Drivers } from 'src/app/model/Formula1Drivers';
 import { SipnnerService } from 'src/app/_services/SpinnerService';
 import { PredictService } from 'src/app/_services/predict.service';
 import { Prediction } from 'src/app/model/Prediction';
+import { F1DriversService } from 'src/app/_services/f1-drivers.service';
+import { faArrowDown,faArrowUp} from '@fortawesome/free-solid-svg-icons'
 
 @Component({
   selector: 'app-home',
@@ -20,7 +22,7 @@ export class HomeComponent implements OnInit {
 
   constructor(private userService: UserService, private authService: AuthService,
     private dateTimeService: DateTimeServiceService, private loadingService: SipnnerService,
-    private predictService: PredictService ) { }
+    private predictService: PredictService) { }
 
   content: String | undefined;
   isLoggedIn: Boolean = false;
@@ -33,6 +35,7 @@ export class HomeComponent implements OnInit {
   saveDriversToPredict : Formula1Driver[] = [];
   showDrivers = false;
   errorMessage = null;
+  successMessage: string = "";
   formattedDate: Date | any;
   isLoading = false;
   predictionLocked : Boolean = false;
@@ -42,9 +45,11 @@ export class HomeComponent implements OnInit {
 
   //results
   userHasPrediction: Boolean = false;
-  pFirst: string = "";
-  pSecond: string = "";
-  pThird: string = "";
+  pFirst: string | undefined = "";
+  pSecond: string | undefined= "";
+  pThird: string | undefined= "";
+  faArrowDown = faArrowDown;
+  faArrowUp = faArrowUp;
 
 
   ngOnInit(): void {
@@ -77,9 +82,9 @@ export class HomeComponent implements OnInit {
         this.predictionLocked = response.predictionLocked;
         if (response.userHavePrediction) {
           this.userHasPrediction = true;
-          this.pFirst = response.first;
-          this.pSecond = response.second;
-          this.pThird = response.third;
+          this.pFirst = F1DriversService.getDriverNameByNumber(response.first);
+          this.pSecond = F1DriversService.getDriverNameByNumber(response.second);
+          this.pThird = F1DriversService.getDriverNameByNumber(response.third);
         }
         
         //testCoundtow
@@ -172,13 +177,21 @@ export class HomeComponent implements OnInit {
 
     this.predictService.savePrediction(this.first, this.second, this.third, this.user, this.round)
     .subscribe(response => {
-      this.pFirst = response.first;
-      this.pSecond = response.second;
-      this.pThird = response.third
+        this.userHasPrediction = true;
+        this.pFirst = F1DriversService.getDriverNameByNumber(response.first);
+        this.pSecond = F1DriversService.getDriverNameByNumber(response.second);
+        this.pThird = F1DriversService.getDriverNameByNumber(response.third);
+        this.resetPredictions();
+        this.showDrivers = false;
+        this.successMessage = "Your prediction has been saved!";
     }, error => {
       console.log(error);
       this.errorMessage = error.error.message;
     });
+  }
+
+  showAllDrivers() {
+    return this.drivers;
   }
 
 }

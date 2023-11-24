@@ -65,6 +65,10 @@ public class PredictService {
             newPrediction.setFirst(prediction.getFirst());
             newPrediction.setSecond(prediction.getSecond());
             newPrediction.setThird(prediction.getThird());
+            newPrediction.setUserId(prediction.getUser());
+            newPrediction.setRound(prediction.getRound());
+            RaceResult race = raceResultRepository.findByRound(prediction.getRound());
+            newPrediction.setRaceId(race.getId().toString());
             return predictRepository.save(newPrediction);
         }
     }
