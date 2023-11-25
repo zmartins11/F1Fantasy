@@ -2,8 +2,8 @@
   <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
     {{ errorMessage}}
   </div>
-  <div *ngIf="successMessage"class="alert alert-success" role="alert">
-   {{ successMessage }}
+  <div *ngIf="successMessage" class="alert alert-success" role="alert">
+    {{ successMessage }}
   </div>
   <div *ngIf="predictionLocked" class="alert alert-warning" role="alert">
     You no longer can make a prediction. Quali has already started!
@@ -13,38 +13,40 @@
   </header>
   <div *ngIf="isLoggedIn">
     <h3 class="text-center mt-3">Next Race: {{ nameRace }} | Round: {{ round }}</h3>
-    <div class="row mt-4">
-    <div class="col-md-2 offset-md-2 text-center">
-      <div class="circle">
-        <p class="circle-text">{{ timeRemaining.days }}</p>
-        <p>Days</p>
+    <div class="row mt-4" *ngIf="!predictionLocked">
+      <div class="col-md-2 offset-md-2 text-center">
+        <div class="circle">
+          <p class="circle-text">{{ timeRemaining.days }}</p>
+          <p>Days</p>
+        </div>
+      </div>
+      <div class="col-md-2 mb-5 text-center">
+        <div class="circle">
+          <p class="circle-text">{{ timeRemaining.hours }}</p>
+          <p>Hours</p>
+        </div>
+      </div>
+      <div class="col-md-2 text-center">
+        <div class="circle">
+          <p class="circle-text">{{ timeRemaining.minutes }}</p>
+          <p>Minutes</p>
+        </div>
+      </div>
+      <div class="col-md-2 text-center">
+        <div class="circle">
+          <p class="circle-text">{{ timeRemaining.seconds }}</p>
+          <p>Seconds</p>
+        </div>
       </div>
     </div>
-    <div class="col-md-2 mb-5 text-center">
-      <div class="circle">
-        <p class="circle-text">{{ timeRemaining.hours }}</p>
-        <p>Hours</p>
-      </div>
+    <div class="mt-4" *ngIf="predictionLocked">
+        <h5 class="text-center mt-3">Wait for race to be completed, to get the weekend results!</h5>
     </div>
-    <div class="col-md-2 text-center">
-      <div class="circle">
-        <p class="circle-text">{{ timeRemaining.minutes }}</p>
-        <p>Minutes</p>
-      </div>
-    </div>
-    <div class="col-md-2 text-center">
-      <div class="circle">
-        <p class="circle-text">{{ timeRemaining.seconds }}</p>
-        <p>Seconds</p>
-      </div>
-    </div>
-  </div>
-    
   </div>
   <div *ngIf="userHasPrediction" class="container mt5">
     <div class="row">
-       <!-- Highlighted container -->
-       <div class="col-md-5 bg-info p-3 rounded">
+      <!-- Highlighted container -->
+      <div class="col-md-5 bg-info p-3 mr-3 rounded">
         <!-- Three boxes displayed horizontally -->
         <div class="row">
           <!-- Left box (Second Driver) -->
@@ -73,17 +75,20 @@
         <div class="row mt-3">
           <div class="col-md-12 text-center">
             <ng-container *ngIf="!showDrivers; else listShown">
-            <p class="mb-0">Change Prediction</p>
-            <span (click)="showDrivers = !showDrivers">
-              <fa-icon [icon]="faArrowDown"></fa-icon>
-            </span>
-          </ng-container>
-          <ng-template #listShown>
-            <!-- Text and arrow are hidden when the list is shown -->
-            <span (click)="showDrivers = !showDrivers">
-              <fa-icon [icon]="faArrowUp"></fa-icon>
-            </span>
-          </ng-template>
+              <div *ngIf="!predictionLocked">
+                <p class="mb-0">Change Prediction</p>
+                <span (click)="showDrivers = !showDrivers">
+                  <fa-icon [icon]="faArrowDown"></fa-icon>
+                </span>
+              </div>
+              <p class="mb-0" *ngIf="predictionLocked">Prediction Locked</p>
+            </ng-container>
+            <ng-template #listShown>
+              <!-- Text and arrow are hidden when the list is shown -->
+              <span (click)="showDrivers = !showDrivers">
+                <fa-icon [icon]="faArrowUp"></fa-icon>
+              </span>
+            </ng-template>
           </div>
         </div>
 
@@ -103,8 +108,16 @@
             </ul>
           </div>
         </div>
-        <button type="button" class="btn btn-outline-light btn-sm mr-3" *ngIf="areAllDriversSelected()" (click)="resetPredictions()">Reset Predictions</button>
-        <button type="button" class="btn btn-outline-light btn-sm" *ngIf="areAllDriversSelected()" (click)="savePredictions()">Save Predictions</button>
+        <button type="button" class="btn btn-outline-light btn-sm mr-3" *ngIf="areAllDriversSelected()"
+          (click)="resetPredictions()">Reset Predictions</button>
+        <button type="button" class="btn btn-outline-light btn-sm" *ngIf="areAllDriversSelected()"
+          (click)="savePredictions()">Save Predictions</button>
+      </div>
+      <div class="col-md-5 bg-info p-3 rounded">
+        <!-- Your table content goes here -->
+        <table class="table">
+          <!-- Table rows and columns -->
+        </table>
       </div>
     </div>
   </div>

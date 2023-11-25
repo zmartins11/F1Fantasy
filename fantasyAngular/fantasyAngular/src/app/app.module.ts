@@ -15,6 +15,7 @@ import { BoardUserComponent } from './components/board-user/board-user.component
 import { authInterceptorProviders } from 'src/_helpers/auth.interceptor';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 
 
@@ -37,7 +38,8 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    FontAwesomeModule
   ],
   providers: [authInterceptorProviders],
   bootstrap: [AppComponent]
