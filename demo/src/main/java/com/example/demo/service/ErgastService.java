@@ -2,6 +2,8 @@ package com.example.demo.service;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjuster;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 import com.example.demo.dto.DateTimeResponseDto;
@@ -210,24 +212,27 @@ public class ErgastService {
 		RaceResponse racesResponse = mapper.readValue(response.getBody(), RaceResponse.class);
 		LocalDate qualiDate = racesResponse.getMrData().getRaceTable().getRaces().get(0).getQualifying().getDate();
 		LocalTime qualiTime = racesResponse.getMrData().getRaceTable().getRaces().get(0).getQualifying().getTime();
+		LocalDate raceDate = racesResponse.getMrData().getRaceTable().getRaces().get(0).getDate();
+		LocalDateTime nextSunday = currentDateTime.with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
 
 		//convert time to gmt
-		LocalDateTime raceDateTime = LocalDateTime.of(2023, 1, 1, qualiTime.getHour(), qualiTime.getMinute(), qualiTime.getSecond());
-		ZonedDateTime gmtQualiDateTime = ZonedDateTime.of(raceDateTime, ZoneId.of("GMT"));
+		LocalDateTime qualiDateTime = LocalDateTime.of(2023, 1, 1, qualiTime.getHour(), qualiTime.getMinute(), qualiTime.getSecond());
+		ZonedDateTime gmtQualiDateTime = ZonedDateTime.of(qualiDateTime, ZoneId.of("GMT"));
 		LocalTime gmtQualiTime = gmtQualiDateTime.toLocalTime();
 
 
  		LocalDateTime localDateTimeQuali = LocalDateTime.of(qualiDate, gmtQualiTime);
+		 LocalDateTime date24Before = localDateTimeQuali.minusHours(24);
 
 		//check if have to lock the predicion
 
-		if (currentDateTime.isAfter(localDateTimeQuali)) {
+		if (date24Before.isAfter(localDateTimeQuali)) {
 			nextRaceInfo.setPredictionLocked(Boolean.TRUE);
 		} else {
 			nextRaceInfo.setPredictionLocked(Boolean.FALSE);
 		}
 
-		nextRaceInfo.setTime(localDateTimeQuali.format(dateTimeFormatter));
+		nextRaceInfo.setTime(nextSunday.format(dateTimeFormatter));
 		nextRaceInfo.setNameRace(racesResponse.getMrData().getRaceTable().getRaces().get(0).getRaceName());
 		nextRaceInfo.setRound(racesResponse.getMrData().getRaceTable().getRaces().get(0).getRound());
 		return nextRaceInfo;

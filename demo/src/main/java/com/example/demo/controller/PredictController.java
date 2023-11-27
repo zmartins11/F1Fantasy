@@ -61,10 +61,10 @@ public class PredictController {
         NextRaceInfoDto nextRaceInfoDto = ergastService.getScheduleRace(nextRaceInfo);
 
         //houve atualizacao do predictionLocked
-        if (!nextRaceInfoDto.getPredictionLocked().equals(nextRaceInfo.get().isPredictionLocked())) {
-            nextRaceInfo.get().setPredictionLocked(nextRaceInfoDto.getPredictionLocked());
-            predictService.updatePredictionLocked(nextRaceInfoDto);
-        }
+//        if (!nextRaceInfoDto.getPredictionLocked().equals(nextRaceInfo.get().isPredictionLocked())) {
+//            nextRaceInfo.get().setPredictionLocked(nextRaceInfoDto.getPredictionLocked());
+//            predictService.updatePredictionLocked(nextRaceInfoDto);
+//        }
         //checkUserPredictions
         nextRaceInfoDto = predictService.getUserPrediction(nextRaceInfoDto, username);
 
