@@ -43,6 +43,13 @@
         <h5 class="text-center mt-3">Wait for race to be completed, to get the weekend results!</h5>
     </div>
   </div>
+  <ngx-spinner>
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-secondary" style="width: 5rem; height: 5rem;"  role="status">
+          <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+  </ngx-spinner>
   <div *ngIf="userHasPrediction" class="container mt5">
     <div class="row">
       <!-- Highlighted container -->

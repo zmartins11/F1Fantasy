@@ -16,6 +16,9 @@ import { authInterceptorProviders } from 'src/_helpers/auth.interceptor';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { NgxSpinnerModule } from 'ngx-spinner';
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 
@@ -39,7 +42,9 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    NgxSpinnerModule,
+    BrowserAnimationsModule
   ],
   providers: [authInterceptorProviders],
   bootstrap: [AppComponent]

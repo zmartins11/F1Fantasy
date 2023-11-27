@@ -21,7 +21,7 @@ import { faArrowDown,faArrowUp} from '@fortawesome/free-solid-svg-icons'
 export class HomeComponent implements OnInit {
 
   constructor(private userService: UserService, private authService: AuthService,
-    private dateTimeService: DateTimeServiceService, private loadingService: SipnnerService,
+    private dateTimeService: DateTimeServiceService, private spinnerService: SipnnerService,
     private predictService: PredictService) { }
 
   content: String | undefined;
@@ -86,11 +86,9 @@ export class HomeComponent implements OnInit {
           this.pSecond = F1DriversService.getDriverNameByNumber(response.second);
           this.pThird = F1DriversService.getDriverNameByNumber(response.third);
         }
-        
         //testCoundtow
         this.formattedDate = new Date(this.raceDate);
         console.log(response);
-
       }, 
       error => {
         this.errorMessage = error.error.message;

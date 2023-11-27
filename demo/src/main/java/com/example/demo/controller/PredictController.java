@@ -28,6 +28,7 @@ public class PredictController {
 
     @PostMapping("/predict")
     private PredictionDto savePrediction(@RequestBody PredictionDto prediction) throws Exception {
+        TimeUnit.SECONDS.sleep(2);
         //season static value
         Year currentYear = Year.now();
         String season = String.valueOf(currentYear.getValue());
