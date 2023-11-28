@@ -12,6 +12,7 @@ import { PredictService } from 'src/app/_services/predict.service';
 import { Prediction } from 'src/app/model/Prediction';
 import { F1DriversService } from 'src/app/_services/f1-drivers.service';
 import { faArrowDown,faArrowUp} from '@fortawesome/free-solid-svg-icons'
+import { TotalPointsResponse } from 'src/app/model/TotalPointsResponse';
 
 @Component({
   selector: 'app-home',
@@ -42,6 +43,9 @@ export class HomeComponent implements OnInit {
   first: number = 0;
   second: number = 0;
   third: number = 0;
+  showAlert: boolean = false;
+  totalPointsData: TotalPointsResponse [] | null = null;
+
 
   //results
   userHasPrediction: Boolean = false;
@@ -88,13 +92,21 @@ export class HomeComponent implements OnInit {
         }
         //testCoundtow
         this.formattedDate = new Date(this.raceDate);
-        console.log(response);
       }, 
       error => {
+        this.showAlert = true;
         this.errorMessage = error.error.message;
         console.log(error.error.message);
       });
-      
+
+      //populate table
+      this.dateTimeService.getTotalPoints().subscribe(response => {
+        if (Array.isArray(response)) {
+          this.totalPointsData = response;
+        }
+      }, error => {
+        this.errorMessage = error.error.message;
+      });
     }
   } 
   updateCountdown() {
@@ -182,6 +194,7 @@ export class HomeComponent implements OnInit {
         this.resetPredictions();
         this.showDrivers = false;
         this.successMessage = "Your prediction has been saved!";
+        this.showAlert = true;
     }, error => {
       console.log(error);
       this.errorMessage = error.error.message;
@@ -190,6 +203,10 @@ export class HomeComponent implements OnInit {
 
   showAllDrivers() {
     return this.drivers;
+  }
+
+  closeAlert() {
+    this.showAlert = false;
   }
 
 }

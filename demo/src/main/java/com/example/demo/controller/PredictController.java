@@ -2,19 +2,17 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.NextRaceInfoDto;
 import com.example.demo.dto.PredictionDto;
+import com.example.demo.dto.TotalPointsDto;
 import com.example.demo.exception.SavePredictionException;
-import com.example.demo.model.Race;
-import com.example.demo.model.fantasy.Prediction;
 import com.example.demo.model.fantasy.RaceResult;
 import com.example.demo.service.ErgastService;
 import com.example.demo.service.PredictService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.time.Year;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -71,9 +69,23 @@ public class PredictController {
         return nextRaceInfoDto;
     }
 
+    @GetMapping("/totalPointsByUser")
+    private TotalPointsDto getTotalPointsByUser(@RequestParam String username) {
+        return predictService.getTotalPointsByUser(username);
+    }
+
+    @GetMapping("/totalPoints")
+    private List<TotalPointsDto> getTotalPoints() {
+        return predictService.getTotalPoints();
+    }
+
+
+
     @GetMapping("/test")
     private String test() {
         return "teste";
     }
+
+
 
 }

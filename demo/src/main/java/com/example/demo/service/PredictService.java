@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.NextRaceInfoDto;
 import com.example.demo.dto.PredictionDto;
+import com.example.demo.dto.TotalPointsDto;
 import com.example.demo.enums.Formula1DriverEnum;
 import com.example.demo.model.fantasy.Prediction;
 import com.example.demo.model.fantasy.PredictionResult;
@@ -183,5 +184,38 @@ public class PredictService {
             nextRaceInfoDto.setUserHavePrediction(Boolean.FALSE);
         }
         return nextRaceInfoDto;
+    }
+
+    public TotalPointsDto getTotalPointsByUser(String username) {
+        List<PredictionResult> result = predictionResultRepository.findByUserId(username);
+        Long points = predictionResultRepository.sumPointsByUserId(username);
+        if (points==null) {
+            points = 0L;
+        }
+        TotalPointsDto totalPointsDto = new TotalPointsDto();
+        totalPointsDto.setUsername(username);
+        totalPointsDto.setPoints(String.valueOf(points));
+
+        return totalPointsDto;
+    }
+
+    public List<TotalPointsDto> getTotalPoints() {
+        List<Object[]> result = predictionResultRepository.findTotalPointsByUser();
+        List<TotalPointsDto> listUsers = new ArrayList<>();
+        int position = 1;
+        for (Object obj : result) {
+            Object[] array = (Object[]) obj;
+
+            String username = (String) array[0];
+            Long points = (Long) array[1];
+
+            TotalPointsDto tmp = new TotalPointsDto();
+            tmp.setPosition(String.valueOf(position));
+            tmp.setUsername(username);
+            tmp.setPoints(String.valueOf(points));
+            listUsers.add(tmp);
+            position ++;
+        }
+        return listUsers;
     }
 }
