@@ -57,7 +57,6 @@ public class PredictController {
 
     @GetMapping("/raceSchedule")
     private NextRaceInfoDto getRaceInfo(@RequestParam String username) throws JsonProcessingException, InterruptedException {
-        TimeUnit.SECONDS.sleep(2);
         Optional<RaceResult> nextRaceInfo = predictService.getNextRaceInfo();
         NextRaceInfoDto nextRaceInfoDto = ergastService.getScheduleRace(nextRaceInfo);
 
