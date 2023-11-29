@@ -4,12 +4,8 @@ import com.example.demo.dto.NextRaceInfoDto;
 import com.example.demo.dto.PredictionDto;
 import com.example.demo.dto.TotalPointsDto;
 import com.example.demo.enums.Formula1DriverEnum;
-import com.example.demo.model.fantasy.Prediction;
-import com.example.demo.model.fantasy.PredictionResult;
-import com.example.demo.model.fantasy.RaceResult;
-import com.example.demo.repository.PredictRepository;
-import com.example.demo.repository.PredictionResultRepository;
-import com.example.demo.repository.RaceResultRepository;
+import com.example.demo.model.fantasy.*;
+import com.example.demo.repository.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +23,10 @@ public class PredictService {
     private ErgastService ergastService;
     @Autowired
     private PredictionResultRepository predictionResultRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private DriversPointsRepository driversPointsRepository;
 
     private final static String SEASON_2023 = "2023";
     private final static String SEASON_2022 = "2022";
@@ -83,62 +83,55 @@ public class PredictService {
         if ((!prediction.getFirst().equals(raceResult.getFirst())) &&
                 (!prediction.getSecond().equals(raceResult.getSecond())) &&
                 (!prediction.getThird().equals(raceResult.getThird()))) {
-            return points;
+
+            createDriversPoints(prediction.getFirst() ,raceResult.getId(), points);
+            createDriversPoints(prediction.getSecond(),raceResult.getId(), points);
+            createDriversPoints(prediction.getThird(), raceResult.getId(), points);
+
         }
 
-        if (prediction.getFirst().equals(raceResult.getFirst())) {
-            resultsPercentage = ergastService.testApiGetResult("1", racesCurrentSeason,Formula1DriverEnum.getNameByNumber(Integer.parseInt(raceResult.getFirst())));
+        points = processDriver("1", raceResult.getId(), prediction.getFirst(), raceResult.getFirst(), points, racesCurrentSeason);
+        points = processDriver("2", raceResult.getId(),prediction.getSecond(), raceResult.getSecond(), points, racesCurrentSeason);
+        points = processDriver("3", raceResult.getId(), prediction.getThird(), raceResult.getThird(), points, racesCurrentSeason);
+
+        return points;
+    }
+
+    private int processDriver(String position, Integer raceId, String predictedDriver, String raceResultDriver, int points, int racesCurrentSeason) throws JsonProcessingException {
+        if (predictedDriver.equals(raceResultDriver)) {
+            Map<Integer, Integer> resultsPercentage = ergastService.testApiGetResult(position, racesCurrentSeason, Formula1DriverEnum.getNameByNumber(Integer.parseInt(raceResultDriver)));
             Iterator<Map.Entry<Integer, Integer>> iterator = resultsPercentage.entrySet().iterator();
             if (iterator.hasNext()) {
                 Map.Entry<Integer, Integer> firstEntry = iterator.next();
-                int percentageFirst = (int)((double)firstEntry.getKey() / firstEntry.getValue() * 100);
-                if (percentageFirst >= 75) {
+                int percentage = (int)((double) firstEntry.getKey() / firstEntry.getValue() * 100);
+                if (percentage >= 75) {
                     points += 1;
-                } else if (percentageFirst >= 50) {
+                    createDriversPoints(predictedDriver,raceId, points);
+                } else if (percentage >= 50) {
                     points += 3;
-                } else if (percentageFirst >= 25) {
+                    createDriversPoints(predictedDriver,raceId, points);
+                } else if (percentage >= 25) {
                     points += 5;
+                    createDriversPoints(predictedDriver,raceId, points);
                 } else {
                     points += 10;
-                }
-            }
-        }
-        if (prediction.getSecond().equals(raceResult.getSecond())) {
-            resultsPercentage = ergastService.testApiGetResult("2", racesCurrentSeason,Formula1DriverEnum.getNameByNumber(Integer.parseInt(raceResult.getSecond())));
-            Iterator<Map.Entry<Integer, Integer>> iterator = resultsPercentage.entrySet().iterator();
-            if (iterator.hasNext()) {
-                Map.Entry<Integer, Integer> firstEntry = iterator.next();
-                int percentaSecond = (int)((double)firstEntry.getKey() / firstEntry.getValue() * 100);
-                if (percentaSecond >= 75) {
-                    points += 1;
-                } else if (percentaSecond >= 50) {
-                    points += 3;
-                } else if (percentaSecond >= 25) {
-                    points += 5;
-                } else {
-                    points += 10;
-                }
-            }
-        }
-        if (prediction.getThird().equals(raceResult.getThird())) {
-            resultsPercentage = ergastService.testApiGetResult("3", racesCurrentSeason,Formula1DriverEnum.getNameByNumber(Integer.parseInt(raceResult.getThird())));
-            Iterator<Map.Entry<Integer, Integer>> iterator = resultsPercentage.entrySet().iterator();
-            if (iterator.hasNext()) {
-                Map.Entry<Integer, Integer> firstEntry = iterator.next();
-                int percentageThird = (int)((double)firstEntry.getKey() / firstEntry.getValue() * 100);
-                if (percentageThird >= 75) {
-                    points += 1;
-                } else if (percentageThird >= 50) {
-                    points += 3;
-                } else if (percentageThird >= 25) {
-                    points += 5;
-                } else {
-                    points += 10;
+                    createDriversPoints(predictedDriver,raceId, points);
                 }
             }
         }
         return points;
     }
+
+    private void createDriversPoints(String driver, Integer raceResultId, int points) {
+        DriversPoints driversPoints = new DriversPoints();
+         if (driversPointsRepository.findByDriver(driver) == null) {
+             driversPoints.setDriver(driver);
+             driversPoints.setRaceId(raceResultId);
+             driversPoints.setPoints(points);
+             driversPointsRepository.save(driversPoints);
+         };
+    }
+
 
     public int getSeasonRaces(String season) {
         List<RaceResult> racesBySeason = raceResultRepository.findBySeason(season);
@@ -187,35 +180,45 @@ public class PredictService {
     }
 
     public TotalPointsDto getTotalPointsByUser(String username) {
-        List<PredictionResult> result = predictionResultRepository.findByUserId(username);
+        TotalPointsDto totalPointsDto = new TotalPointsDto();
         Long points = predictionResultRepository.sumPointsByUserId(username);
         if (points==null) {
             points = 0L;
         }
-        TotalPointsDto totalPointsDto = new TotalPointsDto();
+
         totalPointsDto.setUsername(username);
         totalPointsDto.setPoints(String.valueOf(points));
 
         return totalPointsDto;
     }
 
-    public List<TotalPointsDto> getTotalPoints() {
-        List<Object[]> result = predictionResultRepository.findTotalPointsByUser();
+    public List<TotalPointsDto> getTotalPoints(String usernameFront) {
         List<TotalPointsDto> listUsers = new ArrayList<>();
-        int position = 1;
-        for (Object obj : result) {
-            Object[] array = (Object[]) obj;
+        List<Object[]> result = predictionResultRepository.findTotalPointsByUser();
+        List<User> users = userRepository.findAll();
 
-            String username = (String) array[0];
-            Long points = (Long) array[1];
+        for (User user : users) {
+           List<PredictionResult> predictsByUserTemp =  predictionResultRepository.findByUserId(user.getUserName());
+           if (!predictsByUserTemp.isEmpty()) {
+               TotalPointsDto tmpP = new TotalPointsDto();
+               tmpP.setUsername(user.getUserName());
+               tmpP.setPoints(String.valueOf(predictionResultRepository.sumPointsByUserId(user.getUserName())));
+               listUsers.add(tmpP);
 
-            TotalPointsDto tmp = new TotalPointsDto();
-            tmp.setPosition(String.valueOf(position));
-            tmp.setUsername(username);
-            tmp.setPoints(String.valueOf(points));
-            listUsers.add(tmp);
-            position ++;
+           } else {
+               TotalPointsDto tmp = new TotalPointsDto();
+               tmp.setUsername(user.getUserName());
+               tmp.setPoints("0");
+               listUsers.add(tmp);
+           }
         }
+        //sorting the position
+        listUsers.sort((o1, o2) -> Integer.compare(Integer.parseInt(o2.getPoints()), Integer.parseInt(o1.getPoints())));
+        for (int i = 0; i < listUsers.size(); i++) {
+            TotalPointsDto tmp = listUsers.get(i);
+            tmp.setPosition(String.valueOf(i + 1));
+        }
+
         return listUsers;
     }
 }

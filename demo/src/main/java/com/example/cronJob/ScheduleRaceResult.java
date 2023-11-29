@@ -39,7 +39,7 @@ public class ScheduleRaceResult {
 
 
     //correr a cada domingo
-//    @Scheduled(fixedRate = 30 * 60 * 1000)
+    @Scheduled(fixedRate = 30 * 60 * 1000)
     public void populateRaceResult() throws JsonProcessingException {
         List<RaceResult> racesNotFinished = raceResultRepository.findByRaceFinishedFalse();
         if (racesNotFinished != null) {
@@ -47,7 +47,8 @@ public class ScheduleRaceResult {
                 try {
                     RaceResult raceResultTemp = ergastService.getRaceResult(raceResult.getSeason(), raceResult.getRound());
                     if (raceResultTemp != null) {
-                        raceResult.setRaceFinished(true);
+                        //TODO : comentar para testes
+//                        raceResult.setRaceFinished(true);
                         raceResult.setFirst(raceResultTemp.getFirst());
                         raceResult.setSecond(raceResultTemp.getSecond());
                         raceResult.setThird(raceResultTemp.getThird());

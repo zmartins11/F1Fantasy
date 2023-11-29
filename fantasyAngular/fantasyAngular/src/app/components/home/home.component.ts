@@ -100,7 +100,7 @@ export class HomeComponent implements OnInit {
       });
 
       //populate table
-      this.dateTimeService.getTotalPoints().subscribe(response => {
+      this.dateTimeService.getTotalPoints(this.user).subscribe(response => {
         if (Array.isArray(response)) {
           this.totalPointsData = response;
         }

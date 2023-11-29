@@ -20,8 +20,8 @@ export class DateTimeServiceService {
     return this.http.get<NextRaceInfo>(url);
   }
 
-  getTotalPoints(): Observable<TotalPointsResponse> {
-    const url = "http://localhost:8080/totalPoints";
+  getTotalPoints(username: string): Observable<TotalPointsResponse> {
+    const url = `${this.apiUrl}/totalPoints?username=${username}`;
     return this.http.get<TotalPointsResponse>(url);
   }
 }

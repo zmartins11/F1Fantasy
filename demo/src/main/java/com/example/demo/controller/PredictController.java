@@ -75,8 +75,8 @@ public class PredictController {
     }
 
     @GetMapping("/totalPoints")
-    private List<TotalPointsDto> getTotalPoints() {
-        return predictService.getTotalPoints();
+    private List<TotalPointsDto> getTotalPoints(@RequestParam String username) {
+        return predictService.getTotalPoints(username);
     }
 
 

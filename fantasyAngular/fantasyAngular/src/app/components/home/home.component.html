@@ -1,4 +1,4 @@
-<div class="container" *ngIf="formattedDate">
+<div class="container">
   <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
     {{ errorMessage}}
   </div>
@@ -14,7 +14,7 @@
   <header *ngIf="!isLoggedIn" class="jumbotron">
     <p *ngIf="!isLoggedIn">Welcome to the app. Please log in to access all the content available</p>
   </header>
-  <div *ngIf="isLoggedIn">
+  <div *ngIf="isLoggedIn and formattedDate">
     <h3 class="text-center mt-3">Next Race: {{ nameRace }} | Round: {{ round }}</h3>
     <div class="row mt-4" *ngIf="!predictionLocked">
       <div class="col-md-2 offset-md-2 text-center">
@@ -48,108 +48,13 @@
   </div>
 
 
-
-
-
-  <!--<div *ngIf="userHasPrediction" class="container mt5">
-    <div class="row justify-content-center">
-
-      
-      <div class="col-md-5 bg-info p-3 mr-3 rounded">
-        
-        <div class="row">
-          
-          <div class="col-md-4 text-center">
-            <div class="prediction-box">
-              <p>{{ pSecond }}</p>
-            </div>
-          </div>
-
-         
-          <div class="col-md-4 text-center">
-            <div class="prediction-box">
-              <p>{{ pFirst }}</p>
-            </div>
-          </div>
-
-          
-          <div class="col-md-4 text-center">
-            <div class="prediction-box">
-              <p>{{ pThird }}</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="row mt-3">
-          <div class="col-md-12 text-center">
-            <ng-container *ngIf="!showDrivers; else listShown">
-              <div *ngIf="!predictionLocked">
-                <p class="mb-0">Change Prediction</p>
-                <span (click)="showDrivers = !showDrivers">
-                  <fa-icon [icon]="faArrowDown"></fa-icon>
-                </span>
-              </div>
-              <p class="mb-0" *ngIf="predictionLocked">Prediction Locked</p>
-            </ng-container>
-            <ng-template #listShown>
-              
-              <span (click)="showDrivers = !showDrivers">
-                <fa-icon [icon]="faArrowUp"></fa-icon>
-              </span>
-            </ng-template>
-          </div>
-        </div>
-
-        <div *ngIf="showDrivers" class="row mt-3">
-          <div class="col-md-6">
-            <ul>
-              <li *ngFor="let driver of drivers.slice(0, 10)" (click)="selectDriver(driver)">
-                {{ driver.name }} {{ driver.selection }}
-              </li>
-            </ul>
-          </div>
-          <div class="col-md-6">
-            <ul>
-              <li *ngFor="let driver of drivers.slice(10)" (click)="selectDriver(driver)">
-                {{ driver.name }} {{ driver.selection }}
-              </li>
-            </ul>
-          </div>
-        </div>
-        <button type="button" class="btn btn-outline-light btn-sm mr-3" *ngIf="areAllDriversSelected()"
-          (click)="resetPredictions()">Reset Predictions</button>
-        <button type="button" class="btn btn-outline-light btn-sm" *ngIf="areAllDriversSelected()"
-          (click)="savePredictions()">Save Predictions</button>
-      </div>
-      <div class="col-md-5 bg-info p-3 rounded">
-        
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">First</th>
-              <th scope="col">Last</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">1</th>
-              <td>Mark</td>
-              <td>Otto</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div> -->
-
-  <div *ngIf="userHasPrediction" class="container mt-5">
+  <div *ngIf="isLoggedIn" class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-6">
         <!-- Content for the second inner div -->
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title">Inner Div 2</h5>
+            <h5 class="card-title">Predictions</h5>
             <div class="row">
               <!-- Left box (Second Driver) -->
               <div class="col-md-4 text-center">
@@ -175,7 +80,8 @@
                 <div class="col-md-12 text-center">
                   <ng-container *ngIf="!showDrivers; else listShown">
                     <div *ngIf="!predictionLocked">
-                      <p class="mb-0">Change Prediction</p>
+                      <p *ngIf="userHasPrediction" class="mb-0">Change Prediction</p>
+                      <p *ngIf="!userHasPrediction" class="mb-0">Make your Prediction</p>
                       <span (click)="showDrivers = !showDrivers">
                         <fa-icon [icon]="faArrowDown"></fa-icon>
                       </span>
@@ -219,7 +125,7 @@
         <!-- Content for the first inner div -->
         <div class="card">
           <div class="card-body" *ngIf="totalPointsData && totalPointsData.length > 0">
-            <h5 class="card-title">Inner Div 1</h5>
+            <h5 class="card-title">Leaderboard</h5>
             <table class="table">
               <thead>
                 <tr>
