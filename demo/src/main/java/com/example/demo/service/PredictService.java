@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.NextRaceInfoDto;
+import com.example.demo.dto.PointsInfoDto;
 import com.example.demo.dto.PredictionDto;
 import com.example.demo.dto.TotalPointsDto;
 import com.example.demo.enums.Formula1DriverEnum;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 @Service
@@ -106,18 +108,20 @@ public class PredictService {
                 int percentage = (int)((double) firstEntry.getKey() / firstEntry.getValue() * 100);
                 if (percentage >= 75) {
                     points += 1;
-                    createDriversPoints(predictedDriver,raceId, points);
+                    createDriversPoints(predictedDriver,raceId, 1);
                 } else if (percentage >= 50) {
                     points += 3;
-                    createDriversPoints(predictedDriver,raceId, points);
+                    createDriversPoints(predictedDriver,raceId, 3);
                 } else if (percentage >= 25) {
                     points += 5;
-                    createDriversPoints(predictedDriver,raceId, points);
+                    createDriversPoints(predictedDriver,raceId, 5);
                 } else {
                     points += 10;
-                    createDriversPoints(predictedDriver,raceId, points);
+                    createDriversPoints(predictedDriver,raceId, 10);
                 }
             }
+        } else {
+            createDriversPoints(predictedDriver,raceId,0);
         }
         return points;
     }
@@ -220,5 +224,27 @@ public class PredictService {
         }
 
         return listUsers;
+    }
+
+    public List<PointsInfoDto> getPointsInfo(String username, String round) {
+        //ir buscar os driverpoints para aquela raceId
+        //ir buscar a predicion do user
+        ArrayList<PointsInfoDto> pointsInfo = new ArrayList<>();
+
+        RaceResult raceResult = raceResultRepository.findByRound(round);
+
+        Prediction prediction = predictRepository.findByUserIdAndRound(username, round);
+        List<String> drivers  = List.of(prediction.getFirst(), prediction.getSecond(), prediction.getThird());
+
+        List<DriversPoints> driversPoints = driversPointsRepository.findByDriverInAndRaceId(drivers, String.valueOf(raceResult.getId()));
+
+        for (DriversPoints driversPoints1 : driversPoints) {
+            PointsInfoDto tmPoints = new PointsInfoDto();
+            tmPoints.setDriver(driversPoints1.getDriver());
+            tmPoints.setPoints(driversPoints1.getPoints());
+            pointsInfo.add(tmPoints);
+        }
+
+        return pointsInfo;
     }
 }

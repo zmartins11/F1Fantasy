@@ -13,6 +13,7 @@ import { Prediction } from 'src/app/model/Prediction';
 import { F1DriversService } from 'src/app/_services/f1-drivers.service';
 import { faArrowDown,faArrowUp} from '@fortawesome/free-solid-svg-icons'
 import { TotalPointsResponse } from 'src/app/model/TotalPointsResponse';
+import { PointsInfo } from 'src/app/model/PointsInfo';
 
 @Component({
   selector: 'app-home',
@@ -45,6 +46,7 @@ export class HomeComponent implements OnInit {
   third: number = 0;
   showAlert: boolean = false;
   totalPointsData: TotalPointsResponse [] | null = null;
+  pointsInfo: PointsInfo [] =  [];
 
 
   //results
@@ -98,6 +100,12 @@ export class HomeComponent implements OnInit {
         this.errorMessage = error.error.message;
         console.log(error.error.message);
       });
+
+      //get info points
+      this.dateTimeService.getPointsInfo(this.user).subscribe(response => {
+        this.pointsInfo = response;
+        console.log(this.pointsInfo);
+      })
 
       //populate table
       this.dateTimeService.getTotalPoints(this.user).subscribe(response => {

@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.NextRaceInfoDto;
+import com.example.demo.dto.PointsInfoDto;
 import com.example.demo.dto.PredictionDto;
 import com.example.demo.dto.TotalPointsDto;
 import com.example.demo.exception.SavePredictionException;
@@ -67,6 +68,12 @@ public class PredictController {
         nextRaceInfoDto = predictService.getUserPrediction(nextRaceInfoDto, username);
 
         return nextRaceInfoDto;
+    }
+
+    @GetMapping("/pointsInfo")
+    private List<PointsInfoDto> getPointsInfo(@RequestParam String username) {
+        Optional<RaceResult> nextRaceInfo = predictService.getNextRaceInfo();
+        return predictService.getPointsInfo(username, nextRaceInfo.get().getRound());
     }
 
     @GetMapping("/totalPointsByUser")

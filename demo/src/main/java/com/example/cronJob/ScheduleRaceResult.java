@@ -58,13 +58,16 @@ public class ScheduleRaceResult {
                         List<Prediction> listPredictions = predictRepository.findByRaceId(String.valueOf(raceResult.getId()));
                         if (!listPredictions.isEmpty()) {
                             for (Prediction prediction : listPredictions) {
-                                int points = predictService.calculate(prediction, raceResult);
-                                PredictionResult predictionResult = new PredictionResult();
-                                predictionResult.setPredictionId(String.valueOf(prediction.getId()));
-                                predictionResult.setPoints(points);
-                                predictionResult.setRaceId(String.valueOf(raceResult.getId()));
-                                predictionResult.setUserId(prediction.getUserId());
-                                predictionResultRepository.save(predictionResult);
+                                if (predictionResultRepository.findByPredictionId(String.valueOf(prediction.getId())).isEmpty()) {
+                                    int points = predictService.calculate(prediction, raceResult);
+                                    PredictionResult predictionResult = new PredictionResult();
+                                    predictionResult.setPredictionId(String.valueOf(prediction.getId()));
+                                    predictionResult.setPoints(points);
+                                    predictionResult.setRaceId(String.valueOf(raceResult.getId()));
+                                    predictionResult.setUserId(prediction.getUserId());
+                                    predictionResultRepository.save(predictionResult);
+                                };
+
                             }
                         }
                     }

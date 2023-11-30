@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { DateTimeResponse } from '../model/DateTimeResponse';
 import { NextRaceInfo } from '../model/NextRaceInfo';
 import { TotalPointsResponse } from '../model/TotalPointsResponse';
+import { PointsInfo } from '../model/PointsInfo';
 
 @Injectable({
   providedIn: 'root'
@@ -24,4 +25,11 @@ export class DateTimeServiceService {
     const url = `${this.apiUrl}/totalPoints?username=${username}`;
     return this.http.get<TotalPointsResponse>(url);
   }
+
+  getPointsInfo(username: string): Observable<PointsInfo []> {
+    const url = `${this.apiUrl}/pointsInfo?username=${username}`;
+    return this.http.get<PointsInfo[]>(url);
+  }
+
+  
 }

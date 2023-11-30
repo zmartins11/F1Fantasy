@@ -14,4 +14,6 @@ public interface PredictionResultRepository extends JpaRepository<PredictionResu
     @Query("SELECT p.userId, SUM(p.points) FROM PredictionResult p GROUP BY p.userId ORDER BY SUM(p.points) DESC")
     List<Object[]> findTotalPointsByUser();
 
+    public List<PredictionResult> findByPredictionId(String id);
+
 }
