@@ -159,7 +159,7 @@ public class PredictService {
         //TODO : save points
     }
 
-    public Optional<RaceResult> getNextRaceInfo() {
+    public RaceResult getNextRaceInfo() {
         return raceResultRepository.findTopByRaceFinishedFalseOrderByRoundAsc();
     }
 

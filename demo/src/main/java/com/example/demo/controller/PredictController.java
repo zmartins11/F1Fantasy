@@ -56,7 +56,7 @@ public class PredictController {
 
     @GetMapping("/raceSchedule")
     private NextRaceInfoDto getRaceInfo(@RequestParam String username) throws JsonProcessingException, InterruptedException {
-        Optional<RaceResult> nextRaceInfo = predictService.getNextRaceInfo();
+        RaceResult nextRaceInfo = predictService.getNextRaceInfo();
         NextRaceInfoDto nextRaceInfoDto = ergastService.getScheduleRace(nextRaceInfo);
 
         //houve atualizacao do predictionLocked
@@ -72,8 +72,8 @@ public class PredictController {
 
     @GetMapping("/pointsInfo")
     private List<PointsInfoDto> getPointsInfo(@RequestParam String username) {
-        Optional<RaceResult> nextRaceInfo = predictService.getNextRaceInfo();
-        return predictService.getPointsInfo(username, nextRaceInfo.get().getRound());
+        RaceResult nextRaceInfo = predictService.getNextRaceInfo();
+        return predictService.getPointsInfo(username, nextRaceInfo.getRound());
     }
 
     @GetMapping("/totalPointsByUser")

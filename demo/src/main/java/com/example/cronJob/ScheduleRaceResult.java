@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class ScheduleRaceResult {
@@ -38,44 +39,38 @@ public class ScheduleRaceResult {
     private PredictionResultRepository predictionResultRepository;
 
 
-    //correr a cada domingo
     @Scheduled(fixedRate = 30 * 60 * 1000)
     public void populateRaceResult() throws JsonProcessingException {
-        List<RaceResult> racesNotFinished = raceResultRepository.findByRaceFinishedFalse();
-        if (racesNotFinished != null) {
-            for (RaceResult raceResult : racesNotFinished) {
-                try {
-                    RaceResult raceResultTemp = ergastService.getRaceResult(raceResult.getSeason(), raceResult.getRound());
-                    if (raceResultTemp != null) {
-                        //TODO : comentar para testes
-//                        raceResult.setRaceFinished(true);
-                        raceResult.setFirst(raceResultTemp.getFirst());
-                        raceResult.setSecond(raceResultTemp.getSecond());
-                        raceResult.setThird(raceResultTemp.getThird());
-                        raceResultRepository.save(raceResult);
+        boolean sunday = true;
+        try {
+            RaceResult currentRace = raceResultRepository.findTopByRaceFinishedFalseOrderByRoundAsc();
+            RaceResult raceResultTemp = ergastService.getRaceResult(currentRace.getSeason(), currentRace.getRound());
+            if (raceResultTemp != null) {
+                //TODO : comentar para testes
+                currentRace.setRaceFinished(true);
+                currentRace.setFirst(raceResultTemp.getFirst());
+                currentRace.setSecond(raceResultTemp.getSecond());
+                currentRace.setThird(raceResultTemp.getThird());
+                raceResultRepository.save(currentRace);
 
-                        // check if there are predictions for the raceResult added :
-                        List<Prediction> listPredictions = predictRepository.findByRaceId(String.valueOf(raceResult.getId()));
-                        if (!listPredictions.isEmpty()) {
-                            for (Prediction prediction : listPredictions) {
-                                if (predictionResultRepository.findByPredictionId(String.valueOf(prediction.getId())).isEmpty()) {
-                                    int points = predictService.calculate(prediction, raceResult);
-                                    PredictionResult predictionResult = new PredictionResult();
-                                    predictionResult.setPredictionId(String.valueOf(prediction.getId()));
-                                    predictionResult.setPoints(points);
-                                    predictionResult.setRaceId(String.valueOf(raceResult.getId()));
-                                    predictionResult.setUserId(prediction.getUserId());
-                                    predictionResultRepository.save(predictionResult);
-                                };
-
-                            }
+                // check if there are predictions for the raceResult added :
+                List<Prediction> listPredictions = predictRepository.findByRaceId(String.valueOf(currentRace.getId()));
+                if (!listPredictions.isEmpty()) {
+                    for (Prediction prediction : listPredictions) {
+                        if (predictionResultRepository.findByPredictionId(String.valueOf(prediction.getId())).isEmpty()) {
+                            int points = predictService.calculate(prediction, currentRace);
+                            PredictionResult predictionResult = new PredictionResult();
+                            predictionResult.setPredictionId(String.valueOf(prediction.getId()));
+                            predictionResult.setPoints(points);
+                            predictionResult.setRaceId(String.valueOf(currentRace.getId()));
+                            predictionResult.setUserId(prediction.getUserId());
+                            predictionResultRepository.save(predictionResult);
                         }
                     }
-                } catch (Exception e) {
-                    System.out.println("Round - " + raceResult.getRound() + " not finished!");
                 }
-
             }
+        } catch (Exception e) {
+            System.out.println("Round -  not finished!");
         }
     }
 }

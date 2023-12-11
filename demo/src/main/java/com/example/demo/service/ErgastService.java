@@ -191,7 +191,7 @@ public class ErgastService {
 		return resultSeason;
 	}
 
-    public NextRaceInfoDto getScheduleRace(Optional<RaceResult> nextRace) throws JsonProcessingException {
+    public NextRaceInfoDto getScheduleRace(RaceResult nextRace) throws JsonProcessingException {
 
 		NextRaceInfoDto nextRaceInfo = new NextRaceInfoDto();
 		LocalDateTime currentDateTime = LocalDateTime.now();
@@ -200,7 +200,7 @@ public class ErgastService {
 		ResponseEntity<String> response = null;
 
 		//get next race info
-		String round = nextRace.get().getRound();
+		String round = nextRace.getRound();
 		String url = "http://ergast.com/api/f1/2023/" + round + ".json";
 		try {
 			response = restTemplate.getForEntity(url, String.class);
