@@ -1,6 +1,5 @@
 package com.example.cronJob;
 
-import com.example.demo.model.RaceResponse;
 import com.example.demo.model.fantasy.Prediction;
 import com.example.demo.model.fantasy.PredictionResult;
 import com.example.demo.model.fantasy.RaceResult;
@@ -15,7 +14,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class ScheduleRaceResult {
@@ -42,9 +40,10 @@ public class ScheduleRaceResult {
     @Scheduled(fixedRate = 30 * 60 * 1000)
     public void populateRaceResult() throws JsonProcessingException {
         boolean sunday = true;
+        //TODO : if sunday enter try catch
         try {
             RaceResult currentRace = raceResultRepository.findTopByRaceFinishedFalseOrderByRoundAsc();
-            RaceResult raceResultTemp = ergastService.getRaceResult(currentRace.getSeason(), currentRace.getRound());
+            RaceResult raceResultTemp = ergastService.getRaceResult(currentRace.getSeason(), String.valueOf(currentRace.getRound()));
             if (raceResultTemp != null) {
                 //TODO : comentar para testes
                 currentRace.setRaceFinished(true);
@@ -64,6 +63,7 @@ public class ScheduleRaceResult {
                             predictionResult.setPoints(points);
                             predictionResult.setRaceId(String.valueOf(currentRace.getId()));
                             predictionResult.setUserId(prediction.getUserId());
+                            predictionResult.setShowPointsUser(Boolean.TRUE);
                             predictionResultRepository.save(predictionResult);
                         }
                     }

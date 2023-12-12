@@ -72,27 +72,26 @@ public class PredictController {
 
     @GetMapping("/pointsInfo")
     private List<PointsInfoDto> getPointsInfo(@RequestParam String username) {
-        RaceResult nextRaceInfo = predictService.getNextRaceInfo();
-        return predictService.getPointsInfo(username, nextRaceInfo.getRound());
+        RaceResult racedPassed = predictService.getRacePassed();
+        if (racedPassed != null) {
+            return predictService.getPointsInfo(username, String.valueOf(racedPassed.getRound()));
+        } else {
+            return null;
+        }
+    }
+
+    //check if there are a raceCompleted before the currentOne
+    //check if the user has a prediction for that race
+    //on predictionResult set column boolean : showPointsUser : false
+
+    @GetMapping("/totalPoints")
+    private List<TotalPointsDto> getTotalPoints(@RequestParam String username) {
+        return predictService.getTotalPoints();
     }
 
     @GetMapping("/totalPointsByUser")
     private TotalPointsDto getTotalPointsByUser(@RequestParam String username) {
         return predictService.getTotalPointsByUser(username);
     }
-
-    @GetMapping("/totalPoints")
-    private List<TotalPointsDto> getTotalPoints(@RequestParam String username) {
-        return predictService.getTotalPoints(username);
-    }
-
-
-
-    @GetMapping("/test")
-    private String test() {
-        return "teste";
-    }
-
-
 
 }

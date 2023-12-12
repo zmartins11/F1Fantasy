@@ -11,7 +11,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 @Service
@@ -40,7 +39,7 @@ public class PredictService {
 
     public void saveRace(RaceResult raceResult) {
 
-        RaceResult existingRaceResult = raceResultRepository.findBySeasonAndRound(raceResult.getSeason(), raceResult.getRound());
+        RaceResult existingRaceResult = raceResultRepository.findBySeasonAndRound(raceResult.getSeason(), String.valueOf(raceResult.getRound()));
         if(existingRaceResult != null) {
             return;
         }
@@ -163,6 +162,10 @@ public class PredictService {
         return raceResultRepository.findTopByRaceFinishedFalseOrderByRoundAsc();
     }
 
+    public RaceResult getRacePassed() {
+        return raceResultRepository.findTopByRaceFinishedTrueOrderByRoundAsc();
+    }
+
     public void updatePredictionLocked(NextRaceInfoDto nextRaceInfo) {
         RaceResult raceResult = raceResultRepository.findByRound(nextRaceInfo.getRound());
         raceResult.setPredictionLocked(nextRaceInfo.getPredictionLocked());
@@ -196,7 +199,7 @@ public class PredictService {
         return totalPointsDto;
     }
 
-    public List<TotalPointsDto> getTotalPoints(String usernameFront) {
+    public List<TotalPointsDto> getTotalPoints() {
         List<TotalPointsDto> listUsers = new ArrayList<>();
         List<Object[]> result = predictionResultRepository.findTotalPointsByUser();
         List<User> users = userRepository.findAll();
@@ -222,7 +225,6 @@ public class PredictService {
             TotalPointsDto tmp = listUsers.get(i);
             tmp.setPosition(String.valueOf(i + 1));
         }
-
         return listUsers;
     }
 
@@ -234,15 +236,23 @@ public class PredictService {
         RaceResult raceResult = raceResultRepository.findByRound(round);
 
         Prediction prediction = predictRepository.findByUserIdAndRound(username, round);
-        List<String> drivers  = List.of(prediction.getFirst(), prediction.getSecond(), prediction.getThird());
+        List<PredictionResult> predictionResult = predictionResultRepository.findByPredictionId(String.valueOf(prediction.getId()));
+        PredictionResult predicTemp = predictionResult.get(0);
+        if (prediction != null) {
+            List<String> drivers  = List.of(prediction.getFirst(), prediction.getSecond(), prediction.getThird());
 
-        List<DriversPoints> driversPoints = driversPointsRepository.findByDriverInAndRaceId(drivers, String.valueOf(raceResult.getId()));
+            List<DriversPoints> driversPoints = driversPointsRepository.findByDriverInAndRaceId(drivers, String.valueOf(raceResult.getId()));
 
-        for (DriversPoints driversPoints1 : driversPoints) {
-            PointsInfoDto tmPoints = new PointsInfoDto();
-            tmPoints.setDriver(driversPoints1.getDriver());
-            tmPoints.setPoints(driversPoints1.getPoints());
-            pointsInfo.add(tmPoints);
+            for (DriversPoints driversPoints1 : driversPoints) {
+                PointsInfoDto tmPoints = new PointsInfoDto();
+                tmPoints.setDriver(driversPoints1.getDriver());
+                tmPoints.setPoints(driversPoints1.getPoints());
+                pointsInfo.add(tmPoints);
+            }
+
+
+            predicTemp.setShowPointsUser(false);
+            predictionResultRepository.save(predicTemp);
         }
 
         return pointsInfo;

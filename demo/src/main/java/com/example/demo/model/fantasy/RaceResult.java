@@ -17,7 +17,7 @@ public class RaceResult {
     @Id
     @GeneratedValue()
     private Integer id;
-    private String round;
+    private Integer round;
     private String circuit;
     private String season;
     private String first;

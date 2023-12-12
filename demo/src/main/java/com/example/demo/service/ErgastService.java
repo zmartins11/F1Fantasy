@@ -200,7 +200,7 @@ public class ErgastService {
 		ResponseEntity<String> response = null;
 
 		//get next race info
-		String round = nextRace.getRound();
+		String round = String.valueOf(nextRace.getRound());
 		String url = "http://ergast.com/api/f1/2023/" + round + ".json";
 		try {
 			response = restTemplate.getForEntity(url, String.class);
