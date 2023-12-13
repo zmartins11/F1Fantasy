@@ -1,19 +1,49 @@
-<div class="container">
+<div class="overlay" [ngClass]="{'show': showPopUpDriversPoints}"></div>
+
+<!-- Modal -->
+<div class="modal" #myModal [ngClass]="{'show': showPopUpDriversPoints}" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Points earned in the last race</h5>
+        <button type="button" class="close" aria-label="Close" (click)="closePopup()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Loop through the pointsInfo array and display each item -->
+        <div *ngFor="let pointInfo of pointsInfo">
+          {{ pointInfo.driverName }}: {{ pointInfo.points }} point{{ pointInfo.points !== 1 ? 's' : '' }}
+        </div>
+        <div>Total Points: {{ totalPoints }} point{{ totalPoints !== 1 ? 's' : '' }}</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closePopup()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container" [ngClass]="{'fade-out': showPopUpDriversPoints}">
   <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
     {{ errorMessage}}
   </div>
+
   <div *ngIf="showAlert and successMessage" class="alert alert-success" role="alert">
     {{ successMessage }}
     <button type="button" class="close" (click)="closeAlert()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
+
   <div *ngIf="predictionLocked" class="alert alert-warning" role="alert">
     You no longer can make a prediction. Quali has already started!
   </div>
+
   <header *ngIf="!isLoggedIn" class="jumbotron">
     <p *ngIf="!isLoggedIn">Welcome to the app. Please log in to access all the content available</p>
   </header>
+
   <div *ngIf="isLoggedIn and formattedDate">
     <h3 class="text-center mt-3">Next Race: {{ nameRace }} | Round: {{ round }}</h3>
     <div class="row mt-4" *ngIf="!predictionLocked">

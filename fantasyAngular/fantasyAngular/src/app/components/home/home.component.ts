@@ -1,5 +1,5 @@
 import { DatePipe, Time } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from 'src/app/_services/auth.service';
 import { DateTimeServiceService } from 'src/app/_services/date-time-service.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
@@ -14,6 +14,9 @@ import { F1DriversService } from 'src/app/_services/f1-drivers.service';
 import { faArrowDown,faArrowUp} from '@fortawesome/free-solid-svg-icons'
 import { TotalPointsResponse } from 'src/app/model/TotalPointsResponse';
 import { PointsInfo } from 'src/app/model/PointsInfo';
+import * as $ from 'jquery';
+import { DriverMappingService } from 'src/app/_services/driver-mapping-service.service';
+
 
 @Component({
   selector: 'app-home',
@@ -24,7 +27,12 @@ export class HomeComponent implements OnInit {
 
   constructor(private userService: UserService, private authService: AuthService,
     private dateTimeService: DateTimeServiceService, private spinnerService: SipnnerService,
-    private predictService: PredictService) { }
+    private predictService: PredictService,
+    private driverMappingService: DriverMappingService) { }
+
+    // Reference to the modal element
+  @ViewChild('myModal') myModal!: ElementRef;
+  
 
   content: String | undefined;
   isLoggedIn: Boolean = false;
@@ -47,6 +55,8 @@ export class HomeComponent implements OnInit {
   showAlert: boolean = false;
   totalPointsData: TotalPointsResponse [] | null = null;
   pointsInfo: PointsInfo [] =  [];
+  showPopUpDriversPoints = false;
+  totalPoints: number = 0;
 
 
   //results
@@ -104,7 +114,17 @@ export class HomeComponent implements OnInit {
       //get info points
       this.dateTimeService.getPointsInfo(this.user).subscribe(response => {
         this.pointsInfo = response;
-        console.log(this.pointsInfo);
+        if (this.pointsInfo.length !== 0) {
+          this.showPopUpDriversPoints = true;
+          for (let pointInfo of this.pointsInfo) {
+            pointInfo.driverName = this.driverMappingService.getDriverName(parseInt(pointInfo.driver));
+          }
+          this.calculateTotalPoints();
+          this.openModal();
+        } else {
+          this.showPopUpDriversPoints = false;
+          console.log("dont showpop")
+        }
       })
 
       //populate table
@@ -117,6 +137,15 @@ export class HomeComponent implements OnInit {
       });
     }
   } 
+  calculateTotalPoints() {
+    this.totalPoints = this.pointsInfo.reduce((total, pointInfo) => total + pointInfo.points, 0);
+  }
+
+  openModal() {
+    const modal: any = this.myModal.nativeElement;
+    modal.style.display = 'block';
+  }
+
   updateCountdown() {
     const currentDate = moment();
     const targetDate = moment(this.raceDate, 'YYYYMMDDHHmm');
@@ -217,5 +246,12 @@ export class HomeComponent implements OnInit {
     this.showAlert = false;
   }
 
+  closePopup() {
+    this.showPopUpDriversPoints = false;
+    const modal: any = this.myModal.nativeElement;
+    modal.style.display = 'none';
+  }
+
 }
+
 
