@@ -127,7 +127,7 @@ public class PredictService {
 
     private void createDriversPoints(String driver, Integer raceResultId, int points) {
         DriversPoints driversPoints = new DriversPoints();
-         if (driversPointsRepository.findByDriver(driver) == null) {
+         if (driversPointsRepository.findByRaceIdAndDriver(String.valueOf(raceResultId), driver).isEmpty()) {
              driversPoints.setDriver(driver);
              driversPoints.setRaceId(raceResultId);
              driversPoints.setPoints(points);
@@ -163,14 +163,14 @@ public class PredictService {
     }
 
     public RaceResult getRacePassed() {
-        return raceResultRepository.findTopByRaceFinishedTrueOrderByRoundAsc();
+        return raceResultRepository.findTopByRaceFinishedTrueOrderByRoundDesc();
     }
 
     public void updatePredictionLocked(NextRaceInfoDto nextRaceInfo) {
         RaceResult raceResult = raceResultRepository.findByRound(nextRaceInfo.getRound());
         raceResult.setPredictionLocked(nextRaceInfo.getPredictionLocked());
         raceResultRepository.save(raceResult);
-        
+
     }
 
     public NextRaceInfoDto getUserPrediction(NextRaceInfoDto nextRaceInfoDto, String username) {

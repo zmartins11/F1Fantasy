@@ -15,4 +15,6 @@ public interface DriversPointsRepository extends JpaRepository<DriversPoints, In
     @Query("SELECT dp FROM DriversPoints dp WHERE dp.driver IN :drivers AND dp.raceId = :raceId")
     List<DriversPoints> findByDriverInAndRaceId(@Param("drivers") List<String> drivers, @Param("raceId") String raceId);
 
+    public List<DriversPoints> findByRaceIdAndDriver(String raceId, String driverId);
+
 }

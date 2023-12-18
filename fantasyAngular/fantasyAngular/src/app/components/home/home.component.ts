@@ -57,6 +57,7 @@ export class HomeComponent implements OnInit {
   pointsInfo: PointsInfo [] =  [];
   showPopUpDriversPoints = false;
   totalPoints: number = 0;
+  highlightedDriver: Formula1Driver | null = null;
 
 
   //results
@@ -250,6 +251,16 @@ export class HomeComponent implements OnInit {
     this.showPopUpDriversPoints = false;
     const modal: any = this.myModal.nativeElement;
     modal.style.display = 'none';
+  }
+
+  highlightDriver(driver: Formula1Driver) {
+    this.highlightedDriver = driver;
+  }
+  
+  unhighlightDriver(driver: Formula1Driver) {
+    if (this.highlightedDriver === driver) {
+      this.highlightedDriver = null;
+    }
   }
 
 }

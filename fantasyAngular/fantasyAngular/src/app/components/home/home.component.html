@@ -129,14 +129,14 @@
               <div *ngIf="showDrivers" class="row mt-3">
                 <div class="col-md-6">
                   <ul>
-                    <li *ngFor="let driver of drivers.slice(0, 10)" (click)="selectDriver(driver)">
+                    <li *ngFor="let driver of drivers.slice(0, 10)" class="list-group-item" (mouseover)="highlightDriver(driver)" (mouseout)="unhighlightDriver(driver)" (click)="selectDriver(driver)">
                       {{ driver.name }} {{ driver.selection }}
                     </li>
                   </ul>
                 </div>
                 <div class="col-md-6">
                   <ul>
-                    <li *ngFor="let driver of drivers.slice(10)" (click)="selectDriver(driver)">
+                    <li *ngFor="let driver of drivers.slice(10)" class="list-group-item" (mouseover)="highlightDriver(driver)" (mouseout)="unhighlightDriver(driver)" (click)="selectDriver(driver)">
                       {{ driver.name }} {{ driver.selection }}
                     </li>
                   </ul>

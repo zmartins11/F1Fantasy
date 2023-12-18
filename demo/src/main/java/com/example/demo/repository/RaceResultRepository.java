@@ -15,4 +15,6 @@ public interface RaceResultRepository extends JpaRepository<RaceResult, Integer>
     public RaceResult findByRound(String round);
 
     RaceResult findTopByRaceFinishedTrueOrderByRoundAsc();
+
+    RaceResult findTopByRaceFinishedTrueOrderByRoundDesc();
 }

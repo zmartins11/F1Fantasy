@@ -51,4 +51,13 @@
 .overlay.show {
   display: block;
 }
-  
+
+
+.list-group-item:hover {
+  background-color: #f8f9fa; /* Change to your desired highlight color */
+}
+
+.list-group-item.selected {
+  background-color: #007bff; /* Change to your desired selected color */
+  color: #fff; /* Change to your desired text color for selected items */
+}
