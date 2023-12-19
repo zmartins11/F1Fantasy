@@ -8,6 +8,7 @@ import java.util.*;
 
 import com.example.demo.dto.DateTimeResponseDto;
 import com.example.demo.dto.NextRaceInfoDto;
+import com.example.demo.dto.StandingsDto;
 import com.example.demo.model.*;
 import com.example.demo.model.fantasy.RaceResult;
 import com.example.utils.RaceResultMapper;
@@ -42,77 +43,77 @@ public class ErgastService {
 		return racesResponse.getMrData().getRaceTable().getRace();
 
 	}
-	
+
 	public RaceResult getRaceResult(String season, String round) throws JsonMappingException, JsonProcessingException {
 		List<Results> resultsRace = null;
 		String urlRaceResult = "http://ergast.com/api/f1/" + season + "/" + round + "/results.json?limit=3";
-		
+
 		ResponseEntity<String> response = restTemplate.getForEntity(urlRaceResult, String.class);
-		
+
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		RaceResultsResponse resultsResponse = objectMapper.readValue(response.getBody(),RaceResultsResponse.class);
-	
+		RaceResultsResponse resultsResponse = objectMapper.readValue(response.getBody(), RaceResultsResponse.class);
+
 		resultsRace = resultsResponse.getMrData().getRaceTable().getRaces().get(0).getResults();
-		RaceResult raceResult = resultMapper.map(resultsRace,round, season);
+		RaceResult raceResult = resultMapper.map(resultsRace, round, season);
 
 		return raceResult;
-		
+
 	}
-	
+
 	public List<Driver> rawData(String season, String round) throws JsonProcessingException {
-		
+
 		List<Driver> driversInSeason = null;
-		
+
 		String urlDriversByYear = "http://ergast.com/api/f1/" + season + "/drivers.json";
-		
+
 		ResponseEntity<String> response = restTemplate.getForEntity(urlDriversByYear, String.class);
-		
-		
+
+
 		ObjectMapper mapper = new ObjectMapper();
 		DriverResponse driverResponse = mapper.readValue(response.getBody(), DriverResponse.class);
-		
+
 		driversInSeason = driverResponse.getMrData().getDriverTable().getDrivers();
-		
+
 		getFlagCode(driversInSeason);
-		
+
 		//getting the constructor 
 //		http://ergast.com/api/f1/2010/drivers/alonso/constructors
 		for (Driver driver : driversInSeason) {
-			
+
 			String constructorReturned = null;
 			String urlConstructor = "http://ergast.com/api/f1/" + season + "/drivers/" + driver.getDriverId() + "/constructors.json";
-			
+
 			ResponseEntity<String> responseConstructor = restTemplate.getForEntity(urlConstructor, String.class);
-			
+
 			ObjectMapper mapperC = new ObjectMapper();
 			ConstructorResponse constructorResponse = mapperC.readValue(responseConstructor.getBody(), ConstructorResponse.class);
 
 			constructorReturned = constructorResponse.getMrData().getConstructorTable().getConstructors().get(0).getName();
-			
-			if(constructorReturned != null) {
+
+			if (constructorReturned != null) {
 				driver.setConstructorId(constructorReturned);
 			}
 			///GET WINS 
 //			http://ergast.com/api/f1/2010/drivers/alonso/results/1
-			String winsUrl  = "http://ergast.com/api/f1/" + season + "/drivers/" + driver.getDriverId() + "/results/1.json";
-			
-			ResponseEntity<String> responseWins = restTemplate.getForEntity(winsUrl,String.class);
+			String winsUrl = "http://ergast.com/api/f1/" + season + "/drivers/" + driver.getDriverId() + "/results/1.json";
+
+			ResponseEntity<String> responseWins = restTemplate.getForEntity(winsUrl, String.class);
 			ObjectMapper mapperW = new ObjectMapper();
 			mapperW.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-			
-			WinsResponse data = mapperW.readValue(responseWins.getBody(),WinsResponse.class);
+
+			WinsResponse data = mapperW.readValue(responseWins.getBody(), WinsResponse.class);
 			String winsSeason = String.valueOf(data.getMrData().getTotal());
-			
-			if (winsSeason != null ) {
+
+			if (winsSeason != null) {
 				driver.setWinsSeason(winsSeason);
 			}
 		}
 		return driversInSeason;
 	}
-	
+
 	private void getFlagCode(List<Driver> driversInSeason) {
-		
+
 		Map<String, String> countryCodeMap = new HashMap<>();
 		countryCodeMap.put("german", "de");
 		countryCodeMap.put("british", "gb");
@@ -130,59 +131,58 @@ public class ErgastService {
 		countryCodeMap.put("australian", "au");
 		countryCodeMap.put("japanese", "jp");
 		countryCodeMap.put("chinese", "cn");
-		
-		
-		
-		for(Driver driver : driversInSeason) {
+
+
+		for (Driver driver : driversInSeason) {
 			String flagCode = countryCodeMap.get(driver.getNationality().toLowerCase());
-			if(flagCode != null) {
+			if (flagCode != null) {
 				driver.setFlagCode(flagCode);
 			}
 		}
-		
+
 	}
 
 	public ArrayList<String> getNameRaces(String season) throws JsonMappingException, JsonProcessingException {
 		ArrayList<String> names = new ArrayList<>();
-		
+
 		String url = "http://ergast.com/api/f1/" + season + "/races.json";
 		ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 		ObjectMapper mapper = new ObjectMapper();
 		RaceResponse racesResponse = mapper.readValue(response.getBody(), RaceResponse.class);
 		List<Race> races = racesResponse.getMrData().getRaceTable().getRace();
-		for(Race r :races) {
+		for (Race r : races) {
 			names.add(r.getRaceName());
 		}
-		
+
 		return names;
 	}
 
-	public HashMap<Integer,Integer> testApiGetResult(String position, Integer racesCurrentSeason, String driver) throws JsonProcessingException {
-		HashMap<Integer,Integer> resultSeason = new HashMap<>();
+	public HashMap<Integer, Integer> testApiGetResult(String position, Integer racesCurrentSeason, String driver) throws JsonProcessingException {
+		HashMap<Integer, Integer> resultSeason = new HashMap<>();
 
 		int races2022Season = 22;
 		racesCurrentSeason = 19;
 
 		int numberResult = 0;
-		String winsUrl  = "http://ergast.com/api/f1/" + SEASON_2023 + "/drivers/" + driver.toLowerCase() + "/results/"+ position + ".json";
+		String winsUrl = "http://ergast.com/api/f1/" + SEASON_2023 + "/drivers/" + driver.toLowerCase() + "/results/" + position + ".json";
 
-		ResponseEntity<String> responseWins = restTemplate.getForEntity(winsUrl,String.class);
+		ResponseEntity<String> responseWins = restTemplate.getForEntity(winsUrl, String.class);
 		ObjectMapper mapperW = new ObjectMapper();
 		mapperW.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-		WinsResponse data = mapperW.readValue(responseWins.getBody(),WinsResponse.class);
+		WinsResponse data = mapperW.readValue(responseWins.getBody(), WinsResponse.class);
 		numberResult = data.getMrData().getTotal();
 
 		resultSeason.put(numberResult, racesCurrentSeason);
 
 		if (racesCurrentSeason < 20) {
-			String winsUrlLastSeason  = "http://ergast.com/api/f1/" + SEASON_2022 + "/drivers/" + driver.toLowerCase() + "/results/" + position + ".json";
+			String winsUrlLastSeason = "http://ergast.com/api/f1/" + SEASON_2022 + "/drivers/" + driver.toLowerCase() + "/results/" + position + ".json";
 
-			ResponseEntity<String> responseWinsLastSeason = restTemplate.getForEntity(winsUrlLastSeason,String.class);
+			ResponseEntity<String> responseWinsLastSeason = restTemplate.getForEntity(winsUrlLastSeason, String.class);
 			ObjectMapper mapperWLastSeason = new ObjectMapper();
 			mapperWLastSeason.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-			WinsResponse dataLastSeason = mapperWLastSeason.readValue(responseWinsLastSeason.getBody(),WinsResponse.class);
+			WinsResponse dataLastSeason = mapperWLastSeason.readValue(responseWinsLastSeason.getBody(), WinsResponse.class);
 			int resultLastSeason = dataLastSeason.getMrData().getTotal();
 			resultSeason.remove(numberResult);
 			numberResult += resultLastSeason;
@@ -191,7 +191,7 @@ public class ErgastService {
 		return resultSeason;
 	}
 
-    public NextRaceInfoDto getScheduleRace(RaceResult nextRace) throws JsonProcessingException {
+	public NextRaceInfoDto getScheduleRace(RaceResult nextRace) throws JsonProcessingException {
 
 		NextRaceInfoDto nextRaceInfo = new NextRaceInfoDto();
 		LocalDateTime currentDateTime = LocalDateTime.now();
@@ -204,7 +204,7 @@ public class ErgastService {
 		String url = "http://ergast.com/api/f1/2023/" + round + ".json";
 		try {
 			response = restTemplate.getForEntity(url, String.class);
-		} catch (HttpServerErrorException e){
+		} catch (HttpServerErrorException e) {
 			e.printStackTrace();
 			throw new HttpServerErrorException(HttpStatusCode.valueOf(500));
 		}
@@ -221,8 +221,8 @@ public class ErgastService {
 		LocalTime gmtQualiTime = gmtQualiDateTime.toLocalTime();
 
 
- 		LocalDateTime localDateTimeQuali = LocalDateTime.of(qualiDate, gmtQualiTime);
-		 LocalDateTime date24Before = localDateTimeQuali.minusHours(24);
+		LocalDateTime localDateTimeQuali = LocalDateTime.of(qualiDate, gmtQualiTime);
+		LocalDateTime date24Before = localDateTimeQuali.minusHours(24);
 
 		//check if have to lock the predicion
 
@@ -236,5 +236,48 @@ public class ErgastService {
 		nextRaceInfo.setNameRace(racesResponse.getMrData().getRaceTable().getRaces().get(0).getRaceName());
 		nextRaceInfo.setRound(racesResponse.getMrData().getRaceTable().getRaces().get(0).getRound());
 		return nextRaceInfo;
-    }
+	}
+
+	public StandingsDto getStandings() throws JsonProcessingException {
+		StandingsDto standingsDto = new StandingsDto();
+		RestTemplate restTemplate = new RestTemplate();
+		Map<Integer, Map<String, String>> driversNew = new HashMap<>();
+		Map<Integer, Map<String, String>> constructorNew = new HashMap<>();
+
+
+		String urlDrivers = "http://ergast.com/api/f1/current/driverstandings.json";
+		String urlConstructor = "http://ergast.com/api/f1/current/constructorStandings.json";
+
+		ResponseEntity<String> responseDriver = restTemplate.getForEntity(urlDrivers, String.class);
+		ResponseEntity<String> responseConstructor = restTemplate.getForEntity(urlConstructor, String.class);
+
+		ObjectMapper mapper = new ObjectMapper();
+		RaceResponse racesResponseDrivers = mapper.readValue(responseDriver.getBody(), RaceResponse.class);
+		RaceResponse racesResponseConstructor = mapper.readValue(responseConstructor.getBody(), RaceResponse.class);
+
+		if (racesResponseDrivers != null) {
+			List<DriverStanding> drivers = racesResponseDrivers.getMrData().getStandingsTable().getStandingsLists().get(0).getDriverStandings();
+			for(DriverStanding driverTemp : drivers) {
+				HashMap<String, String> driverResultTemp = new HashMap<>();
+				driverResultTemp.put(driverTemp.getDriver().getFamilyName(), driverTemp.getPoints());
+				driversNew.put(Integer.parseInt(driverTemp.getPosition()), driverResultTemp);
+			}
+			standingsDto.setDriverStandings(driversNew);
+		}
+
+		if (racesResponseConstructor != null) {
+			List<ConstructorStandings> constructors = racesResponseConstructor.getMrData().getStandingsTable().getStandingsLists().get(0).getConstructorStandings();
+			for (ConstructorStandings constructorTemp : constructors) {
+				HashMap<String, String> constructorResultTemp = new HashMap<>();
+				constructorResultTemp.put(constructorTemp.getConstructor().getName(), constructorTemp.getPoints());
+				constructorNew.put(Integer.parseInt(constructorTemp.getPosition()), constructorResultTemp);
+			}
+			standingsDto.setConstructorStandings(constructorNew);
+		}
+
+
+
+
+		return standingsDto;
+	}
 }

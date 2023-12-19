@@ -1,5 +1,7 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Date;
 
 public class Driver {
@@ -9,6 +11,7 @@ public class Driver {
 	private String url;
 	private String permanentNumber;
 	private String givenName;
+	@JsonProperty("familyName")
 	private String familyName;
 	private Date dateOfBirth;
 	private String nationality;

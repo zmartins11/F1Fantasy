@@ -1,9 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.NextRaceInfoDto;
-import com.example.demo.dto.PointsInfoDto;
-import com.example.demo.dto.PredictionDto;
-import com.example.demo.dto.TotalPointsDto;
+import com.example.demo.dto.*;
 import com.example.demo.exception.SavePredictionException;
 import com.example.demo.model.fantasy.RaceResult;
 import com.example.demo.service.ErgastService;
@@ -92,6 +89,11 @@ public class PredictController {
     @GetMapping("/totalPointsByUser")
     private TotalPointsDto getTotalPointsByUser(@RequestParam String username) {
         return predictService.getTotalPointsByUser(username);
+    }
+
+    @GetMapping("/standings")
+    private StandingsDto standingsSeason() throws JsonProcessingException {
+        return ergastService.getStandings();
     }
 
 }

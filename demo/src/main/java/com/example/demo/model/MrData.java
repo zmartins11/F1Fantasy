@@ -11,6 +11,9 @@ public class MrData {
 	private int limit;
 	private int offset;
 	private int total;
+
+	@JsonProperty("StandingsTable")
+	private StandingsTable StandingsTable;
 	
 	@JsonProperty("RaceTable")
 	private RaceTable raceTable;
@@ -91,5 +94,12 @@ public class MrData {
 		this.constructorTable = constructorTable;
 	}
 
+	public StandingsTable getStandingsTable() {
+		return StandingsTable;
+	}
+
+	public void setStandingsTable(StandingsTable standingsTable) {
+		StandingsTable = standingsTable;
+	}
 	
 }
