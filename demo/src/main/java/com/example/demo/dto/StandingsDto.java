@@ -4,12 +4,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
 @Setter
 public class StandingsDto {
 
-    private Map<Integer, Map<String, String>> driverStandings;
-    private Map<Integer, Map<String, String>> constructorStandings;
+    private List<TotalPointsDto> drivers;
+    private List<TotalPointsDto> constructors;
 }

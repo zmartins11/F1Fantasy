@@ -129,14 +129,18 @@
               <div *ngIf="showDrivers" class="row mt-3">
                 <div class="col-md-6">
                   <ul>
-                    <li *ngFor="let driver of drivers.slice(0, 10)" class="list-group-item" (mouseover)="highlightDriver(driver)" (mouseout)="unhighlightDriver(driver)" (click)="selectDriver(driver)">
+                    <li *ngFor="let driver of drivers.slice(0, 10)" class="list-group-item"
+                      (mouseover)="highlightDriver(driver)" (mouseout)="unhighlightDriver(driver)"
+                      (click)="selectDriver(driver)">
                       {{ driver.name }} {{ driver.selection }}
                     </li>
                   </ul>
                 </div>
                 <div class="col-md-6">
                   <ul>
-                    <li *ngFor="let driver of drivers.slice(10)" class="list-group-item" (mouseover)="highlightDriver(driver)" (mouseout)="unhighlightDriver(driver)" (click)="selectDriver(driver)">
+                    <li *ngFor="let driver of drivers.slice(10)" class="list-group-item"
+                      (mouseover)="highlightDriver(driver)" (mouseout)="unhighlightDriver(driver)"
+                      (click)="selectDriver(driver)">
                       {{ driver.name }} {{ driver.selection }}
                     </li>
                   </ul>
@@ -154,9 +158,9 @@
       <div class="col-md-6">
         <!-- Content for the first inner div -->
         <div class="card">
-          <div class="card-body" *ngIf="totalPointsData && totalPointsData.length > 0">
+          <div class="card-body" *ngIf="currentTable === 'userPoints' && totalPointsData && totalPointsData.length > 0">
             <h5 class="card-title">Leaderboard</h5>
-            <table class="table">
+            <table class="table table-striped">
               <thead>
                 <tr>
                   <th scope="col">#</th>
@@ -165,15 +169,70 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let data of totalPointsData">
+                <tr
+                  *ngFor="let data of totalPointsData | paginate:{itemsPerPage:6, currentPage:page, totalItems:totalLength}">
                   <td>{{ data.position}}</td>
                   <td>{{ data.username }}</td>
                   <td>{{ data.points }}</td>
                 </tr>
               </tbody>
             </table>
+            <div class="pagination">
+              <pagination-controls (pageChange)="page=$event"></pagination-controls>
+            </div>
+          </div>
+          <div class="card-body" *ngIf="currentTable === 'driverStandings'">
+            <h5 class="card-title">Driver Standings</h5>
+            <!-- Driver Standings Table -->
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Driver Name</th>
+                  <th scope="col">Points</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let driver of getDriversStandings() | paginate:{itemsPerPage:6, currentPage:page, totalItems:totalLength}">
+                  <td>{{ driver.position}}</td>
+                  <td>{{ driver.username }}</td>
+                  <td>{{ driver.points }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="pagination">
+              <pagination-controls (pageChange)="page=$event"></pagination-controls>
+            </div>
+          </div>
+          <div class="card-body" *ngIf="currentTable === 'constructorStandings'">
+            <h5 class="card-title">Constructor Standings</h5>
+            <!-- Constructor Standings Table -->
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Constructor</th>
+                  <th scope="col">Points</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let driver of getConstructoresStandings() | paginate:{itemsPerPage:6, currentPage:page, totalItems:totalLength}">
+                  <td>{{ driver.position}}</td>
+                  <td>{{ driver.username }}</td>
+                  <td>{{ driver.points }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="pagination">
+              <pagination-controls (pageChange)="page=$event"></pagination-controls>
+            </div>
           </div>
         </div>
+      </div>
+      <div class="col-md-6">
+        <button class="btn btn-primary" (click)="switchTable('userPoints')">User Points</button>
+        <button class="btn btn-primary" (click)="switchTable('driverStandings')">Driver Standings</button>
+        <button class="btn btn-primary" (click)="switchTable('constructorStandings')">Constructor Standings</button>
       </div>
     </div>
   </div>

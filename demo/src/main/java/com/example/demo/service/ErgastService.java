@@ -6,9 +6,7 @@ import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
-import com.example.demo.dto.DateTimeResponseDto;
-import com.example.demo.dto.NextRaceInfoDto;
-import com.example.demo.dto.StandingsDto;
+import com.example.demo.dto.*;
 import com.example.demo.model.*;
 import com.example.demo.model.fantasy.RaceResult;
 import com.example.utils.RaceResultMapper;
@@ -241,8 +239,10 @@ public class ErgastService {
 	public StandingsDto getStandings() throws JsonProcessingException {
 		StandingsDto standingsDto = new StandingsDto();
 		RestTemplate restTemplate = new RestTemplate();
-		Map<Integer, Map<String, String>> driversNew = new HashMap<>();
-		Map<Integer, Map<String, String>> constructorNew = new HashMap<>();
+
+		List<TotalPointsDto> resultDrivers  = new ArrayList<>();
+		List<TotalPointsDto> resultConstructors  = new ArrayList<>();
+
 
 
 		String urlDrivers = "http://ergast.com/api/f1/current/driverstandings.json";
@@ -258,25 +258,39 @@ public class ErgastService {
 		if (racesResponseDrivers != null) {
 			List<DriverStanding> drivers = racesResponseDrivers.getMrData().getStandingsTable().getStandingsLists().get(0).getDriverStandings();
 			for(DriverStanding driverTemp : drivers) {
-				HashMap<String, String> driverResultTemp = new HashMap<>();
-				driverResultTemp.put(driverTemp.getDriver().getFamilyName(), driverTemp.getPoints());
-				driversNew.put(Integer.parseInt(driverTemp.getPosition()), driverResultTemp);
+				TotalPointsDto tmp = new TotalPointsDto();
+				tmp.setUsername(driverTemp.getDriver().getFamilyName());
+				tmp.setPoints(driverTemp.getPoints());
+				resultDrivers.add(tmp);
 			}
-			standingsDto.setDriverStandings(driversNew);
+
 		}
 
 		if (racesResponseConstructor != null) {
 			List<ConstructorStandings> constructors = racesResponseConstructor.getMrData().getStandingsTable().getStandingsLists().get(0).getConstructorStandings();
 			for (ConstructorStandings constructorTemp : constructors) {
-				HashMap<String, String> constructorResultTemp = new HashMap<>();
-				constructorResultTemp.put(constructorTemp.getConstructor().getName(), constructorTemp.getPoints());
-				constructorNew.put(Integer.parseInt(constructorTemp.getPosition()), constructorResultTemp);
+				TotalPointsDto tmpC = new TotalPointsDto();
+				tmpC.setUsername(constructorTemp.getConstructor().getName());
+				tmpC.setPoints(constructorTemp.getPoints());
+				resultConstructors.add(tmpC);
 			}
-			standingsDto.setConstructorStandings(constructorNew);
+
 		}
 
+		resultDrivers.sort((o1, o2) -> Integer.compare(Integer.parseInt(o2.getPoints()), Integer.parseInt(o1.getPoints())));
+		for (int i = 0; i < resultDrivers.size(); i++) {
+			TotalPointsDto tmp = resultDrivers.get(i);
+			tmp.setPosition(String.valueOf(i + 1));
+		}
 
+		resultConstructors.sort((o1, o2) -> Integer.compare(Integer.parseInt(o2.getPoints()), Integer.parseInt(o1.getPoints())));
+		for (int i = 0; i < resultConstructors.size(); i++) {
+			TotalPointsDto tmp = resultConstructors.get(i);
+			tmp.setPosition(String.valueOf(i + 1));
+		}
 
+		standingsDto.setDrivers(resultDrivers);
+		standingsDto.setConstructors(resultConstructors);
 
 		return standingsDto;
 	}

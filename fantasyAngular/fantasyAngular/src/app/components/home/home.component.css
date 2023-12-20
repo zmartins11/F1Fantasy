@@ -61,3 +61,7 @@
   background-color: #007bff; /* Change to your desired selected color */
   color: #fff; /* Change to your desired text color for selected items */
 }
+
+.pagination {
+  float: right;
+}

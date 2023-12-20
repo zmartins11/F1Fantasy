@@ -5,11 +5,13 @@ import { DateTimeResponse } from '../model/DateTimeResponse';
 import { NextRaceInfo } from '../model/NextRaceInfo';
 import { TotalPointsResponse } from '../model/TotalPointsResponse';
 import { PointsInfo } from '../model/PointsInfo';
+import { Standings } from '../model/Standings';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DateTimeServiceService {
+
 
   private apiUrl = 'http://localhost:8080';
   loader = new BehaviorSubject<Boolean>(false);
@@ -29,6 +31,11 @@ export class DateTimeServiceService {
   getPointsInfo(username: string): Observable<PointsInfo []> {
     const url = `${this.apiUrl}/pointsInfo?username=${username}`;
     return this.http.get<PointsInfo[]>(url);
+  }
+
+  getStandingsSeason(): Observable<Standings> {
+    const url = `${this.apiUrl}/standings`;
+    return this.http.get<Standings>(url);
   }
 
   

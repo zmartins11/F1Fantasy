@@ -11,11 +11,12 @@ import { SipnnerService } from 'src/app/_services/SpinnerService';
 import { PredictService } from 'src/app/_services/predict.service';
 import { Prediction } from 'src/app/model/Prediction';
 import { F1DriversService } from 'src/app/_services/f1-drivers.service';
-import { faArrowDown,faArrowUp} from '@fortawesome/free-solid-svg-icons'
+import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons'
 import { TotalPointsResponse } from 'src/app/model/TotalPointsResponse';
 import { PointsInfo } from 'src/app/model/PointsInfo';
 import * as $ from 'jquery';
 import { DriverMappingService } from 'src/app/_services/driver-mapping-service.service';
+import { Standings } from 'src/app/model/Standings';
 
 
 @Component({
@@ -30,41 +31,47 @@ export class HomeComponent implements OnInit {
     private predictService: PredictService,
     private driverMappingService: DriverMappingService) { }
 
-    // Reference to the modal element
+  // Reference to the modal element
   @ViewChild('myModal') myModal!: ElementRef;
-  
+
 
   content: String | undefined;
   isLoggedIn: Boolean = false;
   user: string = '';
-  raceDate: string =  '';
-  round : string = '';
-  timeRemaining : any;
-  nameRace : string  = '';
-  drivers: Formula1Driver[]= [];
-  saveDriversToPredict : Formula1Driver[] = [];
+  raceDate: string = '';
+  round: string = '';
+  timeRemaining: any;
+  nameRace: string = '';
+  drivers: Formula1Driver[] = [];
+  saveDriversToPredict: Formula1Driver[] = [];
   showDrivers = false;
   errorMessage = null;
   successMessage: string = "";
   formattedDate: Date | any;
   isLoading = false;
-  predictionLocked : Boolean = false;
+  predictionLocked: Boolean = false;
   first: number = 0;
   second: number = 0;
   third: number = 0;
   showAlert: boolean = false;
-  totalPointsData: TotalPointsResponse [] | null = null;
-  pointsInfo: PointsInfo [] =  [];
+  totalPointsData: TotalPointsResponse[] | null = null;
+  driversStandings: TotalPointsResponse[] | null = null;
+  constructorStandings: TotalPointsResponse[] | null = null;
+
+  pointsInfo: PointsInfo[] = [];
   showPopUpDriversPoints = false;
   totalPoints: number = 0;
   highlightedDriver: Formula1Driver | null = null;
+  currentTable: string = 'userPoints';
+  totalLength: any;
+  page: number = 1;
 
 
   //results
   userHasPrediction: Boolean = false;
   pFirst: string | undefined = "";
-  pSecond: string | undefined= "";
-  pThird: string | undefined= "";
+  pSecond: string | undefined = "";
+  pThird: string | undefined = "";
   faArrowDown = faArrowDown;
   faArrowUp = faArrowUp;
 
@@ -105,12 +112,12 @@ export class HomeComponent implements OnInit {
         }
         //testCoundtow
         this.formattedDate = new Date(this.raceDate);
-      }, 
-      error => {
-        this.showAlert = true;
-        this.errorMessage = error.error.message;
-        console.log(error.error.message);
-      });
+      },
+        error => {
+          this.showAlert = true;
+          this.errorMessage = error.error.message;
+          console.log(error.error.message);
+        });
 
       //get info points
       this.dateTimeService.getPointsInfo(this.user).subscribe(response => {
@@ -128,16 +135,48 @@ export class HomeComponent implements OnInit {
         }
       })
 
-      //populate table
+      //populate tables
       this.dateTimeService.getTotalPoints(this.user).subscribe(response => {
         if (Array.isArray(response)) {
           this.totalPointsData = response;
+
+          // Check if the length is less than 6
+          if (this.totalPointsData.length < 6) {
+            // Calculate how many default objects to add
+            const remainingCount = 6 - this.totalPointsData.length;
+
+            // Add default objects to the array
+            for (let i = 0; i < remainingCount; i++) {
+              const defaultObject: TotalPointsResponse = {
+                position: '-',
+                username: '---',
+                points: '-'
+              };
+
+              this.totalPointsData.push(defaultObject);
+            }
+          }
         }
       }, error => {
         this.errorMessage = error.error.message;
       });
+
+      this.dateTimeService.getStandingsSeason().subscribe(response => {
+        this.driversStandings = response.drivers;
+        this.constructorStandings = response.constructors;
+
+      })
     }
-  } 
+  }
+
+  getDriversStandings(): TotalPointsResponse[] {
+    return this.driversStandings || [];
+  }
+
+  getConstructoresStandings(): TotalPointsResponse[] {
+    return this.constructorStandings || [];
+  }
+
   calculateTotalPoints() {
     this.totalPoints = this.pointsInfo.reduce((total, pointInfo) => total + pointInfo.points, 0);
   }
@@ -160,8 +199,8 @@ export class HomeComponent implements OnInit {
     };
   }
 
-  selectDriver(selectDriver : Formula1Driver) {
-    
+  selectDriver(selectDriver: Formula1Driver) {
+
     const numberOfSelections = this.drivers.filter(driver => driver.selection).length;
 
     if (numberOfSelections < 3) {
@@ -199,12 +238,12 @@ export class HomeComponent implements OnInit {
   }
   removeDriverFromSelection(driver: Formula1Driver) {
     if (this.first === driver.number) {
-    this.first = 0;
-  } else if (this.second === driver.number) {
-    this.second = 0;
-  } else if (this.third === driver.number) {
-    this.third = 0;
-  }
+      this.first = 0;
+    } else if (this.second === driver.number) {
+      this.second = 0;
+    } else if (this.third === driver.number) {
+      this.third = 0;
+    }
   }
 
   resetPredictions(): void {
@@ -224,7 +263,7 @@ export class HomeComponent implements OnInit {
     const selectedDriverNumbers = this.saveDriversToPredict.map(driver => driver.number);
 
     this.predictService.savePrediction(this.first, this.second, this.third, this.user, this.round)
-    .subscribe(response => {
+      .subscribe(response => {
         this.userHasPrediction = true;
         this.pFirst = F1DriversService.getDriverNameByNumber(response.first);
         this.pSecond = F1DriversService.getDriverNameByNumber(response.second);
@@ -233,10 +272,10 @@ export class HomeComponent implements OnInit {
         this.showDrivers = false;
         this.successMessage = "Your prediction has been saved!";
         this.showAlert = true;
-    }, error => {
-      console.log(error);
-      this.errorMessage = error.error.message;
-    });
+      }, error => {
+        console.log(error);
+        this.errorMessage = error.error.message;
+      });
   }
 
   showAllDrivers() {
@@ -256,12 +295,18 @@ export class HomeComponent implements OnInit {
   highlightDriver(driver: Formula1Driver) {
     this.highlightedDriver = driver;
   }
-  
+
   unhighlightDriver(driver: Formula1Driver) {
     if (this.highlightedDriver === driver) {
       this.highlightedDriver = null;
     }
   }
+
+  switchTable(table: string): void {
+    this.currentTable = table;
+    this.page = 1;
+  }
+
 
 }
 

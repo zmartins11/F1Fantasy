@@ -20,6 +20,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { SpinnerInterceptor } from 'src/_helpers/SpinnerInterceptor';
 import { AuthInterceptor } from 'src/_helpers/auth.interceptor';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 
 
@@ -45,7 +46,8 @@ import { AuthInterceptor } from 'src/_helpers/auth.interceptor';
     HttpClientModule,
     FontAwesomeModule,
     NgxSpinnerModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    NgxPaginationModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
