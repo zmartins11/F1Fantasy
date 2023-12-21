@@ -45,12 +45,14 @@ public class ErgastService {
 	public RaceResult getRaceResult(String season, String round) throws JsonMappingException, JsonProcessingException {
 		List<Results> resultsRace = null;
 		String urlRaceResult = "http://ergast.com/api/f1/" + season + "/" + round + "/results.json?limit=3";
+		String fastestLap = "http://ergast.com/api/f1/" + season + "/" + round + "/fastest/1/results.json";
 
 		ResponseEntity<String> response = restTemplate.getForEntity(urlRaceResult, String.class);
-
+		ResponseEntity<String> responseFastesLap = restTemplate.getForEntity(urlRaceResult, String.class);
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		RaceResultsResponse resultsResponse = objectMapper.readValue(response.getBody(), RaceResultsResponse.class);
+		RaceResultsResponse resultsResponseFastestLap = objectMapper.readValue(response.getBody(), RaceResultsResponse.class);
 
 		resultsRace = resultsResponse.getMrData().getRaceTable().getRaces().get(0).getResults();
 		RaceResult raceResult = resultMapper.map(resultsRace, round, season);

@@ -83,8 +83,16 @@
       <div class="col-md-6">
         <!-- Content for the second inner div -->
         <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Predictions</h5>
+          <div class="navigation-dots">
+            <span class="dot" (click)="switchPredictionCard('podium')"
+              [ngClass]="{'active': currentPredictionCard === 'podium'}"></span>
+            <span class="dot" (click)="switchPredictionCard('fastestLap')"
+              [ngClass]="{'active': currentPredictionCard === 'fastestLap'}"></span>
+            <!-- Add more dots if you have additional prediction cards -->
+          </div>
+          <div class="card-body" *ngIf="currentPredictionCard === 'podium'">
+            <!-- Add navigation dots for predictions -->
+            <h5 class="card-title">Podium Predictions</h5>
             <div class="row">
               <!-- Left box (Second Driver) -->
               <div class="col-md-4 text-center">
@@ -152,12 +160,24 @@
                 (click)="savePredictions()">Save Predictions</button>
             </div>
           </div>
+          <div class="card-body" *ngIf="currentPredictionCard === 'fastestLap'">
+            <!-- Add navigation dots for predictions -->
+            <h5 class="card-title">FastestLap Prediction</h5>
+            
+          </div>
         </div>
       </div>
 
       <div class="col-md-6">
         <!-- Content for the first inner div -->
         <div class="card">
+          <div class="navigation-dots">
+            <span class="dot" (click)="switchTable('userPoints')" [class.active]="currentTable === 'userPoints'"></span>
+            <span class="dot" (click)="switchTable('driverStandings')"
+              [class.active]="currentTable === 'driverStandings'"></span>
+            <span class="dot" (click)="switchTable('constructorStandings')"
+              [class.active]="currentTable === 'constructorStandings'"></span>
+          </div>
           <div class="card-body" *ngIf="currentTable === 'userPoints' && totalPointsData && totalPointsData.length > 0">
             <h5 class="card-title">Leaderboard</h5>
             <table class="table table-striped">
@@ -193,7 +213,8 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let driver of getDriversStandings() | paginate:{itemsPerPage:6, currentPage:page, totalItems:totalLength}">
+                <tr
+                  *ngFor="let driver of getDriversStandings() | paginate:{itemsPerPage:6, currentPage:page, totalItems:totalLength}">
                   <td>{{ driver.position}}</td>
                   <td>{{ driver.username }}</td>
                   <td>{{ driver.points }}</td>
@@ -216,7 +237,8 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let driver of getConstructoresStandings() | paginate:{itemsPerPage:6, currentPage:page, totalItems:totalLength}">
+                <tr
+                  *ngFor="let driver of getConstructoresStandings() | paginate:{itemsPerPage:6, currentPage:page, totalItems:totalLength}">
                   <td>{{ driver.position}}</td>
                   <td>{{ driver.username }}</td>
                   <td>{{ driver.points }}</td>
@@ -228,11 +250,6 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="col-md-6">
-        <button class="btn btn-primary" (click)="switchTable('userPoints')">User Points</button>
-        <button class="btn btn-primary" (click)="switchTable('driverStandings')">Driver Standings</button>
-        <button class="btn btn-primary" (click)="switchTable('constructorStandings')">Constructor Standings</button>
       </div>
     </div>
   </div>

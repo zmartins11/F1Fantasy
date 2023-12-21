@@ -63,6 +63,7 @@ export class HomeComponent implements OnInit {
   totalPoints: number = 0;
   highlightedDriver: Formula1Driver | null = null;
   currentTable: string = 'userPoints';
+  currentPredictionCard: string = 'podium';
   totalLength: any;
   page: number = 1;
 
@@ -306,6 +307,10 @@ export class HomeComponent implements OnInit {
     this.currentTable = table;
     this.page = 1;
   }
+
+  switchPredictionCard(card: string) {
+    this.currentPredictionCard = card;
+}
 
 
 }
