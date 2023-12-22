@@ -23,6 +23,7 @@ public class RaceResult {
     private String first;
     private String second;
     private String third;
+    private String fastestLap;
     private boolean raceFinished;
     private boolean predictionLocked;
 

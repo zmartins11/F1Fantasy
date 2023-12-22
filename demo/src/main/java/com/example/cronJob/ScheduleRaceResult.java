@@ -50,6 +50,7 @@ public class ScheduleRaceResult {
                 currentRace.setFirst(raceResultTemp.getFirst());
                 currentRace.setSecond(raceResultTemp.getSecond());
                 currentRace.setThird(raceResultTemp.getThird());
+                currentRace.setFastestLap(raceResultTemp.getFastestLap());
                 raceResultRepository.save(currentRace);
 
                 // check if there are predictions for the raceResult added :

@@ -21,6 +21,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javax.xml.transform.Result;
+
 @Service
 public class ErgastService {
 
@@ -44,20 +46,21 @@ public class ErgastService {
 
 	public RaceResult getRaceResult(String season, String round) throws JsonMappingException, JsonProcessingException {
 		List<Results> resultsRace = null;
+		Results fastesLap = null;
 		String urlRaceResult = "http://ergast.com/api/f1/" + season + "/" + round + "/results.json?limit=3";
 		String fastestLap = "http://ergast.com/api/f1/" + season + "/" + round + "/fastest/1/results.json";
 
 		ResponseEntity<String> response = restTemplate.getForEntity(urlRaceResult, String.class);
-		ResponseEntity<String> responseFastesLap = restTemplate.getForEntity(urlRaceResult, String.class);
+		ResponseEntity<String> responseFastesLap = restTemplate.getForEntity(fastestLap, String.class);
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		RaceResultsResponse resultsResponse = objectMapper.readValue(response.getBody(), RaceResultsResponse.class);
-		RaceResultsResponse resultsResponseFastestLap = objectMapper.readValue(response.getBody(), RaceResultsResponse.class);
+		RaceResultsResponse resultsResponseFastestLap = objectMapper.readValue(responseFastesLap.getBody(), RaceResultsResponse.class);
 
 		resultsRace = resultsResponse.getMrData().getRaceTable().getRaces().get(0).getResults();
-		RaceResult raceResult = resultMapper.map(resultsRace, round, season);
+		fastesLap = resultsResponseFastestLap.getMrData().getRaceTable().getRaces().get(0).getResults().get(0);
 
-		return raceResult;
+        return resultMapper.map(resultsRace, fastesLap, round, season);
 
 	}
 
