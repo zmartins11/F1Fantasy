@@ -10,4 +10,7 @@ public class PredictionDto {
     private String second;
     private String third;
     private String round;
+    private String fastestLap;
+    private Boolean predictedPodium;
+    private Boolean predictedFastestLap;
 }

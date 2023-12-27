@@ -18,5 +18,7 @@ public class Prediction {
     private String first;
     private String second;
     private String third;
-
+    private String fastestLap;
+    private Boolean predictedPodium;
+    private Boolean predictedFastestLap;
 }

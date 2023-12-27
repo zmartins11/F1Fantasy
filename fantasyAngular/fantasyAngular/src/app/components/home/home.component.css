@@ -83,5 +83,10 @@
 }
 
 .active {
-  background-color: #717171;
+  background-color: #5f5d5d;
+}
+
+.separator-line {
+  border-top: 1px solid #8f8d8d; 
+  margin-top: 10px; 
 }

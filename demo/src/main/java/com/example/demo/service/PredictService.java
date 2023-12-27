@@ -55,23 +55,42 @@ public class PredictService {
         return race.isRaceFinished();
     }
 
-    public Prediction savePrediction(PredictionDto prediction) {
+    public void savePrediction(PredictionDto prediction) {
+        //nova prediction :
+        // 1- if podium != null
+        // 2- if fastestLap != null
         Prediction predictionSaved = predictRepository.findByUserIdAndRound(prediction.getUser(), prediction.getRound());
         if (predictionSaved != null) {
-            predictionSaved.setFirst(prediction.getFirst());
-            predictionSaved.setSecond(prediction.getSecond());
-            predictionSaved.setThird(prediction.getThird());
-            return predictRepository.save(predictionSaved);
+            if (prediction.getFirst() != null) {
+                predictionSaved.setFirst(prediction.getFirst());
+                predictionSaved.setSecond(prediction.getSecond());
+                predictionSaved.setThird(prediction.getThird());
+                predictionSaved.setPredictedPodium(Boolean.TRUE);
+            }
+            if (prediction.getFastestLap() != null) {
+                predictionSaved.setFastestLap(prediction.getFastestLap());
+                predictionSaved.setPredictedFastestLap(Boolean.TRUE);
+            }
+            predictRepository.save(predictionSaved);
         } else {
             Prediction newPrediction = new Prediction();
-            newPrediction.setFirst(prediction.getFirst());
-            newPrediction.setSecond(prediction.getSecond());
-            newPrediction.setThird(prediction.getThird());
             newPrediction.setUserId(prediction.getUser());
             newPrediction.setRound(prediction.getRound());
+            newPrediction.setPredictedFastestLap(Boolean.FALSE);
+            newPrediction.setPredictedPodium(Boolean.FALSE);
+            if (prediction.getFirst() != null) {
+                newPrediction.setFirst(prediction.getFirst());
+                newPrediction.setSecond(prediction.getSecond());
+                newPrediction.setThird(prediction.getThird());
+                newPrediction.setPredictedPodium(Boolean.TRUE);
+            }
+            if (prediction.getFastestLap() != null) {
+                newPrediction.setFastestLap(prediction.getFastestLap());
+                newPrediction.setPredictedFastestLap(Boolean.TRUE);
+            }
             RaceResult race = raceResultRepository.findByRound(prediction.getRound());
             newPrediction.setRaceId(race.getId().toString());
-            return predictRepository.save(newPrediction);
+            predictRepository.save(newPrediction);
         }
     }
 
