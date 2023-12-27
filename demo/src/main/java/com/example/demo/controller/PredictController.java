@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.*;
 import com.example.demo.exception.SavePredictionException;
+import com.example.demo.model.fantasy.Prediction;
 import com.example.demo.model.fantasy.RaceResult;
 import com.example.demo.service.ErgastService;
 import com.example.demo.service.PredictService;
@@ -30,11 +31,13 @@ public class PredictController {
         String season = String.valueOf(currentYear.getValue());
         //check if raceFinished
         //TODO: GET THE ROUND STRING FOR PREDICTION OBJECT
-        boolean raceFinished = predictService.checkRaceFinished(season, prediction.getRound());
-        if (raceFinished) {
-            throw new SavePredictionException("race already finish");
-        }
-        predictService.savePrediction(prediction);
+//        boolean raceFinished = predictService.checkRaceFinished(season, prediction.getRound());
+//        if (raceFinished) {
+//            throw new SavePredictionException("race already finish");
+//        }
+        Prediction savedPrediction = predictService.savePrediction(prediction);
+        prediction.setPredictedPodium(savedPrediction.getPredictedPodium());
+        prediction.setPredictedFastestLap(savedPrediction.getPredictedFastestLap());
         return prediction;
     }
 

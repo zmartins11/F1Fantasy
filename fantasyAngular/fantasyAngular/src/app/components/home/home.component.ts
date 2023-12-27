@@ -45,6 +45,7 @@ export class HomeComponent implements OnInit {
   drivers: Formula1Driver[] = [];
   saveDriversToPredict: Formula1Driver[] = [];
   showDrivers = false;
+  showDriversFastest = false;
   errorMessage = null;
   successMessage: string = "";
   formattedDate: Date | any;
@@ -273,6 +274,7 @@ export class HomeComponent implements OnInit {
         this.showDrivers = false;
         this.successMessage = "Your prediction has been saved!";
         this.showAlert = true;
+        //check if fastestLap
       }, error => {
         console.log(error);
         this.errorMessage = error.error.message;

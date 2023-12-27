@@ -55,7 +55,7 @@ public class PredictService {
         return race.isRaceFinished();
     }
 
-    public void savePrediction(PredictionDto prediction) {
+    public Prediction savePrediction(PredictionDto prediction) {
         //nova prediction :
         // 1- if podium != null
         // 2- if fastestLap != null
@@ -71,7 +71,7 @@ public class PredictService {
                 predictionSaved.setFastestLap(prediction.getFastestLap());
                 predictionSaved.setPredictedFastestLap(Boolean.TRUE);
             }
-            predictRepository.save(predictionSaved);
+            return predictRepository.save(predictionSaved);
         } else {
             Prediction newPrediction = new Prediction();
             newPrediction.setUserId(prediction.getUser());
@@ -90,7 +90,7 @@ public class PredictService {
             }
             RaceResult race = raceResultRepository.findByRound(prediction.getRound());
             newPrediction.setRaceId(race.getId().toString());
-            predictRepository.save(newPrediction);
+            return predictRepository.save(newPrediction);
         }
     }
 

@@ -4,4 +4,5 @@ export interface Prediction {
     second : string;
     third : string;
     round : string;
+    fastestLap: string;
 }
