@@ -41,18 +41,18 @@ public class PredictController {
         return prediction;
     }
 
-    @GetMapping("/predictResult")
-    private void getPrediction(@RequestParam String round) throws Exception {
-        Year currentYear = Year.now();
-        String season = String.valueOf(currentYear.getValue());
-        //check if raceFinished
-        boolean raceFinished = predictService.checkRaceFinished(season, round);
-        if (raceFinished) {
-            throw new Exception("race already finish");
-        }
-        RaceResult raceResult = predictService.getRace(season, round);
-        //TODO
-    }
+//    @GetMapping("/predictResult")
+//    private void getPrediction(@RequestParam String round) throws Exception {
+//        Year currentYear = Year.now();
+//        String season = String.valueOf(currentYear.getValue());
+//        //check if raceFinished
+//        boolean raceFinished = predictService.checkRaceFinished(season, round);
+//        if (raceFinished) {
+//            throw new Exception("race already finish");
+//        }
+//        RaceResult raceResult = predictService.getRace(season, round);
+//        //TODO
+//    }
 
     @GetMapping("/raceSchedule")
     private NextRaceInfoDto getRaceInfo(@RequestParam String username) throws JsonProcessingException, InterruptedException {

@@ -199,6 +199,11 @@ public class PredictService {
             nextRaceInfoDto.setFirst(userPrediction.getFirst());
             nextRaceInfoDto.setSecond(userPrediction.getSecond());
             nextRaceInfoDto.setThird(userPrediction.getThird());
+            if (userPrediction.getPredictedPodium()) {
+                nextRaceInfoDto.setFastestLap(userPrediction.getFastestLap());
+            }
+            nextRaceInfoDto.setPredictedPodium(userPrediction.getPredictedPodium());
+            nextRaceInfoDto.setPredictedFastestLap(userPrediction.getPredictedFastestLap());
         } else {
             nextRaceInfoDto.setUserHavePrediction(Boolean.FALSE);
         }
