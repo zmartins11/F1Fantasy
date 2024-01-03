@@ -35,6 +35,13 @@
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
+  
+  <div *ngIf="IncompletePredictionMessage" class="alert alert-warning" role="alert">
+    {{ IncompletePredictionMessage }}
+    <button type="button" class="close" (click)="closeAlert()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
 
   <div *ngIf="predictionLocked" class="alert alert-warning" role="alert">
     You no longer can make a prediction. Quali has already started!
@@ -90,37 +97,40 @@
               [ngClass]="{'active': currentPredictionCard === 'fastestLap'}"></span>
             <!-- Add more dots if you have additional prediction cards -->
           </div>
+                                                                            <!-- PODIUM -->
           <div class="card-body" *ngIf="currentPredictionCard === 'podium'">
             <!-- Add navigation dots for predictions -->
             <h5 class="card-title">Podium Prediction</h5>
             <hr class="separator-line">
+
             <div class="row">
               <!-- Left box (Second Driver) -->
               <div class="col-md-4 text-center">
-                <div class="prediction-box">
+                <div class="prediction-box-second">
                   <p>{{ pSecond }}</p>
                 </div>
               </div>
 
               <!-- Middle box (First Driver) -->
               <div class="col-md-4 text-center">
-                <div class="prediction-box">
+                <div class="prediction-box-first">
                   <p>{{ pFirst }}</p>
                 </div>
               </div>
 
               <!-- Right box (Third Driver) -->
               <div class="col-md-4 text-center">
-                <div class="prediction-box">
+                <div class="prediction-box-third">
                   <p>{{ pThird }}</p>
                 </div>
               </div>
+
               <div class="row mt-3">
                 <div class="col-md-12 text-center">
                   <ng-container *ngIf="!showDrivers; else listShown">
                     <div *ngIf="!predictionLocked">
-                      <p *ngIf="userHasPrediction" class="mb-0">Change Prediction</p>
-                      <p *ngIf="!userHasPrediction" class="mb-0">Make your Prediction</p>
+                      <p *ngIf="pHasPodium" class="mb-0">Change Podium Prediction</p>
+                      <p *ngIf="!pHasPodium" class="mb-0">Make your Podium Prediction</p>
                       <span (click)="showDrivers = !showDrivers">
                         <fa-icon [icon]="faArrowDown"></fa-icon>
                       </span>
@@ -141,7 +151,9 @@
                     <li *ngFor="let driver of drivers.slice(0, 10)" class="list-group-item"
                       (mouseover)="highlightDriver(driver)" (mouseout)="unhighlightDriver(driver)"
                       (click)="selectDriver(driver)">
-                      {{ driver.name }} {{ driver.selection }}
+                        <div [ngClass]="{'selected-1st': driver.selection === 1, 'selected-2nd': driver.selection === 2, 'selected-3rd': driver.selection === 3}">
+                          {{ driver.name }} {{ driver.selection }}
+                        </div>
                     </li>
                   </ul>
                 </div>
@@ -150,7 +162,9 @@
                     <li *ngFor="let driver of drivers.slice(10)" class="list-group-item"
                       (mouseover)="highlightDriver(driver)" (mouseout)="unhighlightDriver(driver)"
                       (click)="selectDriver(driver)">
-                      {{ driver.name }} {{ driver.selection }}
+                      <div [ngClass]="{'selected-1st': driver.selection === 1, 'selected-2nd': driver.selection === 2, 'selected-3rd': driver.selection === 3}">
+                        {{ driver.name }} {{ driver.selection }}
+                      </div>
                     </li>
                   </ul>
                 </div>
@@ -159,7 +173,7 @@
               <button type="button" class="btn btn-outline-dark btn-sm mr-3" *ngIf="areAllDriversSelected()"
                 (click)="resetPredictions()">Reset Predictions</button>
               <button type="button" class="btn btn-outline-dark btn-sm" *ngIf="areAllDriversSelected()"
-                (click)="savePredictions()">Save Predictions</button>
+                (click)="savePredictions()">Save Podium Prediction</button>
             </div>
           </div>
                                                                             <!-- FASTESTlAP CARD -->
@@ -170,36 +184,37 @@
             <div class="row">
               <!-- Middle box (First Driver) -->
               <div class="col-md-4 text-center">
-                <div class="prediction-box">
-                  <p>{{ pFirst }}</p>
+                <div class="prediction-box-fastest">
+                  <p>{{ pFastestLap }}</p>
                 </div>
               </div>
               <div class="row mt-3">
                 <div class="col-md-12 text-center">
-                  <ng-container *ngIf="!showDriversFastest; else listShown">
+                  <ng-container *ngIf="!showDriversFastest; else listShownFastest">
                     <div *ngIf="!predictionLocked">
-                      <p *ngIf="userHasPrediction" class="mb-0">Change Prediction</p>
-                      <p *ngIf="!userHasPrediction" class="mb-0">Make your Prediction</p>
+                      <p *ngIf="pHasFastestLap" class="mb-0">Change FastestLap Prediction</p>
+                      <p *ngIf="!pHasFastestLap" class="mb-0">Make your FastestLap Prediction</p>
                       <span (click)="showDriversFastest = !showDriversFastest">
                         <fa-icon [icon]="faArrowDown"></fa-icon>
                       </span>
                     </div>
                     <p class="mb-0" *ngIf="predictionLocked">Prediction Locked</p>
                   </ng-container>
-                  <ng-template #listShown>
+                  <ng-template #listShownFastest>
                     <!-- Text and arrow are hidden when the list is shown -->
-                    <span (click)="showDrivers = !showDrivers">
+                    <span (click)="showDriversFastest = !showDriversFastest">
                       <fa-icon [icon]="faArrowUp"></fa-icon>
                     </span>
                   </ng-template>
                 </div>
               </div>
-              <div *ngIf="showDrivers" class="row mt-3">
+              <div *ngIf="showDriversFastest" class="row mt-3">
                 <div class="col-md-6">
                   <ul>
                     <li *ngFor="let driver of drivers.slice(0, 10)" class="list-group-item"
                       (mouseover)="highlightDriver(driver)" (mouseout)="unhighlightDriver(driver)"
-                      (click)="selectDriver(driver)">
+                      (click)="selectFastestDriver(driver)"
+                      [class.fastest-driver]="driver.number === fastest">
                       {{ driver.name }} {{ driver.selection }}
                     </li>
                   </ul>
@@ -208,7 +223,8 @@
                   <ul>
                     <li *ngFor="let driver of drivers.slice(10)" class="list-group-item"
                       (mouseover)="highlightDriver(driver)" (mouseout)="unhighlightDriver(driver)"
-                      (click)="selectDriver(driver)">
+                      (click)="selectFastestDriver(driver)"
+                      [class.fastest-driver]="driver.number === fastest">
                       {{ driver.name }} {{ driver.selection }}
                     </li>
                   </ul>
@@ -216,8 +232,8 @@
               </div>
               <button type="button" class="btn btn-outline-dark btn-sm mr-3" *ngIf="areAllDriversSelected()"
                 (click)="resetPredictions()">Reset Predictions</button>
-              <button type="button" class="btn btn-outline-dark btn-sm" *ngIf="areAllDriversSelected()"
-                (click)="savePredictions()">Save Predictions</button>
+              <button type="button" class="btn btn-outline-dark btn-sm" *ngIf="fastest"
+                (click)="savePredictions()">Save FastestLap Prediction</button>
             </div>
           </div>
         </div>

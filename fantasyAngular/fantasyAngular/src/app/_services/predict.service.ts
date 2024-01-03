@@ -12,16 +12,26 @@ export class PredictService {
   constructor(private http : HttpClient) { }
 
  
-  savePrediction(first:number, second: number, third:number, user:string, round: string): Observable<Prediction> {
+  savePrediction(first:number, second: number, third:number, fastest:number, user:string, round: string): Observable<Prediction> {
+
+    // Helper function to convert 0 to null
+  const convertToNullIfZero = (value: number): string | null => {
+    return value === 0 ? null : value.toString();
+  };
 
     const predictionDTO = {
-      first: first.toString(),
-      second: second.toString(),
-      third: third.toString(),
+      first: convertToNullIfZero(first),
+      second: convertToNullIfZero(second),
+      third: convertToNullIfZero(third),
+      fastestLap: convertToNullIfZero(fastest),
       user: user,
       round: round
     };
 
     return this.http.post<Prediction>("http://localhost:8080/predict", predictionDTO);
+  }
+
+  private convertToNullIfZero(value: number): string | null {
+    return value === 0 ? null : value.toString();
   }
 }

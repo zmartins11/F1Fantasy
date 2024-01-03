@@ -90,3 +90,55 @@
   border-top: 1px solid #8f8d8d; 
   margin-top: 10px; 
 }
+
+.fastest-driver {
+  background-color: #7a4886;
+  width: 100px; /* or any other color you prefer */
+  /* Add more styling as needed */
+}
+
+.selected-1st {
+  background-color: #ffd700; 
+  width: 100px;
+}
+
+.selected-2nd {
+  background-color: #c0c0c0; 
+  width: 100px;
+}
+
+.selected-3rd {
+  background-color: #cd7f32; 
+  width: 100px;
+}
+
+.prediction-box-first {
+  background-color: #ffd700; 
+}
+
+.prediction-box-second {
+  background-color: #c0c0c0; 
+}
+
+.prediction-box-third {
+  background-color: #cd7f32; 
+}
+
+.prediction-box-fastest {
+  background-color: #7a4886;
+}
+
+.list-group-item {
+  position: relative;
+}
+
+.list-group-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px; /* Adjust the width as needed */
+  height: 100%;
+  background-color: #7a4886; /* Set the desired background color */
+  z-index: -1;
+}

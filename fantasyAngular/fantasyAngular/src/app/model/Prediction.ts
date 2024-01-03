@@ -5,4 +5,6 @@ export interface Prediction {
     third : string;
     round : string;
     fastestLap: string;
+    predictedPodium: Boolean;
+    predictedFastestLap: Boolean;
 }

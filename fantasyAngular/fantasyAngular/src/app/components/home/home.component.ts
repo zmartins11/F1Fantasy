@@ -48,12 +48,14 @@ export class HomeComponent implements OnInit {
   showDriversFastest = false;
   errorMessage = null;
   successMessage: string = "";
+  IncompletePredictionMessage : string = "";
   formattedDate: Date | any;
   isLoading = false;
   predictionLocked: Boolean = false;
   first: number = 0;
   second: number = 0;
   third: number = 0;
+  fastest: number = 0;
   showAlert: boolean = false;
   totalPointsData: TotalPointsResponse[] | null = null;
   driversStandings: TotalPointsResponse[] | null = null;
@@ -70,10 +72,12 @@ export class HomeComponent implements OnInit {
 
 
   //results
-  userHasPrediction: Boolean = false;
   pFirst: string | undefined = "";
   pSecond: string | undefined = "";
   pThird: string | undefined = "";
+  pFastestLap: string | undefined = "";
+  pHasPodium: Boolean = false;
+  pHasFastestLap: Boolean = false;
   faArrowDown = faArrowDown;
   faArrowUp = faArrowUp;
 
@@ -83,15 +87,6 @@ export class HomeComponent implements OnInit {
     setInterval(() => {
       this.updateCountdown();
     }, 1000)
-    this.userService.getPublicContent().subscribe(
-      data => {
-        this.content = data;
-      },
-      err => {
-        this.content = err.error.message;
-        console.log(err.message);
-      }
-    );
     if (this.authService.getToken()) {
       this.isLoggedIn = true;
       const userString = this.authService.getUser();
@@ -106,11 +101,15 @@ export class HomeComponent implements OnInit {
         this.nameRace = response.nameRace;
         this.round = response.round;
         this.predictionLocked = response.predictionLocked;
-        if (response.userHavePrediction) {
-          this.userHasPrediction = true;
+        if (response.predictedPodium) {
+          this.pHasPodium = true;
           this.pFirst = F1DriversService.getDriverNameByNumber(response.first);
           this.pSecond = F1DriversService.getDriverNameByNumber(response.second);
           this.pThird = F1DriversService.getDriverNameByNumber(response.third);
+          if (response.predictedFastestLap) {
+            this.pHasFastestLap = true;
+            this.pFastestLap = F1DriversService.getDriverNameByNumber(response.fastestLap);
+          }
         }
         //testCoundtow
         this.formattedDate = new Date(this.raceDate);
@@ -222,6 +221,10 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  selectFastestDriver(selectDriver: Formula1Driver) {
+    this.fastest = selectDriver.number; 
+  }
+
   addDriverToSelection(driver: Formula1Driver, position: number) {
     switch (position) {
       case 1:
@@ -262,24 +265,35 @@ export class HomeComponent implements OnInit {
 
   savePredictions() {
     this.saveDriversToPredict = this.drivers.filter(driver => driver.selection !== undefined);
-    const selectedDriverNumbers = this.saveDriversToPredict.map(driver => driver.number);
 
-    this.predictService.savePrediction(this.first, this.second, this.third, this.user, this.round)
+    this.predictService.savePrediction(this.first, this.second, this.third, this.fastest, this.user, this.round)
       .subscribe(response => {
-        this.userHasPrediction = true;
         this.pFirst = F1DriversService.getDriverNameByNumber(response.first);
         this.pSecond = F1DriversService.getDriverNameByNumber(response.second);
         this.pThird = F1DriversService.getDriverNameByNumber(response.third);
+        this.pFastestLap = F1DriversService.getDriverNameByNumber(response.fastestLap);
         this.resetPredictions();
         this.showDrivers = false;
+        this.showDriversFastest = false;
         this.successMessage = "Your prediction has been saved!";
         this.showAlert = true;
+        if (response.predictedPodium == false || response.predictedFastestLap == false) {
+          let tempMessage = "";
+          if (response.predictedPodium == false) {
+            tempMessage = "podium";
+          } else {
+            tempMessage = "fastestLap";
+          }
+          this.IncompletePredictionMessage = "To get more points, fill the " + tempMessage +  " prediction!";
+        }
         //check if fastestLap
       }, error => {
         console.log(error);
         this.errorMessage = error.error.message;
       });
   }
+
+
 
   showAllDrivers() {
     return this.drivers;
@@ -288,6 +302,7 @@ export class HomeComponent implements OnInit {
   closeAlert() {
     this.showAlert = false;
   }
+
 
   closePopup() {
     this.showPopUpDriversPoints = false;

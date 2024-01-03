@@ -7,5 +7,7 @@ export interface NextRaceInfo {
     first : string;
     second : string;
     third : string;
-
+    fastestLap: string;
+    predictedPodium: Boolean;
+    predictedFastestLap : Boolean;
 }
