@@ -15,4 +15,5 @@ public class DriversPoints {
     private Integer points;
     private Integer predictionId;
     private Integer raceId;
+    private String position;
 }

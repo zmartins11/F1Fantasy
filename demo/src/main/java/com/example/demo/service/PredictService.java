@@ -100,19 +100,31 @@ public class PredictService {
         HashMap<Integer, Integer> resultsPercentage = new HashMap<>();
         int racesCurrentSeason = getSeasonRaces(SEASON_2023);
 
-        if ((!prediction.getFirst().equals(raceResult.getFirst())) &&
-                (!prediction.getSecond().equals(raceResult.getSecond())) &&
-                (!prediction.getThird().equals(raceResult.getThird()))) {
+        if (prediction.getPredictedPodium()) {
+            if ((!prediction.getFirst().equals(raceResult.getFirst())) &&
+                    (!prediction.getSecond().equals(raceResult.getSecond())) &&
+                    (!prediction.getThird().equals(raceResult.getThird())) && (!prediction.getFastestLap().equals(raceResult.getFastestLap()))) {
 
-            createDriversPoints(prediction.getFirst() ,raceResult.getId(), points);
-            createDriversPoints(prediction.getSecond(),raceResult.getId(), points);
-            createDriversPoints(prediction.getThird(), raceResult.getId(), points);
+                createDriversPoints(prediction.getFirst() ,raceResult.getId(), points, "1");
+                createDriversPoints(prediction.getSecond(),raceResult.getId(), points, "2");
+                createDriversPoints(prediction.getThird(), raceResult.getId(), points, "3");
+
+            }
+
+            points = processDriver("1", raceResult.getId(), prediction.getFirst(), raceResult.getFirst(), points, racesCurrentSeason);
+            points = processDriver("2", raceResult.getId(),prediction.getSecond(), raceResult.getSecond(), points, racesCurrentSeason);
+            points = processDriver("3", raceResult.getId(), prediction.getThird(), raceResult.getThird(), points, racesCurrentSeason);
 
         }
-
-        points = processDriver("1", raceResult.getId(), prediction.getFirst(), raceResult.getFirst(), points, racesCurrentSeason);
-        points = processDriver("2", raceResult.getId(),prediction.getSecond(), raceResult.getSecond(), points, racesCurrentSeason);
-        points = processDriver("3", raceResult.getId(), prediction.getThird(), raceResult.getThird(), points, racesCurrentSeason);
+        if (prediction.getPredictedFastestLap()) {
+            if (prediction.getFastestLap().equals(raceResult.getFastestLap())) {
+                int poinsToSave = 0;
+                points += 5;
+                poinsToSave = 5;
+                //createDriversPoints(predictedDriver,raceId, 1, position);
+                createDriversPoints(prediction.getFastestLap(), raceResult.getId(),poinsToSave,"fastestLap");
+            }
+        }
 
         return points;
     }
@@ -126,30 +138,31 @@ public class PredictService {
                 int percentage = (int)((double) firstEntry.getKey() / firstEntry.getValue() * 100);
                 if (percentage >= 75) {
                     points += 1;
-                    createDriversPoints(predictedDriver,raceId, 1);
+                    createDriversPoints(predictedDriver,raceId, 1, position);
                 } else if (percentage >= 50) {
                     points += 3;
-                    createDriversPoints(predictedDriver,raceId, 3);
+                    createDriversPoints(predictedDriver,raceId, 3, position);
                 } else if (percentage >= 25) {
                     points += 5;
-                    createDriversPoints(predictedDriver,raceId, 5);
+                    createDriversPoints(predictedDriver,raceId, 5, position);
                 } else {
                     points += 10;
-                    createDriversPoints(predictedDriver,raceId, 10);
+                    createDriversPoints(predictedDriver,raceId, 10, position);
                 }
             }
         } else {
-            createDriversPoints(predictedDriver,raceId,0);
+            createDriversPoints(predictedDriver,raceId,0, position);
         }
         return points;
     }
 
-    private void createDriversPoints(String driver, Integer raceResultId, int points) {
+    private void createDriversPoints(String driver, Integer raceResultId, int points, String position) {
         DriversPoints driversPoints = new DriversPoints();
-         if (driversPointsRepository.findByRaceIdAndDriver(String.valueOf(raceResultId), driver).isEmpty()) {
+         if (driversPointsRepository.findByRaceIdAndDriverAndPosition(String.valueOf(raceResultId), driver, position).isEmpty()) {
              driversPoints.setDriver(driver);
              driversPoints.setRaceId(raceResultId);
              driversPoints.setPoints(points);
+             driversPoints.setPosition(position);
              driversPointsRepository.save(driversPoints);
          };
     }
@@ -158,23 +171,6 @@ public class PredictService {
     public int getSeasonRaces(String season) {
         List<RaceResult> racesBySeason = raceResultRepository.findBySeason(season);
         return racesBySeason.size();
-    }
-
-    // metodo devera sr chamado atraves de cronjob aquando ultima corrida terminada
-    // adicionar coluna boolean : calculado
-    public void testCalculate(String user, String round, String season) throws JsonProcessingException {
-        RaceResult race  = raceResultRepository.findBySeasonAndRound(season, round);
-        Prediction prediction = null;
-        if (race.getFirst() != null) {
-            prediction = predictRepository.findByUserIdAndRaceId(user, String.valueOf(race.getId()));
-            int pointsPrediction = calculate(prediction, race);
-            PredictionResult predictionResult = new PredictionResult();
-            predictionResult.setUserId(user);
-            predictionResult.setRaceId(String.valueOf(race.getId()));
-            predictionResult.setPoints(pointsPrediction);
-            predictionResultRepository.save(predictionResult);
-        }
-        //TODO : save points
     }
 
     public RaceResult getNextRaceInfo() {
@@ -262,7 +258,7 @@ public class PredictService {
         Prediction prediction = predictRepository.findByUserIdAndRound(username, round);
         List<PredictionResult> predictionResult = predictionResultRepository.findByPredictionId(String.valueOf(prediction.getId()));
         PredictionResult predicTemp = predictionResult.get(0);
-        if (prediction != null) {
+        if (prediction.getPredictedPodium()) {
             List<String> drivers  = List.of(prediction.getFirst(), prediction.getSecond(), prediction.getThird());
 
             List<DriversPoints> driversPoints = driversPointsRepository.findByDriverInAndRaceId(drivers, String.valueOf(raceResult.getId()));
@@ -278,6 +274,11 @@ public class PredictService {
             predicTemp.setShowPointsUser(false);
             predictionResultRepository.save(predicTemp);
         }
+
+        if (prediction.getPredictedFastestLap()) {
+
+        }
+
 
         return pointsInfo;
     }
