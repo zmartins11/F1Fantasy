@@ -123,6 +123,8 @@ public class PredictService {
                 poinsToSave = 5;
                 //createDriversPoints(predictedDriver,raceId, 1, position);
                 createDriversPoints(prediction.getFastestLap(), raceResult.getId(),poinsToSave,"fastestLap");
+            } else {
+                createDriversPoints(prediction.getFastestLap(), raceResult.getId(), 0, "fastestLap");
             }
         }
 
@@ -258,8 +260,8 @@ public class PredictService {
         Prediction prediction = predictRepository.findByUserIdAndRound(username, round);
         List<PredictionResult> predictionResult = predictionResultRepository.findByPredictionId(String.valueOf(prediction.getId()));
         PredictionResult predicTemp = predictionResult.get(0);
-        if (prediction.getPredictedPodium()) {
-            List<String> drivers  = List.of(prediction.getFirst(), prediction.getSecond(), prediction.getThird());
+        if (prediction != null) {
+            List<String> drivers  = List.of(prediction.getFirst(), prediction.getSecond(), prediction.getThird(), prediction.getFastestLap());
 
             List<DriversPoints> driversPoints = driversPointsRepository.findByDriverInAndRaceId(drivers, String.valueOf(raceResult.getId()));
 
@@ -267,18 +269,13 @@ public class PredictService {
                 PointsInfoDto tmPoints = new PointsInfoDto();
                 tmPoints.setDriver(driversPoints1.getDriver());
                 tmPoints.setPoints(driversPoints1.getPoints());
+                tmPoints.setPosition(driversPoints1.getPosition());
                 pointsInfo.add(tmPoints);
             }
-
 
             predicTemp.setShowPointsUser(false);
             predictionResultRepository.save(predicTemp);
         }
-
-        if (prediction.getPredictedFastestLap()) {
-
-        }
-
 
         return pointsInfo;
     }

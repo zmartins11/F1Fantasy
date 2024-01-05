@@ -13,7 +13,7 @@
       <div class="modal-body">
         <!-- Loop through the pointsInfo array and display each item -->
         <div *ngFor="let pointInfo of pointsInfo">
-          {{ pointInfo.driverName }}: {{ pointInfo.points }} point{{ pointInfo.points !== 1 ? 's' : '' }}
+          {{ pointInfo.position }} -- {{ pointInfo.driverName }}: {{ pointInfo.points }} point{{ pointInfo.points !== 1 ? 's' : '' }}
         </div>
         <div>Total Points: {{ totalPoints }} point{{ totalPoints !== 1 ? 's' : '' }}</div>
       </div>
@@ -215,7 +215,7 @@
                       (mouseover)="highlightDriver(driver)" (mouseout)="unhighlightDriver(driver)"
                       (click)="selectFastestDriver(driver)"
                       [class.fastest-driver]="driver.number === fastest">
-                      {{ driver.name }} {{ driver.selection }}
+                      {{ driver.name }} 
                     </li>
                   </ul>
                 </div>
@@ -225,7 +225,7 @@
                       (mouseover)="highlightDriver(driver)" (mouseout)="unhighlightDriver(driver)"
                       (click)="selectFastestDriver(driver)"
                       [class.fastest-driver]="driver.number === fastest">
-                      {{ driver.name }} {{ driver.selection }}
+                      {{ driver.name }} 
                     </li>
                   </ul>
                 </div>
