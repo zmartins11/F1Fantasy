@@ -1,5 +1,6 @@
 package com.example.demo.model.fantasy;
 
+import com.example.demo.dto.PredictionDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -21,4 +22,5 @@ public class Prediction {
     private String fastestLap;
     private Boolean predictedPodium;
     private Boolean predictedFastestLap;
+
 }

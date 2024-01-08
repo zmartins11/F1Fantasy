@@ -29,16 +29,16 @@
     {{ errorMessage}}
   </div>
 
-  <div *ngIf="showAlert and successMessage" class="alert alert-success" role="alert">
+  <div *ngIf="showAlertSuccess && successMessage" class="alert alert-success" role="alert">
     {{ successMessage }}
-    <button type="button" class="close" (click)="closeAlert()">
+    <button type="button" class="close" (click)="closeAlert('success')">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   
-  <div *ngIf="IncompletePredictionMessage" class="alert alert-warning" role="alert">
+  <div *ngIf="showAlertIncomplete && IncompletePredictionMessage" class="alert alert-warning" role="alert">
     {{ IncompletePredictionMessage }}
-    <button type="button" class="close" (click)="closeAlert()">
+    <button type="button" class="close" (click)="closeAlert('incomplete')">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -170,10 +170,11 @@
                 </div>
                 <hr *ngIf="areAllDriversSelected()" class="separator-line">
               </div>
-              <button type="button" class="btn btn-outline-dark btn-sm mr-3" *ngIf="areAllDriversSelected()"
+              <button type="button" class="btn btn-outline-dark btn-sm mr-3" *ngIf="areAllDriversSelected() and"
                 (click)="resetPredictions()">Reset Predictions</button>
               <button type="button" class="btn btn-outline-dark btn-sm" *ngIf="areAllDriversSelected()"
-                (click)="savePredictions()">Save Podium Prediction</button>
+                (click)="savePredictions()">
+                {{ fastest ? 'Save Podium Prediction and Fastest Lap' : 'Save Podium Prediction' }}</button>
             </div>
           </div>
                                                                             <!-- FASTESTlAP CARD -->
@@ -230,10 +231,10 @@
                   </ul>
                 </div>
               </div>
-              <button type="button" class="btn btn-outline-dark btn-sm mr-3" *ngIf="areAllDriversSelected()"
-                (click)="resetPredictions()">Reset Predictions</button>
-              <button type="button" class="btn btn-outline-dark btn-sm" *ngIf="fastest"
-                (click)="savePredictions()">Save FastestLap Prediction</button>
+              <button type="button" class="btn btn-outline-dark btn-sm" *ngIf="fastest && showDriversFastest"
+                (click)="savePredictions()">
+                {{ areAllDriversSelected() ? 'Save FastestLap and Podium Prediction' : 'Save FastestLap Prediction' }}
+              </button>
             </div>
           </div>
         </div>

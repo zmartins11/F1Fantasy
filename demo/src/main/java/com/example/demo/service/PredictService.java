@@ -94,6 +94,7 @@ public class PredictService {
         }
     }
 
+
     // método chamado quando o RaceResult com o race_id da prediction é preenchido
     public int calculate(Prediction prediction, RaceResult raceResult) throws JsonProcessingException {
         int points = 0;
@@ -254,7 +255,6 @@ public class PredictService {
         //ir buscar os driverpoints para aquela raceId
         //ir buscar a predicion do user
         ArrayList<PointsInfoDto> pointsInfo = new ArrayList<>();
-
         RaceResult raceResult = raceResultRepository.findByRound(round);
 
         Prediction prediction = predictRepository.findByUserIdAndRound(username, round);
@@ -262,7 +262,6 @@ public class PredictService {
         PredictionResult predicTemp = predictionResult.get(0);
         if (prediction != null) {
             List<String> drivers  = List.of(prediction.getFirst(), prediction.getSecond(), prediction.getThird(), prediction.getFastestLap());
-
             List<DriversPoints> driversPoints = driversPointsRepository.findByDriverInAndRaceId(drivers, String.valueOf(raceResult.getId()));
 
             for (DriversPoints driversPoints1 : driversPoints) {
@@ -272,7 +271,6 @@ public class PredictService {
                 tmPoints.setPosition(driversPoints1.getPosition());
                 pointsInfo.add(tmPoints);
             }
-
             predicTemp.setShowPointsUser(false);
             predictionResultRepository.save(predicTemp);
         }

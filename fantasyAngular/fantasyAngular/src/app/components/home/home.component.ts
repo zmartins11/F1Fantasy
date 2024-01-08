@@ -11,7 +11,7 @@ import { SipnnerService } from 'src/app/_services/SpinnerService';
 import { PredictService } from 'src/app/_services/predict.service';
 import { Prediction } from 'src/app/model/Prediction';
 import { F1DriversService } from 'src/app/_services/f1-drivers.service';
-import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons'
+import { faArrowDown, faArrowUp, faGaugeSimpleMed } from '@fortawesome/free-solid-svg-icons'
 import { TotalPointsResponse } from 'src/app/model/TotalPointsResponse';
 import { PointsInfo } from 'src/app/model/PointsInfo';
 import * as $ from 'jquery';
@@ -57,6 +57,8 @@ export class HomeComponent implements OnInit {
   third: number = 0;
   fastest: number = 0;
   showAlert: boolean = false;
+  showAlertSuccess: boolean = false;
+  showAlertIncomplete: boolean = false;
   totalPointsData: TotalPointsResponse[] | null = null;
   driversStandings: TotalPointsResponse[] | null = null;
   constructorStandings: TotalPointsResponse[] | null = null;
@@ -256,6 +258,9 @@ export class HomeComponent implements OnInit {
     this.drivers.forEach(driver => {
       driver.selection = undefined;
     });
+    this.first = 0;
+    this.second = 0;
+    this.third = 0;
   }
 
   areAllDriversSelected(): boolean {
@@ -276,15 +281,21 @@ export class HomeComponent implements OnInit {
         this.showDrivers = false;
         this.showDriversFastest = false;
         this.successMessage = "Your prediction has been saved!";
+        this.showAlertSuccess = true;
         this.showAlert = true;
         if (response.predictedPodium == false || response.predictedFastestLap == false) {
           let tempMessage = "";
           if (response.predictedPodium == false) {
             tempMessage = "podium";
+            this.pHasPodium = false;
+            this.pHasFastestLap = true;
           } else {
             tempMessage = "fastestLap";
+            this.pHasPodium = true;
           }
           this.IncompletePredictionMessage = "To get more points, fill the " + tempMessage +  " prediction!";
+          this.showAlertSuccess = true;
+          this.showAlertIncomplete = true;
         }
         //check if fastestLap
       }, error => {
@@ -299,8 +310,12 @@ export class HomeComponent implements OnInit {
     return this.drivers;
   }
 
-  closeAlert() {
-    this.showAlert = false;
+  closeAlert(alertType : string) {
+    if (alertType === "success") {
+      this.showAlertSuccess = false;
+    } else {
+      this.showAlertIncomplete = false;
+    }
   }
 
 

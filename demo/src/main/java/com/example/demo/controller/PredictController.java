@@ -38,6 +38,10 @@ public class PredictController {
         Prediction savedPrediction = predictService.savePrediction(prediction);
         prediction.setPredictedPodium(savedPrediction.getPredictedPodium());
         prediction.setPredictedFastestLap(savedPrediction.getPredictedFastestLap());
+        prediction.setFirst(savedPrediction.getFirst());
+        prediction.setSecond(savedPrediction.getSecond());
+        prediction.setThird(savedPrediction.getThird());
+        prediction.setFastestLap(savedPrediction.getFastestLap());
         return prediction;
     }
 
