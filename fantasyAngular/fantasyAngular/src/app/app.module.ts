@@ -21,6 +21,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { SpinnerInterceptor } from 'src/_helpers/SpinnerInterceptor';
 import { AuthInterceptor } from 'src/_helpers/auth.interceptor';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { FooterComponent } from './components/footer/footer.component';
+import { CalendarComponent } from './components/calendar/calendar.component';
+import { RaceDetailsComponent } from './components/race-details/race-details.component';
 
 
 
@@ -37,7 +40,10 @@ import { NgxPaginationModule } from 'ngx-pagination';
     BoardModeratorComponent,
     BoardUserComponent,
     NavBarComponent,
-    SpinnerComponent
+    SpinnerComponent,
+    FooterComponent,
+    CalendarComponent,
+    RaceDetailsComponent
   ],
   imports: [
     BrowserModule,

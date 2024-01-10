@@ -17,6 +17,8 @@ import { PointsInfo } from 'src/app/model/PointsInfo';
 import * as $ from 'jquery';
 import { DriverMappingService } from 'src/app/_services/driver-mapping-service.service';
 import { Standings } from 'src/app/model/Standings';
+import { DarkModeService } from 'angular-dark-mode';
+import { Observable } from 'rxjs';
 
 
 @Component({
@@ -26,10 +28,13 @@ import { Standings } from 'src/app/model/Standings';
 })
 export class HomeComponent implements OnInit {
 
+  darkMode$: Observable<boolean> = this.darkModeService.darkMode$;
+
   constructor(private userService: UserService, private authService: AuthService,
     private dateTimeService: DateTimeServiceService, private spinnerService: SipnnerService,
     private predictService: PredictService,
-    private driverMappingService: DriverMappingService) { }
+    private driverMappingService: DriverMappingService,
+    private darkModeService: DarkModeService) { }
 
   // Reference to the modal element
   @ViewChild('myModal') myModal!: ElementRef;
@@ -172,6 +177,10 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  onToggle(): void {
+    this.darkModeService.toggle();
+  }
+
   getDriversStandings(): TotalPointsResponse[] {
     return this.driversStandings || [];
   }
@@ -292,6 +301,8 @@ export class HomeComponent implements OnInit {
           } else {
             tempMessage = "fastestLap";
             this.pHasPodium = true;
+          } if (response.predictedFastestLap) {
+            this.pHasFastestLap = true;
           }
           this.IncompletePredictionMessage = "To get more points, fill the " + tempMessage +  " prediction!";
           this.showAlertSuccess = true;

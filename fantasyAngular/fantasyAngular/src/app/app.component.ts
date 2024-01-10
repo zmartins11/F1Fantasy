@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, Renderer2 } from '@angular/core';
 import { TokenStorageService } from './_services/token-storage.service';
 import { User } from './model/user';
 import { Router } from '@angular/router';
@@ -20,7 +20,8 @@ export class AppComponent implements OnInit {
   user : User | null | undefined;
 
   constructor(private authService: AuthService, private router: Router,
-              private dateTimeService : DateTimeServiceService) { }
+              private dateTimeService : DateTimeServiceService,
+              private el: ElementRef, private renderer: Renderer2) { }
 
   ngOnInit(): void {
         this.user= this.authService.getUser();
