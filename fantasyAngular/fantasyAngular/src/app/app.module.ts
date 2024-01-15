@@ -21,9 +21,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { SpinnerInterceptor } from 'src/_helpers/SpinnerInterceptor';
 import { AuthInterceptor } from 'src/_helpers/auth.interceptor';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { FooterComponent } from './components/footer/footer.component';
 import { CalendarComponent } from './components/calendar/calendar.component';
 import { RaceDetailsComponent } from './components/race-details/race-details.component';
+import { AngularTwitterTimelineModule } from 'angular-twitter-timeline';
 
 
 
@@ -41,7 +41,6 @@ import { RaceDetailsComponent } from './components/race-details/race-details.com
     BoardUserComponent,
     NavBarComponent,
     SpinnerComponent,
-    FooterComponent,
     CalendarComponent,
     RaceDetailsComponent
   ],
@@ -53,7 +52,8 @@ import { RaceDetailsComponent } from './components/race-details/race-details.com
     FontAwesomeModule,
     NgxSpinnerModule,
     BrowserAnimationsModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    AngularTwitterTimelineModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

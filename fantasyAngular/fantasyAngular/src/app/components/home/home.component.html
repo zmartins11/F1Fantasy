@@ -13,7 +13,8 @@
       <div class="modal-body">
         <!-- Loop through the pointsInfo array and display each item -->
         <div *ngFor="let pointInfo of pointsInfo">
-          {{ pointInfo.position }} -- {{ pointInfo.driverName }}: {{ pointInfo.points }} point{{ pointInfo.points !== 1 ? 's' : '' }}
+          {{ pointInfo.position }} -- {{ pointInfo.driverName }}: {{ pointInfo.points }} point{{ pointInfo.points !== 1
+          ? 's' : '' }}
         </div>
         <div>Total Points: {{ totalPoints }} point{{ totalPoints !== 1 ? 's' : '' }}</div>
       </div>
@@ -35,7 +36,7 @@
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
-  
+
   <div *ngIf="showAlertIncomplete && IncompletePredictionMessage" class="alert alert-warning" role="alert">
     {{ IncompletePredictionMessage }}
     <button type="button" class="close" (click)="closeAlert('incomplete')">
@@ -50,7 +51,6 @@
   <header *ngIf="!isLoggedIn" class="jumbotron">
     <p *ngIf="!isLoggedIn">Welcome to the app. Please log in to access all the content available</p>
   </header>
-
   <div *ngIf="isLoggedIn and formattedDate">
     <h3 class="text-center mt-3">Next Race: {{ nameRace }} | Round: {{ round }}</h3>
     <div class="row mt-4" *ngIf="!predictionLocked">
@@ -85,7 +85,7 @@
   </div>
 
 
-  <div *ngIf="isLoggedIn" class="container mt-5">
+  <div *ngIf="isLoggedIn and !errorMessage" class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-6">
         <!-- Content for the second inner div -->
@@ -97,7 +97,7 @@
               [ngClass]="{'active': currentPredictionCard === 'fastestLap'}"></span>
             <!-- Add more dots if you have additional prediction cards -->
           </div>
-                                                                            <!-- PODIUM -->
+          <!-- PODIUM -->
           <div class="card-body" *ngIf="currentPredictionCard === 'podium'">
             <!-- Add navigation dots for predictions -->
             <h5 class="card-title">Podium Prediction</h5>
@@ -151,9 +151,10 @@
                     <li *ngFor="let driver of drivers.slice(0, 10)" class="list-group-item"
                       (mouseover)="highlightDriver(driver)" (mouseout)="unhighlightDriver(driver)"
                       (click)="selectDriver(driver)">
-                        <div [ngClass]="{'selected-1st': driver.selection === 1, 'selected-2nd': driver.selection === 2, 'selected-3rd': driver.selection === 3}">
-                          {{ driver.name }} {{ driver.selection }}
-                        </div>
+                      <div
+                        [ngClass]="{'selected-1st': driver.selection === 1, 'selected-2nd': driver.selection === 2, 'selected-3rd': driver.selection === 3}">
+                        {{ driver.name }} {{ driver.selection }}
+                      </div>
                     </li>
                   </ul>
                 </div>
@@ -162,7 +163,8 @@
                     <li *ngFor="let driver of drivers.slice(10)" class="list-group-item"
                       (mouseover)="highlightDriver(driver)" (mouseout)="unhighlightDriver(driver)"
                       (click)="selectDriver(driver)">
-                      <div [ngClass]="{'selected-1st': driver.selection === 1, 'selected-2nd': driver.selection === 2, 'selected-3rd': driver.selection === 3}">
+                      <div
+                        [ngClass]="{'selected-1st': driver.selection === 1, 'selected-2nd': driver.selection === 2, 'selected-3rd': driver.selection === 3}">
                         {{ driver.name }} {{ driver.selection }}
                       </div>
                     </li>
@@ -177,7 +179,7 @@
                 {{ fastest ? 'Save Podium Prediction and Fastest Lap' : 'Save Podium Prediction' }}</button>
             </div>
           </div>
-                                                                            <!-- FASTESTlAP CARD -->
+          <!-- FASTESTlAP CARD -->
           <div class="card-body" *ngIf="currentPredictionCard === 'fastestLap'">
             <!-- Add navigation dots for predictions -->
             <h5 class="card-title">FastestLap Prediction</h5>
@@ -214,9 +216,8 @@
                   <ul>
                     <li *ngFor="let driver of drivers.slice(0, 10)" class="list-group-item"
                       (mouseover)="highlightDriver(driver)" (mouseout)="unhighlightDriver(driver)"
-                      (click)="selectFastestDriver(driver)"
-                      [class.fastest-driver]="driver.number === fastest">
-                      {{ driver.name }} 
+                      (click)="selectFastestDriver(driver)" [class.fastest-driver]="driver.number === fastest">
+                      {{ driver.name }}
                     </li>
                   </ul>
                 </div>
@@ -224,9 +225,8 @@
                   <ul>
                     <li *ngFor="let driver of drivers.slice(10)" class="list-group-item"
                       (mouseover)="highlightDriver(driver)" (mouseout)="unhighlightDriver(driver)"
-                      (click)="selectFastestDriver(driver)"
-                      [class.fastest-driver]="driver.number === fastest">
-                      {{ driver.name }} 
+                      (click)="selectFastestDriver(driver)" [class.fastest-driver]="driver.number === fastest">
+                      {{ driver.name }}
                     </li>
                   </ul>
                 </div>
@@ -324,5 +324,13 @@
         </div>
       </div>
     </div>
+    <div style="width: 617px;">
+      <angular-twitter-timeline [data]="{sourceType: 'url', url: 'https://twitter.com/F1'}"
+        [opts]="{tweetLimit: 5, height: 600}">
+      </angular-twitter-timeline>
+    </div>
+    <div>
+
+    </div>
+      <iframe width="560" height="315" src="https://www.youtube.com/watch?v=tCIl16gLe88&ab_channel=FORMULA1" frameborder="0" allowfullscreen></iframe>
   </div>
-</div>

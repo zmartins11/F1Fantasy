@@ -67,8 +67,7 @@ public class PredictService {
                 predictionSaved.setThird(prediction.getThird());
                 predictionSaved.setPredictedPodium(Boolean.TRUE);
             }
-            if (prediction.getFastestLap() != null) {
-                predictionSaved.setFastestLap(prediction.getFastestLap());
+            if (prediction.getFastestLap() != null) {                predictionSaved.setFastestLap(prediction.getFastestLap());
                 predictionSaved.setPredictedFastestLap(Boolean.TRUE);
             }
             return predictRepository.save(predictionSaved);
@@ -78,7 +77,7 @@ public class PredictService {
             newPrediction.setRound(prediction.getRound());
             newPrediction.setPredictedFastestLap(Boolean.FALSE);
             newPrediction.setPredictedPodium(Boolean.FALSE);
-            if (prediction.getFirst() != null) {
+           if (prediction.getFirst() != null) {
                 newPrediction.setFirst(prediction.getFirst());
                 newPrediction.setSecond(prediction.getSecond());
                 newPrediction.setThird(prediction.getThird());

@@ -1,6 +1,6 @@
-<div id="app">
+<div id="app" class="wraper">
   <nav class="navbar navbar-expand navbar-dark bg-dark">
-    <a href="#" class="navbar-brand">  F1Predictor</a>
+    <a href="#" class="navbar-brand"> F1Predictor</a>
     <ul class="navbar-nav mr-auto" routerLinkActive="active">
       <li class="nav-item" *ngIf="showAdminBoard">
         <a href="/admin" class="nav-link" routerLink="admin">Admin Board</a>
@@ -31,13 +31,14 @@
       </li>
     </ul>
   </nav>
-  
-  <div class="container">
+
+  <div class="container mb-5">
     <router-outlet></router-outlet>
     <app-spinner></app-spinner>
   </div>
-
- <app-footer></app-footer>
+  <!-- Sticky Footer -->
+  <footer class="navbar navbar-expand navbar-dark bg-dark footer">
+    <span class="navbar-brand">&copy; 2024 F1Predictor</span>
+  </footer>
 
 </div>
-

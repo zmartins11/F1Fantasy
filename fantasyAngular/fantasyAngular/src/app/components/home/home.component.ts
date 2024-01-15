@@ -1,5 +1,5 @@
 import { DatePipe, Time } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { AuthService } from 'src/app/_services/auth.service';
 import { DateTimeServiceService } from 'src/app/_services/date-time-service.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
@@ -14,11 +14,12 @@ import { F1DriversService } from 'src/app/_services/f1-drivers.service';
 import { faArrowDown, faArrowUp, faGaugeSimpleMed } from '@fortawesome/free-solid-svg-icons'
 import { TotalPointsResponse } from 'src/app/model/TotalPointsResponse';
 import { PointsInfo } from 'src/app/model/PointsInfo';
-import * as $ from 'jquery';
 import { DriverMappingService } from 'src/app/_services/driver-mapping-service.service';
 import { Standings } from 'src/app/model/Standings';
 import { DarkModeService } from 'angular-dark-mode';
 import { Observable } from 'rxjs';
+import { DomSanitizer } from '@angular/platform-browser';
+
 
 
 @Component({
@@ -26,7 +27,7 @@ import { Observable } from 'rxjs';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit {
 
   darkMode$: Observable<boolean> = this.darkModeService.darkMode$;
 
@@ -34,7 +35,9 @@ export class HomeComponent implements OnInit {
     private dateTimeService: DateTimeServiceService, private spinnerService: SipnnerService,
     private predictService: PredictService,
     private driverMappingService: DriverMappingService,
-    private darkModeService: DarkModeService) { }
+    private darkModeService: DarkModeService,
+    private sanitizer: DomSanitizer
+   ) { }
 
   // Reference to the modal element
   @ViewChild('myModal') myModal!: ElementRef;
@@ -67,6 +70,7 @@ export class HomeComponent implements OnInit {
   totalPointsData: TotalPointsResponse[] | null = null;
   driversStandings: TotalPointsResponse[] | null = null;
   constructorStandings: TotalPointsResponse[] | null = null;
+  safeUrl : any;
 
   pointsInfo: PointsInfo[] = [];
   showPopUpDriversPoints = false;
@@ -87,9 +91,15 @@ export class HomeComponent implements OnInit {
   pHasFastestLap: Boolean = false;
   faArrowDown = faArrowDown;
   faArrowUp = faArrowUp;
+  events! : any;
 
+  ngAfterViewInit() {
+    (<any>window).twttr.widgets.load();
+  }
 
   ngOnInit(): void {
+    this.events = 'Formula1';
+    this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/watch?v=tCIl16gLe88&ab_channel=FORMULA1");
     this.updateCountdown();
     setInterval(() => {
       this.updateCountdown();
@@ -175,10 +185,6 @@ export class HomeComponent implements OnInit {
 
       })
     }
-  }
-
-  onToggle(): void {
-    this.darkModeService.toggle();
   }
 
   getDriversStandings(): TotalPointsResponse[] {
@@ -313,6 +319,7 @@ export class HomeComponent implements OnInit {
         console.log(error);
         this.errorMessage = error.error.message;
       });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
 
