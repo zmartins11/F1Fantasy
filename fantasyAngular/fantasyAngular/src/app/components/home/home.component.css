@@ -142,3 +142,8 @@
   background-color: #7a4886; /* Set the desired background color */
   z-index: -1;
 }
+
+.highlighted-text {
+  color: rgb(7, 112, 182); 
+  font-weight: bold;
+}

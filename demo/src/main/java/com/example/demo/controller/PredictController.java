@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -90,6 +91,12 @@ public class PredictController {
     @GetMapping("/standings")
     private StandingsDto standingsSeason() throws JsonProcessingException {
         return ergastService.getStandings();
+    }
+
+
+    @GetMapping("/allRaces")
+    private List<RaceInfo> getAllRaces() throws JsonProcessingException {
+        return ergastService.getAllRaces("2023");
     }
 
 }

@@ -160,6 +160,24 @@ public class ErgastService {
 		return names;
 	}
 
+
+	public List<RaceInfo> getAllRaces(String season) throws JsonMappingException, JsonProcessingException {
+		ArrayList<RaceInfo> races = new ArrayList<>();
+		String url = "http://ergast.com/api/f1/" + season + "/races.json";
+		ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+		ObjectMapper mapper = new ObjectMapper();
+		RaceResponse racesResponse = mapper.readValue(response.getBody(), RaceResponse.class);
+
+		for (Race race : racesResponse.getMrData().getRaceTable().getRaces()) {
+			RaceInfo tmpRace = new RaceInfo();
+			tmpRace.setRaceName(race.getRaceName());
+			tmpRace.setRound(race.getRound());
+			tmpRace.setCountry(race.getCircuit().getLocation().getCountry());
+			races.add(tmpRace);
+		}
+		return races;
+	}
+
 	public HashMap<Integer, Integer> testApiGetResult(String position, Integer racesCurrentSeason, String driver) throws JsonProcessingException {
 		HashMap<Integer, Integer> resultSeason = new HashMap<>();
 
@@ -299,5 +317,9 @@ public class ErgastService {
 		standingsDto.setConstructors(resultConstructors);
 
 		return standingsDto;
+	}
+
+	public void getAllRaces() {
+
 	}
 }

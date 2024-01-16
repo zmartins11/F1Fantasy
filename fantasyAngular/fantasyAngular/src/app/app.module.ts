@@ -25,6 +25,7 @@ import { CalendarComponent } from './components/calendar/calendar.component';
 import { RaceDetailsComponent } from './components/race-details/race-details.component';
 import { AngularTwitterTimelineModule } from 'angular-twitter-timeline';
 import { YouTubePlayerModule } from '@angular/youtube-player';
+import { RacePopupComponent } from './components/race-popup/race-popup.component';
 
 
 
@@ -43,7 +44,8 @@ import { YouTubePlayerModule } from '@angular/youtube-player';
     NavBarComponent,
     SpinnerComponent,
     CalendarComponent,
-    RaceDetailsComponent
+    RaceDetailsComponent,
+    RacePopupComponent
   ],
   imports: [
     BrowserModule,

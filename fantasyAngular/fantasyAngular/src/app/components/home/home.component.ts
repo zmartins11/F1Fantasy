@@ -138,7 +138,7 @@ export class HomeComponent implements OnInit{
         error => {
           this.showAlert = true;
           this.errorMessage = error.error.message;
-          let countdown = 10; // Set the initial countdown value
+          let countdown = 3; // Set the initial countdown value
 
           const intervalId = setInterval(() => {
             this.sessionExpiredMessage = `Your session has expired. You will be logged out in ${countdown} seconds...`;
