@@ -19,6 +19,8 @@ import { Standings } from 'src/app/model/Standings';
 import { DarkModeService } from 'angular-dark-mode';
 import { Observable } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
+import { NextRaceInfo } from 'src/app/model/NextRaceInfo';
+import { Router } from '@angular/router';
 
 
 
@@ -27,7 +29,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit, AfterViewInit {
+export class HomeComponent implements OnInit{
 
   darkMode$: Observable<boolean> = this.darkModeService.darkMode$;
 
@@ -36,7 +38,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private predictService: PredictService,
     private driverMappingService: DriverMappingService,
     private darkModeService: DarkModeService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private router: Router
    ) { }
 
   // Reference to the modal element
@@ -50,11 +53,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
   round: string = '';
   timeRemaining: any;
   nameRace: string = '';
+  country : string = '';
   drivers: Formula1Driver[] = [];
   saveDriversToPredict: Formula1Driver[] = [];
   showDrivers = false;
   showDriversFastest = false;
   errorMessage = null;
+  sessionExpiredMessage :string = '';
   successMessage: string = "";
   IncompletePredictionMessage : string = "";
   formattedDate: Date | any;
@@ -93,9 +98,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   faArrowUp = faArrowUp;
   events! : any;
 
-  ngAfterViewInit() {
-    (<any>window).twttr.widgets.load();
-  }
+ 
 
   ngOnInit(): void {
     this.events = 'Formula1';
@@ -117,6 +120,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.raceDate = response.time;
         this.nameRace = response.nameRace;
         this.round = response.round;
+        this.country = response.country;
         this.predictionLocked = response.predictionLocked;
         if (response.predictedPodium) {
           this.pHasPodium = true;
@@ -134,7 +138,21 @@ export class HomeComponent implements OnInit, AfterViewInit {
         error => {
           this.showAlert = true;
           this.errorMessage = error.error.message;
-          console.log(error.error.message);
+          let countdown = 10; // Set the initial countdown value
+
+          const intervalId = setInterval(() => {
+            this.sessionExpiredMessage = `Your session has expired. You will be logged out in ${countdown} seconds...`;
+            countdown--;
+    
+            if (countdown === 0) {
+              clearInterval(intervalId);
+    
+              // Redirect to login page
+              this.authService.signOut();
+              window.location.reload();
+              this.router.navigate(['/home']);
+            }
+          }, 1000); // Update the countdown every second
         });
 
       //get info points
@@ -316,8 +334,21 @@ export class HomeComponent implements OnInit, AfterViewInit {
         }
         //check if fastestLap
       }, error => {
-        console.log(error);
         this.errorMessage = error.error.message;
+        let countdown = 10; // Set the initial countdown value
+        const intervalId = setInterval(() => {
+          this.sessionExpiredMessage = `Your session has expired. You will be logged out in ${countdown} seconds...`;
+          countdown--;
+  
+          if (countdown === 0) {
+            clearInterval(intervalId);
+  
+            // Redirect to login page
+            this.authService.signOut();
+            window.location.reload();
+            this.router.navigate(['/home']);
+          }
+        }, 1000); // Update the countdown every second
       });
       window.scrollTo({ top: 0, behavior: 'smooth' });
   }

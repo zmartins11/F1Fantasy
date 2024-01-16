@@ -25,7 +25,7 @@ public class PredictController {
 
     @PostMapping("/predict")
     private PredictionDto savePrediction(@RequestBody PredictionDto prediction) throws Exception {
-        TimeUnit.SECONDS.sleep(2);
+        TimeUnit.SECONDS.sleep(1);
         //season static value
         Year currentYear = Year.now();
         String season = String.valueOf(currentYear.getValue());
@@ -48,6 +48,7 @@ public class PredictController {
 
     @GetMapping("/raceSchedule")
     private NextRaceInfoDto getRaceInfo(@RequestParam String username) throws JsonProcessingException, InterruptedException {
+        TimeUnit.SECONDS.sleep(3);
         RaceResult nextRaceInfo = predictService.getNextRaceInfo();
         NextRaceInfoDto nextRaceInfoDto = ergastService.getScheduleRace(nextRaceInfo);
 

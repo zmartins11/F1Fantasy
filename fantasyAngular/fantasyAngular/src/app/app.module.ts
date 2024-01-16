@@ -24,6 +24,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { CalendarComponent } from './components/calendar/calendar.component';
 import { RaceDetailsComponent } from './components/race-details/race-details.component';
 import { AngularTwitterTimelineModule } from 'angular-twitter-timeline';
+import { YouTubePlayerModule } from '@angular/youtube-player';
 
 
 
@@ -53,7 +54,8 @@ import { AngularTwitterTimelineModule } from 'angular-twitter-timeline';
     NgxSpinnerModule,
     BrowserAnimationsModule,
     NgxPaginationModule,
-    AngularTwitterTimelineModule
+    AngularTwitterTimelineModule,
+    YouTubePlayerModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
