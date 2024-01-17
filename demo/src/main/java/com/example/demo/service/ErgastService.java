@@ -170,9 +170,13 @@ public class ErgastService {
 
 		for (Race race : racesResponse.getMrData().getRaceTable().getRaces()) {
 			RaceInfo tmpRace = new RaceInfo();
+			if (race.getCircuit().getLocation().getCountry().equals("United States")) {
+				tmpRace.setCountry("USA");
+			} else {
+				tmpRace.setCountry(race.getCircuit().getLocation().getCountry());
+			}
 			tmpRace.setRaceName(race.getRaceName());
 			tmpRace.setRound(race.getRound());
-			tmpRace.setCountry(race.getCircuit().getLocation().getCountry());
 			races.add(tmpRace);
 		}
 		return races;

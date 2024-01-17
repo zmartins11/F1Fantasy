@@ -3,6 +3,7 @@ import { Race } from 'src/app/model/Race';
 import { RaceDetailsComponent } from '../race-details/race-details.component';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { CalendarService } from 'src/app/_services/calendar.service';
+import { F1Service } from 'src/app/_services/f1.service';
 
 @Component({
   selector: 'app-calendar',
@@ -17,7 +18,9 @@ export class CalendarComponent {
 
   currentYear = new Date().getFullYear();
 
-  constructor(private calendarService: CalendarService) { }
+  constructor(private calendarService: CalendarService,
+              private f1Service: F1Service,
+              private modalService: BsModalService) { }
 
   
 
@@ -53,12 +56,18 @@ export class CalendarComponent {
 
 
   openRaceDetails(race: Race) {
-    this.calendarService.setRaceData(race);
+    this.f1Service.setRaceData(race);
 
     const initialState = {
-      title: race.raceName,
       race: race
     };
+
+    if(this.currentSeason === this.currentYear) {
+      this.modalService.show(RaceDetailsComponent, { initialState });
+    } else {
+      this.modalService.show(RaceDetailsComponent, { initialState })
+    }
+    
     
   }
 

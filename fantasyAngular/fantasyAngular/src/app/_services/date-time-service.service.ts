@@ -6,6 +6,8 @@ import { NextRaceInfo } from '../model/NextRaceInfo';
 import { TotalPointsResponse } from '../model/TotalPointsResponse';
 import { PointsInfo } from '../model/PointsInfo';
 import { Standings } from '../model/Standings';
+import { RaceInfo } from '../model/RaceInfo';
+import { Race } from '../model/Race';
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +38,11 @@ export class DateTimeServiceService {
   getStandingsSeason(): Observable<Standings> {
     const url = `${this.apiUrl}/standings`;
     return this.http.get<Standings>(url);
+  }
+
+  getAllRaces(): Observable<RaceInfo []> {
+    const url = `${this.apiUrl}/allRaces`;
+    return this.http.get<RaceInfo[]>(url);
   }
 
   

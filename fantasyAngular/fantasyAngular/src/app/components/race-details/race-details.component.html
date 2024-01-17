@@ -1,1 +1,70 @@
-<p>race-details works!</p>
+<table class="table">
+  
+    <tbody>
+      <tr>
+        <td class="day-month-raceDetails text-center align-middle">&nbsp;{{raceData.FirstPractice.date | date : 'dd'}}
+            <br>
+            <div class="bg-secondary rounded p-2 d-inline-block">
+        <h6 class="font-weight-bold text-white mb-0">{{raceData.FirstPractice.date | date : 'MMM'}}</h6>
+    </div>
+        </td>
+        <td>
+            <h6 class="font-weight-bold">FirstPractice</h6>
+            <br>
+            {{ raceData.FirstPractice.time.slice(0,5)}}
+        </td>
+      </tr>
+      <tr>
+        <td class="day-month-raceDetails text-center align-middle">&nbsp;{{raceData.SecondPractice.date | date : 'dd'}}
+            <br>
+            <div class="bg-secondary rounded p-2 d-inline-block">
+        <h6 class="font-weight-bold text-white mb-0">{{raceData.SecondPractice.date | date : 'MMM'}}</h6>
+    </div>
+        </td>
+        <td>
+            <h6 class="font-weight-bold">SecondPractice</h6>
+            <br>
+            {{ raceData.SecondPractice.time.slice(0,5)}}
+        </td>
+      </tr>
+      <tr>
+        <td class="day-month-raceDetails text-center align-middle">&nbsp;{{raceData.ThirdPractice.date | date : 'dd'}}
+            <br>
+            <div class="bg-secondary rounded p-2 d-inline-block">
+        <h6 class="font-weight-bold text-white mb-0">{{raceData.ThirdPractice.date | date : 'MMM'}}</h6>
+    </div>
+        </td>
+        <td>
+            <h6 class="font-weight-bold">ThirdPractice</h6>
+            <br>
+            {{ raceData.ThirdPractice.time.slice(0,5)}}
+        </td>
+      </tr>
+      <tr>
+        <td class="day-month-raceDetails text-center align-middle">&nbsp;{{raceData.Qualifying.date | date : 'dd'}}
+            <br>
+            <div class="bg-secondary rounded p-2 d-inline-block">
+        <h6 class="font-weight-bold text-white mb-0">{{raceData.Qualifying.date | date : 'MMM'}}</h6>
+    </div>
+        </td>
+        <td>
+            <h6 class="font-weight-bold">Qualifying</h6>
+            <br>
+            {{ raceData.Qualifying.time.slice(0,5)}}
+        </td>
+      </tr>
+      <tr>
+        <td class="day-month-raceDetails text-center align-middle">&nbsp;{{raceData.date | date : 'dd'}}
+            <br>
+            <div class="bg-secondary rounded p-2 d-inline-block">
+        <h6 class="font-weight-bold text-white mb-0">{{raceData.date | date : 'MMM'}}</h6>
+    </div>
+        </td>
+        <td>
+            <h6 class="font-weight-bold">Race</h6>
+            <br>
+            {{ raceData.time.slice(0,5)}}
+        </td>
+      </tr>
+    </tbody>
+  </table>

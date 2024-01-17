@@ -26,6 +26,7 @@ import { RaceDetailsComponent } from './components/race-details/race-details.com
 import { AngularTwitterTimelineModule } from 'angular-twitter-timeline';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 import { RacePopupComponent } from './components/race-popup/race-popup.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 
 
@@ -57,7 +58,8 @@ import { RacePopupComponent } from './components/race-popup/race-popup.component
     BrowserAnimationsModule,
     NgxPaginationModule,
     AngularTwitterTimelineModule,
-    YouTubePlayerModule
+    YouTubePlayerModule,
+    ModalModule.forRoot()
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

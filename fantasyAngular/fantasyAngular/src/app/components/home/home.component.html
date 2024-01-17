@@ -30,8 +30,11 @@
     <div *ngIf="errorMessage" class="alert alert-danger font-weight-bold" role="alert">
       {{ sessionExpiredMessage }}
     </div>
+    <div *ngIf="errorMessagePopUp" class="alert alert-danger font-weight-bold" role="alert">
+      {{ errorMessagePopUp }}
+    </div>
 
-    <div *ngIf="showAlertSuccess && successMessage" class="alert alert-success" role="alert">
+    <div *ngIf="showAlertSuccess && successMessage" class="alert alert-success fade-out" role="alert">
       {{ successMessage }}
       <button type="button" class="close" (click)="closeAlert('success')">
         <span aria-hidden="true">&times;</span>
@@ -53,7 +56,9 @@
       <p *ngIf="!isLoggedIn">Welcome to the app. Please log in to access all the content available</p>
     </header>
     <div *ngIf="isLoggedIn and formattedDate">
-      <h3 (click)="openRacePopup()" class="text-center mt-3">Next Race: {{ nameRace }} <img src="assets/images/flags/{{country}}.png" alt="Flag" class="ml-2" width="28" height="17"> | Round: {{ round }}</h3>
+      <h3 (click)="openRacePopup()" (mouseover)="highlightText()" (mouseout)="removeHighlight()" class="text-center mt-3 clickable-text">
+        Next Race: {{ nameRace }} <img src="assets/images/flags/{{country}}.png" alt="Flag" class="ml-2" width="28" height="17"> | Round: {{ round }}
+      </h3>
       <div class="row mt-4" *ngIf="!predictionLocked">
         <div class="col-md-2 offset-md-2 text-center">
           <div class="circle">
@@ -340,7 +345,7 @@
         </div>
         <div class="col-md-6 mb-5">
           <div style="float: right;border-radius: 10px;overflow: hidden;">
-            <youtube-player videoId="MCDg2XzwF7g" suggestedQuality="highres" [height]="500" [width]="610">
+            <youtube-player [videoId]="videoId" suggestedQuality="highres" [height]="500" [width]="610">
             </youtube-player>
           </div>
         </div>

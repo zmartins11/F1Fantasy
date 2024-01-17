@@ -1,5 +1,5 @@
 import { DatePipe, Time } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { AuthService } from 'src/app/_services/auth.service';
 import { DateTimeServiceService } from 'src/app/_services/date-time-service.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
@@ -21,6 +21,9 @@ import { Observable } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NextRaceInfo } from 'src/app/model/NextRaceInfo';
 import { Router } from '@angular/router';
+import { RacePopupComponent } from '../race-popup/race-popup.component';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { YoutubeService } from 'src/app/_services/youtube.service';
 
 
 
@@ -32,6 +35,7 @@ import { Router } from '@angular/router';
 export class HomeComponent implements OnInit{
 
   darkMode$: Observable<boolean> = this.darkModeService.darkMode$;
+  
 
   constructor(private userService: UserService, private authService: AuthService,
     private dateTimeService: DateTimeServiceService, private spinnerService: SipnnerService,
@@ -39,7 +43,10 @@ export class HomeComponent implements OnInit{
     private driverMappingService: DriverMappingService,
     private darkModeService: DarkModeService,
     private sanitizer: DomSanitizer,
-    private router: Router
+    private router: Router,
+    private modalService : BsModalService,
+    private youtubeService: YoutubeService
+    
    ) { }
 
   // Reference to the modal element
@@ -60,6 +67,7 @@ export class HomeComponent implements OnInit{
   showDriversFastest = false;
   errorMessage = null;
   sessionExpiredMessage :string = '';
+  errorMessagePopUp : string = "";
   successMessage: string = "";
   IncompletePredictionMessage : string = "";
   formattedDate: Date | any;
@@ -72,10 +80,12 @@ export class HomeComponent implements OnInit{
   showAlert: boolean = false;
   showAlertSuccess: boolean = false;
   showAlertIncomplete: boolean = false;
+  isHighlighted: boolean = false;
   totalPointsData: TotalPointsResponse[] | null = null;
   driversStandings: TotalPointsResponse[] | null = null;
   constructorStandings: TotalPointsResponse[] | null = null;
   safeUrl : any;
+  bsModalRef: BsModalRef | undefined;
 
   pointsInfo: PointsInfo[] = [];
   showPopUpDriversPoints = false;
@@ -97,12 +107,12 @@ export class HomeComponent implements OnInit{
   faArrowDown = faArrowDown;
   faArrowUp = faArrowUp;
   events! : any;
+  videoId: string = "";
+
 
  
 
   ngOnInit(): void {
-    this.events = 'Formula1';
-    this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/watch?v=tCIl16gLe88&ab_channel=FORMULA1");
     this.updateCountdown();
     setInterval(() => {
       this.updateCountdown();
@@ -197,6 +207,24 @@ export class HomeComponent implements OnInit{
         this.errorMessage = error.error.message;
       });
 
+      
+        this.youtubeService.searchVideo("formula 1 monaco 2023 highlights tsn").subscribe(
+          (response: any) => {
+            if (response.videoId) {
+              this.videoId = response.videoId;
+              console.log('Video ID:', this.videoId);
+              // Now, this.videoId contains the retrieved videoId
+            } else {
+              console.error('Error:', response.error);
+              // Handle the error if needed
+            }
+          },
+          (error) => {
+            console.error('HTTP Request Error:', error);
+            // Handle the error if needed
+          }
+        );
+
       this.dateTimeService.getStandingsSeason().subscribe(response => {
         this.driversStandings = response.drivers;
         this.constructorStandings = response.constructors;
@@ -204,6 +232,45 @@ export class HomeComponent implements OnInit{
       })
     }
   }
+
+  openRacePopup() {
+    // Fetch races from your service and subscribe to the observable
+    this.dateTimeService.getAllRaces().subscribe(races => {
+      const initialState = {
+        races: races,
+        round: this.round,
+        error : null
+      };
+      
+      const modalOptions = {
+        initialState,
+        class: 'modal-lg',
+      };
+  
+      this.bsModalRef = this.modalService.show(RacePopupComponent, modalOptions);
+    },
+    error => {
+      let countdown = 3; // Set the initial countdown value
+
+      const intervalId = setInterval(() => {
+          this.errorMessagePopUp = `Your session has expired. You will be logged out in ${countdown} seconds...`;
+        countdown--;
+        if (countdown === 0) {
+          clearInterval(intervalId);
+
+          // Redirect to login page
+          this.authService.signOut();
+          window.location.reload();
+          this.router.navigate(['/home']);
+        }
+      }, 1000); 
+    }
+  );
+  }
+
+  
+  
+  
 
   getDriversStandings(): TotalPointsResponse[] {
     return this.driversStandings || [];
@@ -314,6 +381,7 @@ export class HomeComponent implements OnInit{
         this.showDrivers = false;
         this.showDriversFastest = false;
         this.successMessage = "Your prediction has been saved!";
+        this.showSuccessAlert("Your prediction has been saved!");
         this.showAlertSuccess = true;
         this.showAlert = true;
         if (response.predictedPodium == false || response.predictedFastestLap == false) {
@@ -335,7 +403,7 @@ export class HomeComponent implements OnInit{
         //check if fastestLap
       }, error => {
         this.errorMessage = error.error.message;
-        let countdown = 10; // Set the initial countdown value
+        let countdown = 3; // Set the initial countdown value
         const intervalId = setInterval(() => {
           this.sessionExpiredMessage = `Your session has expired. You will be logged out in ${countdown} seconds...`;
           countdown--;
@@ -361,9 +429,13 @@ export class HomeComponent implements OnInit{
 
   closeAlert(alertType : string) {
     if (alertType === "success") {
-      this.showAlertSuccess = false;
+      setTimeout(() => {
+        this.showAlertSuccess = false;
+      }, 1000); // Adjust the duration to match the transition duration
     } else {
-      this.showAlertIncomplete = false;
+      setTimeout(() => {
+        this.showAlertIncomplete = false;
+      }, 1000); // Adjust the duration to match the transition duration
     }
   }
 
@@ -393,6 +465,23 @@ export class HomeComponent implements OnInit{
     this.currentPredictionCard = card;
 }
 
+highlightText() {
+  this.isHighlighted = true; 
+}
+
+removeHighlight() {
+  this.isHighlighted = false;
+}
+
+showSuccessAlert(message: string): void {
+  this.successMessage = message;
+  this.showAlertSuccess = true;
+
+  // Close the alert after 3 seconds
+  setTimeout(() => {
+    this.closeAlert('success');
+  }, 3000);
+}
 
 }
 
