@@ -9,12 +9,11 @@ export class YoutubeService {
 
   constructor(private http: HttpClient) { }
 
-  private baseUrl = 'http://localhost:8000/video_search'; 
+  baseUrl = ' http://127.0.0.1:5000/video-search'; 
 
   searchVideo(query: string): Observable<any> {
-    const url = `${this.baseUrl}/search`; // Adjust the endpoint if needed
     const payload = { query };
 
-    return this.http.post(url, payload);
+    return this.http.post(this.baseUrl, payload);
   }
 }

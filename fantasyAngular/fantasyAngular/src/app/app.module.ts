@@ -27,6 +27,7 @@ import { AngularTwitterTimelineModule } from 'angular-twitter-timeline';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 import { RacePopupComponent } from './components/race-popup/race-popup.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { WeatherComponent } from './components/weather/weather.component';
 
 
 
@@ -46,7 +47,8 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     SpinnerComponent,
     CalendarComponent,
     RaceDetailsComponent,
-    RacePopupComponent
+    RacePopupComponent,
+    WeatherComponent
   ],
   imports: [
     BrowserModule,

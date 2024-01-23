@@ -24,6 +24,9 @@ import { Router } from '@angular/router';
 import { RacePopupComponent } from '../race-popup/race-popup.component';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { YoutubeService } from 'src/app/_services/youtube.service';
+import { WeatherService } from 'src/app/_services/weather.service';
+import { WeatherComponent } from '../weather/weather.component';
+import { Weather } from 'src/app/model/Weather';
 
 
 
@@ -32,10 +35,10 @@ import { YoutubeService } from 'src/app/_services/youtube.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit{
+export class HomeComponent implements OnInit {
 
   darkMode$: Observable<boolean> = this.darkModeService.darkMode$;
-  
+
 
   constructor(private userService: UserService, private authService: AuthService,
     private dateTimeService: DateTimeServiceService, private spinnerService: SipnnerService,
@@ -44,10 +47,10 @@ export class HomeComponent implements OnInit{
     private darkModeService: DarkModeService,
     private sanitizer: DomSanitizer,
     private router: Router,
-    private modalService : BsModalService,
-    private youtubeService: YoutubeService
-    
-   ) { }
+    private modalService: BsModalService,
+    private youtubeService: YoutubeService,
+    private weatherService: WeatherService
+  ) { }
 
   // Reference to the modal element
   @ViewChild('myModal') myModal!: ElementRef;
@@ -60,16 +63,16 @@ export class HomeComponent implements OnInit{
   round: string = '';
   timeRemaining: any;
   nameRace: string = '';
-  country : string = '';
+  country: string = '';
   drivers: Formula1Driver[] = [];
   saveDriversToPredict: Formula1Driver[] = [];
   showDrivers = false;
   showDriversFastest = false;
   errorMessage = null;
-  sessionExpiredMessage :string = '';
-  errorMessagePopUp : string = "";
+  sessionExpiredMessage: string = '';
+  errorMessagePopUp: string = "";
   successMessage: string = "";
-  IncompletePredictionMessage : string = "";
+  IncompletePredictionMessage: string = "";
   formattedDate: Date | any;
   isLoading = false;
   predictionLocked: Boolean = false;
@@ -84,7 +87,7 @@ export class HomeComponent implements OnInit{
   totalPointsData: TotalPointsResponse[] | null = null;
   driversStandings: TotalPointsResponse[] | null = null;
   constructorStandings: TotalPointsResponse[] | null = null;
-  safeUrl : any;
+  safeUrl: any;
   bsModalRef: BsModalRef | undefined;
 
   pointsInfo: PointsInfo[] = [];
@@ -97,6 +100,7 @@ export class HomeComponent implements OnInit{
   page: number = 1;
 
 
+
   //results
   pFirst: string | undefined = "";
   pSecond: string | undefined = "";
@@ -106,11 +110,12 @@ export class HomeComponent implements OnInit{
   pHasFastestLap: Boolean = false;
   faArrowDown = faArrowDown;
   faArrowUp = faArrowUp;
-  events! : any;
+  events!: any;
   videoId: string = "";
+  weatherData: Weather | undefined;
 
 
- 
+
 
   ngOnInit(): void {
     this.updateCountdown();
@@ -123,6 +128,24 @@ export class HomeComponent implements OnInit{
       if (userString) {
         this.user = userString.username;
       }
+
+      this.weatherService.getWeather('Lisbon').subscribe(
+        (response: any) => {
+          if (response && response.weather && response.weather.length > 0) {
+            const weatherInfo = response.weather[0];
+
+            this.weatherData = {
+              weather: weatherInfo.weather,
+              temperature: weatherInfo.temperature
+            };
+            console.log(this.weatherData);
+          }
+        },
+        error => {
+          console.error('Error fetching weather data:', error.message);
+        }
+      );
+
       //getting all drivers
       this.drivers = Formula1Drivers;
       //getting info for nexRace
@@ -153,10 +176,10 @@ export class HomeComponent implements OnInit{
           const intervalId = setInterval(() => {
             this.sessionExpiredMessage = `Your session has expired. You will be logged out in ${countdown} seconds...`;
             countdown--;
-    
+
             if (countdown === 0) {
               clearInterval(intervalId);
-    
+
               // Redirect to login page
               this.authService.signOut();
               window.location.reload();
@@ -207,23 +230,23 @@ export class HomeComponent implements OnInit{
         this.errorMessage = error.error.message;
       });
 
-      
-        this.youtubeService.searchVideo("formula 1 monaco 2023 highlights tsn").subscribe(
-          (response: any) => {
-            if (response.videoId) {
-              this.videoId = response.videoId;
-              console.log('Video ID:', this.videoId);
-              // Now, this.videoId contains the retrieved videoId
-            } else {
-              console.error('Error:', response.error);
-              // Handle the error if needed
-            }
-          },
-          (error) => {
-            console.error('HTTP Request Error:', error);
+
+      this.youtubeService.searchVideo("formula 1 monaco 2023 highlights tsn").subscribe(
+        (response: any) => {
+          if (response.videoId) {
+            this.videoId = response.videoId;
+            console.log('Video ID:', this.videoId);
+            // Now, this.videoId contains the retrieved videoId
+          } else {
+            console.error('Error:', response.error);
             // Handle the error if needed
           }
-        );
+        },
+        (error) => {
+          console.error('HTTP Request Error:', error);
+          // Handle the error if needed
+        }
+      );
 
       this.dateTimeService.getStandingsSeason().subscribe(response => {
         this.driversStandings = response.drivers;
@@ -239,38 +262,38 @@ export class HomeComponent implements OnInit{
       const initialState = {
         races: races,
         round: this.round,
-        error : null
+        error: null
       };
-      
+
       const modalOptions = {
         initialState,
         class: 'modal-lg',
       };
-  
+
       this.bsModalRef = this.modalService.show(RacePopupComponent, modalOptions);
     },
-    error => {
-      let countdown = 3; // Set the initial countdown value
+      error => {
+        let countdown = 3; // Set the initial countdown value
 
-      const intervalId = setInterval(() => {
+        const intervalId = setInterval(() => {
           this.errorMessagePopUp = `Your session has expired. You will be logged out in ${countdown} seconds...`;
-        countdown--;
-        if (countdown === 0) {
-          clearInterval(intervalId);
+          countdown--;
+          if (countdown === 0) {
+            clearInterval(intervalId);
 
-          // Redirect to login page
-          this.authService.signOut();
-          window.location.reload();
-          this.router.navigate(['/home']);
-        }
-      }, 1000); 
-    }
-  );
+            // Redirect to login page
+            this.authService.signOut();
+            window.location.reload();
+            this.router.navigate(['/home']);
+          }
+        }, 1000);
+      }
+    );
   }
 
-  
-  
-  
+
+
+
 
   getDriversStandings(): TotalPointsResponse[] {
     return this.driversStandings || [];
@@ -324,7 +347,7 @@ export class HomeComponent implements OnInit{
   }
 
   selectFastestDriver(selectDriver: Formula1Driver) {
-    this.fastest = selectDriver.number; 
+    this.fastest = selectDriver.number;
   }
 
   addDriverToSelection(driver: Formula1Driver, position: number) {
@@ -396,7 +419,7 @@ export class HomeComponent implements OnInit{
           } if (response.predictedFastestLap) {
             this.pHasFastestLap = true;
           }
-          this.IncompletePredictionMessage = "To get more points, fill the " + tempMessage +  " prediction!";
+          this.IncompletePredictionMessage = "To get more points, fill the " + tempMessage + " prediction!";
           this.showAlertSuccess = true;
           this.showAlertIncomplete = true;
         }
@@ -407,10 +430,10 @@ export class HomeComponent implements OnInit{
         const intervalId = setInterval(() => {
           this.sessionExpiredMessage = `Your session has expired. You will be logged out in ${countdown} seconds...`;
           countdown--;
-  
+
           if (countdown === 0) {
             clearInterval(intervalId);
-  
+
             // Redirect to login page
             this.authService.signOut();
             window.location.reload();
@@ -418,7 +441,7 @@ export class HomeComponent implements OnInit{
           }
         }, 1000); // Update the countdown every second
       });
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
 
@@ -427,7 +450,7 @@ export class HomeComponent implements OnInit{
     return this.drivers;
   }
 
-  closeAlert(alertType : string) {
+  closeAlert(alertType: string) {
     if (alertType === "success") {
       setTimeout(() => {
         this.showAlertSuccess = false;
@@ -463,25 +486,25 @@ export class HomeComponent implements OnInit{
 
   switchPredictionCard(card: string) {
     this.currentPredictionCard = card;
-}
+  }
 
-highlightText() {
-  this.isHighlighted = true; 
-}
+  highlightText() {
+    this.isHighlighted = true;
+  }
 
-removeHighlight() {
-  this.isHighlighted = false;
-}
+  removeHighlight() {
+    this.isHighlighted = false;
+  }
 
-showSuccessAlert(message: string): void {
-  this.successMessage = message;
-  this.showAlertSuccess = true;
+  showSuccessAlert(message: string): void {
+    this.successMessage = message;
+    this.showAlertSuccess = true;
 
-  // Close the alert after 3 seconds
-  setTimeout(() => {
-    this.closeAlert('success');
-  }, 3000);
-}
+    // Close the alert after 3 seconds
+    setTimeout(() => {
+      this.closeAlert('success');
+    }, 3000);
+  }
 
 }
 

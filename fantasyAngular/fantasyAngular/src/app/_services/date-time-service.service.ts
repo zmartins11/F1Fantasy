@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { DateTimeResponse } from '../model/DateTimeResponse';
@@ -8,6 +8,7 @@ import { PointsInfo } from '../model/PointsInfo';
 import { Standings } from '../model/Standings';
 import { RaceInfo } from '../model/RaceInfo';
 import { Race } from '../model/Race';
+import { data } from 'jquery';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,8 @@ export class DateTimeServiceService {
 
 
   private apiUrl = 'http://localhost:8080';
+  private apiKeyWeather = '6d61bbd868dc7299fdc44c9543ad3988';
+  private apiUrlWeather = '/api/data/2.5/forecast';
   loader = new BehaviorSubject<Boolean>(false);
 
   constructor(private http: HttpClient) { }
@@ -44,6 +47,7 @@ export class DateTimeServiceService {
     const url = `${this.apiUrl}/allRaces`;
     return this.http.get<RaceInfo[]>(url);
   }
+
 
   
 }
