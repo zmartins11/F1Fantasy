@@ -20,6 +20,7 @@
     "@angular/router": "^16.2.0",
     "@angular/youtube-player": "^17.0.5",
     "@fortawesome/angular-fontawesome": "^0.13.0",
+    "@fortawesome/fontawesome-free": "^6.5.1",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@frxjs/ngx-timeline": "^2.2.4",

@@ -1,4 +1,5 @@
 <div class="weather-widget">
-    <p>{{ weather.weather }}</p>
-    <p>{{ weather.temperature }}°C</p>
+    
+    <i [class]="getWeatherIconClass('clouds')" style="font-size: 24px;"></i> 
+     {{ weather.temperature }}°C
   </div>

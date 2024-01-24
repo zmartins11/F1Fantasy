@@ -60,33 +60,36 @@
         Next Race: {{ nameRace }} <img src="assets/images/flags/{{country}}.png" alt="Flag" class="ml-2" width="28" height="17"> | Round: {{ round }}
       </h3>
       <div class="row mt-4" *ngIf="!predictionLocked">
-        <div class="col-md-2 offset-md-2 text-center">
+        <div class="col-md-2 offset-md-1 mb-md-0 mb-2 text-center">
           <div class="circle">
             <p class="circle-text">{{ timeRemaining.days }}</p>
             <p>Days</p>
           </div>
         </div>
-        <div class="col-md-2 mb-5 text-center">
+        <div class="col-md-2 mb-md-0 mb-2 text-center">
           <div class="circle">
             <p class="circle-text">{{ timeRemaining.hours }}</p>
             <p>Hours</p>
           </div>
         </div>
-        <div class="col-md-2 text-center">
+        <div class="col-md-2 mb-md-0 mb-2 text-center">
           <div class="circle">
             <p class="circle-text">{{ timeRemaining.minutes }}</p>
             <p>Minutes</p>
           </div>
         </div>
-        <div class="col-md-2 text-center">
+        <div class="col-md-2 mb-md-0 mb-2 text-center">
           <div class="circle">
             <p class="circle-text">{{ timeRemaining.seconds }}</p>
             <p>Seconds</p>
           </div>
         </div>
+        <div class="col-md-2">
+          <span>Weather in {{city}} for RaceDay:</span>
+          <app-weather [weather]="weatherData"></app-weather>
+        </div>
       </div>
 
-      <app-weather *ngIf="weatherData" [weather]="weatherData"></app-weather>
       
       <div class="mt-4" *ngIf="predictionLocked">
         <h5 class="text-center mt-3">Wait for race to be completed, to get the weekend results!</h5>

@@ -261,6 +261,9 @@ public class ErgastService {
 		nextRaceInfo.setNameRace(racesResponse.getMrData().getRaceTable().getRaces().get(0).getRaceName());
 		nextRaceInfo.setRound(racesResponse.getMrData().getRaceTable().getRaces().get(0).getRound());
 		nextRaceInfo.setCountry(racesResponse.getMrData().getRaceTable().getRaces().get(0).getCircuit().getLocation().getCountry());
+		nextRaceInfo.setCity(racesResponse.getMrData().getRaceTable().getRaces().get(0).getCircuit().getLocation().getLocality());
+		nextRaceInfo.setRaceDate(raceDate);
+		nextRaceInfo.setRaceTime(racesResponse.getMrData().getRaceTable().getRaces().get(0).getTime());
 		return nextRaceInfo;
 	}
 

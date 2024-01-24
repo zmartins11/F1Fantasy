@@ -64,6 +64,7 @@ export class HomeComponent implements OnInit {
   timeRemaining: any;
   nameRace: string = '';
   country: string = '';
+  city: string = '';
   drivers: Formula1Driver[] = [];
   saveDriversToPredict: Formula1Driver[] = [];
   showDrivers = false;
@@ -150,10 +151,12 @@ export class HomeComponent implements OnInit {
       this.drivers = Formula1Drivers;
       //getting info for nexRace
       this.dateTimeService.getNextRaceInfo(this.user).subscribe(response => {
+        console.log('raceInfo:' + response);
         this.raceDate = response.time;
         this.nameRace = response.nameRace;
         this.round = response.round;
         this.country = response.country;
+        this.city = response.city;
         this.predictionLocked = response.predictionLocked;
         if (response.predictedPodium) {
           this.pHasPodium = true;

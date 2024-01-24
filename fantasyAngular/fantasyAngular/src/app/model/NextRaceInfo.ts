@@ -11,4 +11,5 @@ export interface NextRaceInfo {
     fastestLap: string;
     predictedPodium: Boolean;
     predictedFastestLap : Boolean;
+    city: string;
 }

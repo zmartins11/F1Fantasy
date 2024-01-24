@@ -7,15 +7,21 @@ import { Component, Input } from '@angular/core';
 })
 export class WeatherComponent {
 
-  weatherIconMapping: { [key: string]: string } = {
-    'clear sky': 'fas fa-sun',
-    'few clouds': 'fas fa-cloud-sun',
-    'scattered clouds': 'fas fa-cloud',
-    'broken clouds': 'fas fa-cloud',
-    // Add more mappings as needed
-  };
-
+  
 
   @Input() weather : any;
+
+  getWeatherIconClass(weather: string): string {
+    // Your logic to map weather conditions to FontAwesome icon classes
+    switch (weather) {
+      case 'clear sky':
+        return 'fas fa-sun';
+      case 'clouds':
+        return 'fas fa-cloud';
+      // Add more cases as needed
+      default:
+        return 'fas fa-question'; // Default icon for unknown weather
+    }
+  }
 
 }
