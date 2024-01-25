@@ -1,5 +1,32 @@
-<div class="weather-widget">
-    
-    <i [class]="getWeatherIconClass('clouds')" style="font-size: 24px;"></i> 
-     {{ weather.temperature }}°C
+<div class="weather-widget" id="weather-widget" (click)="onWeatherWidgetClick()" (mouseover)="onWeatherWidgetMouseOver()" (mouseout)="onWeatherWidgetMouseOut()">
+    <h6>Weather in {{ city }} for Sunday Race Day: </h6>
+    <span>{{weather.weather}}</span>
+    <div class="weather-details mt-3">
+      <div class="temperature">
+        <i [class]="getWeatherIconClass('clouds')" class="moving-icon" style="font-size: 28px; margin-right: 8px;"
+         data-toggle="tooltip" data-placement="top"
+          title="{{ weather.weather }}" data-delay="0"></i>
+        {{ weather.temperature }} °C
+      </div>
+  
+      <div class="wind">
+        <i class="fa-solid fa-wind" style="font-size: 28px; margin-right: 8px;" data-toggle="tooltip" data-placement="top"
+        title="Wind"></i>
+        {{ weather.wind_speed }} m/s
+      </div>
+  
+      <div class="humidity">
+        <i class="fa-solid fa-droplet" style="font-size: 28px; margin-right: 8px;" 
+        data-toggle="tooltip" data-placement="top"
+        title="Humidity"></i>
+        {{ weather.humidity }}%
+      </div>
+    </div>
   </div>
+  
+  <script>
+    // Initialize Bootstrap tooltips
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+  </script>

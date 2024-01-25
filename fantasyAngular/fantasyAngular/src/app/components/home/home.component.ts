@@ -114,6 +114,10 @@ export class HomeComponent implements OnInit {
   events!: any;
   videoId: string = "";
   weatherData: Weather | undefined;
+  raceDay: number = 0;
+  raceMonth: number = 0;
+  raceHour: number = 0;
+
 
 
 
@@ -130,34 +134,26 @@ export class HomeComponent implements OnInit {
         this.user = userString.username;
       }
 
-      this.weatherService.getWeather('Lisbon').subscribe(
-        (response: any) => {
-          if (response && response.weather && response.weather.length > 0) {
-            const weatherInfo = response.weather[0];
-
-            this.weatherData = {
-              weather: weatherInfo.weather,
-              temperature: weatherInfo.temperature
-            };
-            console.log(this.weatherData);
-          }
-        },
-        error => {
-          console.error('Error fetching weather data:', error.message);
-        }
-      );
 
       //getting all drivers
       this.drivers = Formula1Drivers;
       //getting info for nexRace
       this.dateTimeService.getNextRaceInfo(this.user).subscribe(response => {
-        console.log('raceInfo:' + response);
         this.raceDate = response.time;
         this.nameRace = response.nameRace;
         this.round = response.round;
         this.country = response.country;
         this.city = response.city;
         this.predictionLocked = response.predictionLocked;
+        const date = new Date(response.raceDate);
+
+
+        console.log('hour:' + this.raceHour);
+        this.raceDay = date.getDate();
+        this.raceMonth = date.getMonth() + 1;
+        //ajust timezone
+        this.raceHour = parseInt(response.raceTime, 10);
+        this.populateWeatherWidget();
         if (response.predictedPodium) {
           this.pHasPodium = true;
           this.pFirst = F1DriversService.getDriverNameByNumber(response.first);
@@ -191,72 +187,108 @@ export class HomeComponent implements OnInit {
           }, 1000); // Update the countdown every second
         });
 
-      //get info points
-      this.dateTimeService.getPointsInfo(this.user).subscribe(response => {
-        this.pointsInfo = response;
-        if (this.pointsInfo.length !== 0) {
-          this.showPopUpDriversPoints = true;
-          for (let pointInfo of this.pointsInfo) {
-            pointInfo.driverName = this.driverMappingService.getDriverName(parseInt(pointInfo.driver));
-          }
-          this.calculateTotalPoints();
-          this.openModal();
+
+      this.getPointsInfo();
+      this.populatePointsTables();
+      this.getYTBVideo();
+      this.getStandings();
+      
+    }
+  }
+
+
+  getStandings() {
+    this.dateTimeService.getStandingsSeason().subscribe(response => {
+      this.driversStandings = response.drivers;
+      this.constructorStandings = response.constructors;
+    })
+  }
+
+  getYTBVideo() {
+    this.youtubeService.searchVideo("formula 1 monaco 2023 highlights tsn").subscribe(
+      (response: any) => {
+        if (response.videoId) {
+          this.videoId = response.videoId;
+          console.log('Video ID:', this.videoId);
+          // Now, this.videoId contains the retrieved videoId
         } else {
-          this.showPopUpDriversPoints = false;
-          console.log("dont showpop")
-        }
-      })
-
-      //populate tables
-      this.dateTimeService.getTotalPoints(this.user).subscribe(response => {
-        if (Array.isArray(response)) {
-          this.totalPointsData = response;
-
-          // Check if the length is less than 6
-          if (this.totalPointsData.length < 6) {
-            // Calculate how many default objects to add
-            const remainingCount = 6 - this.totalPointsData.length;
-
-            // Add default objects to the array
-            for (let i = 0; i < remainingCount; i++) {
-              const defaultObject: TotalPointsResponse = {
-                position: '-',
-                username: '---',
-                points: '-'
-              };
-
-              this.totalPointsData.push(defaultObject);
-            }
-          }
-        }
-      }, error => {
-        this.errorMessage = error.error.message;
-      });
-
-
-      this.youtubeService.searchVideo("formula 1 monaco 2023 highlights tsn").subscribe(
-        (response: any) => {
-          if (response.videoId) {
-            this.videoId = response.videoId;
-            console.log('Video ID:', this.videoId);
-            // Now, this.videoId contains the retrieved videoId
-          } else {
-            console.error('Error:', response.error);
-            // Handle the error if needed
-          }
-        },
-        (error) => {
-          console.error('HTTP Request Error:', error);
+          console.error('Error:', response.error);
           // Handle the error if needed
         }
-      );
+      },
+      (error) => {
+        console.error('HTTP Request Error:', error);
+        // Handle the error if needed
+      }
+    );
+  }
 
-      this.dateTimeService.getStandingsSeason().subscribe(response => {
-        this.driversStandings = response.drivers;
-        this.constructorStandings = response.constructors;
+  populatePointsTables() {
+    //populate tables
+    this.dateTimeService.getTotalPoints(this.user).subscribe(response => {
+      if (Array.isArray(response)) {
+        this.totalPointsData = response;
 
-      })
-    }
+        // Check if the length is less than 6
+        if (this.totalPointsData.length < 6) {
+          // Calculate how many default objects to add
+          const remainingCount = 6 - this.totalPointsData.length;
+
+          // Add default objects to the array
+          for (let i = 0; i < remainingCount; i++) {
+            const defaultObject: TotalPointsResponse = {
+              position: '-',
+              username: '---',
+              points: '-'
+            };
+
+            this.totalPointsData.push(defaultObject);
+          }
+        }
+      }
+    }, error => {
+      this.errorMessage = error.error.message;
+    });
+  }
+
+  getPointsInfo()  {
+    //get info points
+    this.dateTimeService.getPointsInfo(this.user).subscribe(response => {
+      this.pointsInfo = response;
+      if (this.pointsInfo.length !== 0) {
+        this.showPopUpDriversPoints = true;
+        for (let pointInfo of this.pointsInfo) {
+          pointInfo.driverName = this.driverMappingService.getDriverName(parseInt(pointInfo.driver));
+        }
+        this.calculateTotalPoints();
+        this.openModal();
+      } else {
+        this.showPopUpDriversPoints = false;
+        console.log("dont showpop")
+      }
+    })
+  }
+
+  populateWeatherWidget() {
+    //getting weather
+    this.weatherService.getWeather(this.country, this.city, this.raceHour, this.raceDay, this.raceMonth).subscribe(
+      (response: any) => {
+        if (response && response.weather && response.weather.length > 0) {
+          const weatherInfo = response.weather[0];
+
+          this.weatherData = {
+            weather: weatherInfo.weather,
+            temperature: weatherInfo.temperature,
+            humidity: weatherInfo.humidity,
+            wind_speed: weatherInfo.wind_speed
+          };
+          console.log(this.weatherData);
+        }
+      },
+      error => {
+        console.error('Error fetching weather data:', error.message);
+      }
+    );
   }
 
   openRacePopup() {
@@ -510,5 +542,4 @@ export class HomeComponent implements OnInit {
   }
 
 }
-
 

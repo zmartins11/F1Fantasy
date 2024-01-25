@@ -12,4 +12,6 @@ export interface NextRaceInfo {
     predictedPodium: Boolean;
     predictedFastestLap : Boolean;
     city: string;
+    raceDate: string;
+    raceTime: string;
 }

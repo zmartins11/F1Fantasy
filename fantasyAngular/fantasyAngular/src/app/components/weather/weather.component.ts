@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { WeatherForecastPopupComponent } from '../weather-forecast-popup/weather-forecast-popup.component';
 
 @Component({
   selector: 'app-weather',
@@ -7,21 +9,70 @@ import { Component, Input } from '@angular/core';
 })
 export class WeatherComponent {
 
-  
+
+  constructor(private modalService: BsModalService){}
+
+  bsModalRef: BsModalRef | undefined;
 
   @Input() weather : any;
+  @Input() city : string = '';
 
   getWeatherIconClass(weather: string): string {
-    // Your logic to map weather conditions to FontAwesome icon classes
-    switch (weather) {
-      case 'clear sky':
-        return 'fas fa-sun';
-      case 'clouds':
-        return 'fas fa-cloud';
-      // Add more cases as needed
-      default:
-        return 'fas fa-question'; // Default icon for unknown weather
+    if (weather.includes('clear sky')) {
+      return 'fa-solid fa-sun';
+    } else if (weather.includes('cloud')) {
+      return 'fa-solid fa-cloud';
+    } else if (weather.includes('rain') || weather.includes('shower rain')) {
+      return 'fa-solid fa-cloud-rain';
+    } else if (weather.includes('thunderstorm')) {
+      return 'fa-solid fa-cloud-bolt';
+    } else if (weather.includes('snow')) {
+      return 'fa-solid fa-cloud-meatball';
+    } else if (
+      weather.includes('mist') ||
+      weather.includes('smoke') ||
+      weather.includes('haze') ||
+      weather.includes('dust') ||
+      weather.includes('fog') ||
+      weather.includes('sand') ||
+      weather.includes('ash') ||
+      weather.includes('squall') ||
+      weather.includes('tornado')
+    ) {
+      return 'fa-solid fa-smog';
+    } else {
+      return 'fa-solid fa-cloud-sun'; // Default icon for unknown weather
     }
   }
+
+  onWeatherWidgetClick() {
+    // Handle click event
+    console.log('Weather widget clicked!');
+  }
+
+  openRacePopup() {
+    // Fetch races from your service and subscribe to the observable
+
+      this.bsModalRef = this.modalService.show(WeatherForecastPopupComponent);
+   
+  }
+
+
+  onWeatherWidgetMouseOver() {
+    const weatherWidget = document.getElementById('weather-widget');
+    if (weatherWidget) {
+      weatherWidget.style.backgroundColor = '#e6f7ff';
+    }
+  }
+  
+  onWeatherWidgetMouseOut() {
+    const weatherWidget = document.getElementById('weather-widget');
+    if (weatherWidget) {
+      weatherWidget.style.backgroundColor = '';
+    }
+  }
+  
+  
+  
 
 }

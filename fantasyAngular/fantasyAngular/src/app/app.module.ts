@@ -28,6 +28,7 @@ import { YouTubePlayerModule } from '@angular/youtube-player';
 import { RacePopupComponent } from './components/race-popup/race-popup.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { WeatherComponent } from './components/weather/weather.component';
+import { WeatherForecastPopupComponent } from './components/weather-forecast-popup/weather-forecast-popup.component';
 
 
 
@@ -48,7 +49,8 @@ import { WeatherComponent } from './components/weather/weather.component';
     CalendarComponent,
     RaceDetailsComponent,
     RacePopupComponent,
-    WeatherComponent
+    WeatherComponent,
+    WeatherForecastPopupComponent
   ],
   imports: [
     BrowserModule,
