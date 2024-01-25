@@ -3,4 +3,5 @@ export interface Weather {
     temperature : string;
     humidity: number;
     wind_speed: number;
+    current_weather : Boolean;
 }

@@ -28,7 +28,7 @@ def weather():
         day = request.args.get('day', type=str)
         month = request.args.get('month', type=str)
         print('city: ' + city + '||' + 'hour:' + hour +  '||' + 'day:' + day + '||' + 'month:' + month )
-        weather_data = get_weather(country, city, 15, 28, 1)
+        weather_data = get_weather(country, city, hour, day, month)
         return jsonify({'weather': weather_data})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -66,8 +66,24 @@ def get_weather(country, city, hour, day, month):
                     'weather': weather,
                     'temperature': temperature_celcius,
                     'humidity' : humidity,
-                    'wind_speed' : wind_speed
+                    'wind_speed' : wind_speed,
+                    'current_weather': False
                 })
+        if not forecast:
+            print(f'No forecast found for {day}/{month}. Getting current weather.')
+            current_weather_url = f'https://api.openweathermap.org/data/2.5/weather?q={city}&appid={open_weather_api}'
+            current_weather_response = requests.get(current_weather_url)
+            current_weather_data = current_weather_response.json()
+
+            current_weather = {
+                'weather': current_weather_data['weather'][0]['description'],
+                'temperature': round(current_weather_data['main']['temp'] - 273.15, 1),
+                'humidity': current_weather_data['main']['humidity'],
+                'wind_speed': current_weather_data['wind']['speed'],
+                'current_weather': True
+            }
+            print(current_weather)
+            return [current_weather]
         print('PRINTING FORECAST....')
         print(forecast)
         return forecast
