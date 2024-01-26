@@ -27,8 +27,9 @@ def weather():
         hour = request.args.get('hour', type=str)
         day = request.args.get('day', type=str)
         month = request.args.get('month', type=str)
-        print('city: ' + city + '||' + 'hour:' + hour +  '||' + 'day:' + day + '||' + 'month:' + month )
-        weather_data = get_weather(country, city, hour, day, month)
+        get_forecast_for_week = request.args.get('forecast', default='false', type=str).lower() == 'true'
+
+        weather_data = get_race_weather(country, city, hour, day, month, get_forecast_for_week)
         return jsonify({'weather': weather_data})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -37,7 +38,8 @@ def search_videos(query):
     videos = YoutubeSearch(query, max_results=1).to_dict()
     return videos[0]['id'] if videos else None
 
-def get_weather(country, city, hour, day, month):
+def get_race_weather(country, city, hour, day, month, get_forecast_for_week):
+    capital_for_city_not_found = city
     print('GETTING WEATHER...')
     weather_url = f'https://api.openweathermap.org/data/2.5/forecast?q={city}&appid={open_weather_api}'
     try : 
@@ -59,19 +61,30 @@ def get_weather(country, city, hour, day, month):
             humidity = item['main']['humidity']
             wind_speed = item['wind']['speed']
             temperature_celcius = round(temperature_kelvin - 273.15, 1)
+            if not get_forecast_for_week:
+                if date.hour == hour and date.day == day and date.month == month:
+                    forecast.append({
+                        'date': date,
+                        'weather': weather,
+                        'temperature': temperature_celcius,
+                        'humidity' : humidity,
+                        'wind_speed' : wind_speed,
+                        'current_weather': False
+                    })
+            else :
+                if(date.hour== 12):
+                    forecast.append({
+                        'date': date,
+                        'weather': weather,
+                        'temperature': temperature_celcius,
+                        'humidity' : humidity,
+                        'wind_speed' : wind_speed,
+                        'current_weather': False
+                    })
 
-            if date.hour == hour and date.day == day and date.month == month:
-                forecast.append({
-                    'date': date,
-                    'weather': weather,
-                    'temperature': temperature_celcius,
-                    'humidity' : humidity,
-                    'wind_speed' : wind_speed,
-                    'current_weather': False
-                })
         if not forecast:
             print(f'No forecast found for {day}/{month}. Getting current weather.')
-            current_weather_url = f'https://api.openweathermap.org/data/2.5/weather?q={city}&appid={open_weather_api}'
+            current_weather_url = f'https://api.openweathermap.org/data/2.5/weather?q={capital_for_city_not_found}&appid={open_weather_api}'
             current_weather_response = requests.get(current_weather_url)
             current_weather_data = current_weather_response.json()
 

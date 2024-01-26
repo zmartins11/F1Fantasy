@@ -1,4 +1,5 @@
 export interface Weather {
+    date: string;
     weather : string;
     temperature : string;
     humidity: number;

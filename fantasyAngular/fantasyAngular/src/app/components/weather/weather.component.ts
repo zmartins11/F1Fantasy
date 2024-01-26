@@ -16,6 +16,7 @@ export class WeatherComponent {
 
   @Input() weather : any;
   @Input() city : string = '';
+  @Input() country : string = '';
 
   getWeatherIconClass(weather: string): string {
     if (weather.includes('clear sky')) {
@@ -45,15 +46,21 @@ export class WeatherComponent {
     }
   }
 
-  onWeatherWidgetClick() {
-    // Handle click event
-    console.log('Weather widget clicked!');
-  }
 
-  openRacePopup() {
+  onWeatherWidgetClick() {
     // Fetch races from your service and subscribe to the observable
 
-      this.bsModalRef = this.modalService.show(WeatherForecastPopupComponent);
+    const initialState = {
+      country: this.country,
+      city: this.city
+    };
+
+    const modalOptions = {
+      initialState,
+      class: 'modal-lg',
+    };
+
+      this.bsModalRef = this.modalService.show(WeatherForecastPopupComponent, modalOptions );
    
   }
 

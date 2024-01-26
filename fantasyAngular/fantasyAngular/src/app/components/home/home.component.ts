@@ -270,13 +270,14 @@ export class HomeComponent implements OnInit {
   }
 
   populateWeatherWidget() {
-    //getting weather
-    this.weatherService.getWeather(this.country, this.city, this.raceHour, this.raceDay, this.raceMonth).subscribe(
+    //getting weather for day
+    this.weatherService.getWeather(this.country, this.city, this.raceHour, this.raceDay, this.raceMonth, false).subscribe(
       (response: any) => {
         if (response && response.weather && response.weather.length > 0) {
           const weatherInfo = response.weather[0];
 
           this.weatherData = {
+            date: weatherInfo.date,
             weather: weatherInfo.weather,
             temperature: weatherInfo.temperature,
             humidity: weatherInfo.humidity,
