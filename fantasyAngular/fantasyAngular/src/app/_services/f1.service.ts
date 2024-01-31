@@ -4,37 +4,38 @@ import { Observable } from 'rxjs';
 import { Driver } from '../model/Driver';
 import { Race } from '../model/Race';
 import { RaceResults } from '../model/RaceResults';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class F1Service {
 
+  private baseApi = environment.apiSpringUrl;
+  private baseUrl = `${this.baseApi}/rawData`;
 
-  private baseUrl = "localhost:8080/rawData";
+  constructor(private httpClient: HttpClient) { }
 
-    constructor(private httpClient: HttpClient) { }
+  raceData: any;
 
-    raceData : any;
+  setRaceData(data: any) {
+    this.raceData = data;
+  }
 
-    setRaceData(data: any) {
-        this.raceData = data;
-      }
-    
-    getRaceData() {
-        return this.raceData;
-      }
+  getRaceData() {
+    return this.raceData;
+  }
 
-    getRaces(season : number): Observable<Race[]> {
-        return this.httpClient.get<Race[]>(`http://ec2-16-16-76-107.eu-north-1.compute.amazonaws.com/${season}`);
-    }
+  getRaces(season: number): Observable<Race[]> {
+    return this.httpClient.get<Race[]>(`http://ec2-16-16-76-107.eu-north-1.compute.amazonaws.com/${season}`);
+  }
 
-    getDriversList(season: number): Observable<Driver[]> {
-        const search = `${this.baseUrl}/${season}`;
-        return this.httpClient.get<Driver[]>(search);
-    }
+  getDriversList(season: number): Observable<Driver[]> {
+    const search = `${this.baseUrl}/${season}`;
+    return this.httpClient.get<Driver[]>(search);
+  }
 
-    getRaceResult(season: string, round: string) {
-        return this.httpClient.get<RaceResults[]>(`http://ec2-16-16-76-107.eu-north-1.compute.amazonaws.com/raceResult/${season}/${round}`);
-    }
+  getRaceResult(season: string, round: string) {
+    return this.httpClient.get<RaceResults[]>(`http://ec2-16-16-76-107.eu-north-1.compute.amazonaws.com/raceResult/${season}/${round}`);
+  }
 }

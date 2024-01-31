@@ -26,6 +26,10 @@ export class WeatherForecastPopupComponent implements OnInit {
     })
   }
 
+  closePopup() {
+    this.bsModalRef.hide();
+  }
+
   getWeatherIconClass(weather: string): string {
     if (weather.includes('clear sky')) {
       return 'fa-solid fa-sun';

@@ -1,4 +1,4 @@
-<div class="weather-widget" id="weather-widget" (click)="onWeatherWidgetClick()" (mouseover)="onWeatherWidgetMouseOver()" (mouseout)="onWeatherWidgetMouseOut()">
+<div class="weather-widget mt-n1" style="margin-right: 13px;" id="weather-widget" (click)="onWeatherWidgetClick()" (mouseover)="onWeatherWidgetMouseOver()" (mouseout)="onWeatherWidgetMouseOut()">
     <h6 *ngIf="!weather.current_weather">Weather in {{ city }} for Sunday Race Day: </h6>
     <h6 *ngIf="weather.current_weather">Current weather in {{ city }}: </h6>
     <span>{{weather.weather}}</span>

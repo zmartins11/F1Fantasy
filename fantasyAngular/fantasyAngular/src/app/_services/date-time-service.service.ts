@@ -9,6 +9,7 @@ import { Standings } from '../model/Standings';
 import { RaceInfo } from '../model/RaceInfo';
 import { Race } from '../model/Race';
 import { data } from 'jquery';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -16,9 +17,7 @@ import { data } from 'jquery';
 export class DateTimeServiceService {
 
 
-  private apiUrl = 'http://localhost:8080';
-  private apiKeyWeather = '6d61bbd868dc7299fdc44c9543ad3988';
-  private apiUrlWeather = '/api/data/2.5/forecast';
+  private apiUrl = environment.apiSpringUrl;
   loader = new BehaviorSubject<Boolean>(false);
 
   constructor(private http: HttpClient) { }

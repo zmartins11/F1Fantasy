@@ -2,11 +2,15 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Prediction } from '../model/Prediction';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PredictService {
+
+  private baseApi = environment.apiSpringUrl;
+  private baseUrl = `${this.baseApi}/predict`;
   
   
   constructor(private http : HttpClient) { }
@@ -28,7 +32,7 @@ export class PredictService {
       round: round
     };
 
-    return this.http.post<Prediction>("http://localhost:8080/predict", predictionDTO);
+    return this.http.post<Prediction>(this.baseUrl, predictionDTO);
   }
 
   private convertToNullIfZero(value: number): string | null {

@@ -3,13 +3,19 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Race } from '../model/Race';
 import { Driver } from '../model/Driver';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
+
+
 export class CalendarService {
 
-  private baseUrl = "http://localhost:8080/rawData";
+
+  private baseApi = environment.apiSpringUrl;
+  private baseUrl = `${this.baseApi}/rawData`;
+  
 
     constructor(private httpClient: HttpClient) { }
 
@@ -24,7 +30,7 @@ export class CalendarService {
       }
 
     getRaces(season : number): Observable<Race[]> {
-        return this.httpClient.get<Race[]>(`http://localhost:8080/${season}`);
+        return this.httpClient.get<Race[]>(`${this.baseApi}/${season}`);
     }
 
     getDriversList(season: number): Observable<Driver[]> {
