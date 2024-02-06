@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.Iterator;
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/api/auth")
 public class AuthenticationController {
 
@@ -83,11 +82,12 @@ public class AuthenticationController {
 		user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
 		user.setEmailId(registerDto.getEmail());
 
-		Roles roles = roleRepository.findByName("USER").get();
-		user.setRoles(Collections.singletonList(roles));
+		//Roles roles = roleRepository.findByName("USER").get();
+		//user.setRoles(Collections.singletonList(roles));
 
 		userRepository.save(user);
 		return new ResponseEntity<>("User registered success!!", HttpStatus.OK);
+
 	}
 
 	@GetMapping("/test")
