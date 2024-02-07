@@ -25,7 +25,7 @@ COPY --from=builder /usr/src/app/dist/ /usr/share/nginx/html
 COPY default.conf /etc/nginx/conf.d/default.conf
 
 # Expose the port the app runs on
-EXPOSE 8090
+EXPOSE 80
 
 # Command to run the application
 CMD ["nginx", "-g", "daemon off;"]

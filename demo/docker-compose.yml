@@ -25,7 +25,7 @@ services:
   angular-app:
     image: angularf1-image:latest
     ports:
-      - "8090:8090"
+      - "80:80"
 
   python-flask-app:
     container_name: python-flask-app
