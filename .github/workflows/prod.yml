@@ -1,0 +1,27 @@
+name: Deploy Application
+
+on:
+  push:
+    branches: [off-season]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Build project
+        working-directory: code/F1Fantasy/demo
+        run: mvn clean install -DskipTests
+      - name: Login Docker Hub
+        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+      - name: Build docker image
+        run: docker build -t zmartins11/spring-boot-docker .
+      - name: Push image docker
+        run: docker push zmartins11/spring-boot-docker
