@@ -7,6 +7,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: demo
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -16,14 +19,10 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
       - name: Build project
-        working-directory: demo
         run: mvn clean install -DskipTests
       - name: Login Docker Hub
-        working-directory: demo
         run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
       - name: Build docker image
-        working-directory: demo
         run: docker build -t zmartins11/springf1-image .
       - name: Push image docker
-        working-directory: demo
         run: docker push zmartins11/springf1-image
