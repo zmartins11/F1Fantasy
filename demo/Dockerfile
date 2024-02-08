@@ -11,4 +11,4 @@ COPY target/spring-boot-docker.jar /app/
 EXPOSE 8080
 
 # Run the JAR file
-CMD ["java", "-jar", "spring-boot-docker.jar"]
+CMD ["java", "-jar", "springf1-image.jar"]
