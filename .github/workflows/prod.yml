@@ -22,6 +22,6 @@ jobs:
       - name: Login Docker Hub
         run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
       - name: Build docker image
-        run: docker build -t zmartins11/spring-boot-docker .
+        run: docker build -t zmartins11/springf1-image .
       - name: Push image docker
-        run: docker push zmartins11/spring-boot-docker
+        run: docker push zmartins11/springf1-image
