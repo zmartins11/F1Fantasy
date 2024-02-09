@@ -17,8 +17,8 @@ public class CorsConfiguration {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins("http://localhost:4200", "http://localhost:80", "http://localhost",
-                                "ec2-18-169-170-133.eu-west-2.compute.amazonaws.com",
-                                "http://ec2-18-169-170-133.eu-west-2.compute.amazonaws.com")
+                                "ec2-35-178-26-145.eu-west-2.compute.amazonaws.com",
+                                "http://ec2-35-178-26-145.eu-west-2.compute.amazonaws.com")
                         .allowedMethods(HttpMethod.GET.name(),
                                 HttpMethod.POST.name(),
                                 HttpMethod.DELETE.name())
