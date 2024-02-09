@@ -1,0 +1,21 @@
+name: Deploy Python Application
+
+on:
+  push:
+    branches: [off-season]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pythonF1
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Build docker image
+        run: docker build -t zmartins11/pythonf1-image .
+      - name: Login Docker Hub
+        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+      - name: Push image to Docker Hub
+        run: docker push zmartins11/pythonf1-image

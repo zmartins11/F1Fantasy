@@ -27,11 +27,3 @@ jobs:
       - name: Push image docker
         run: docker push zmartins11/springf1-image
 
-  deploy:
-    needs: build
-    runs-on: self-hosted
-    steps:
-      - name: Stop Docker Compose
-        run: sudo docker-compose -f /home/ec2-user/code/docker-compose.yml down
-      - name: Pull image from docker hub
-        run: sudo docker pull zmartins11/springf1-image

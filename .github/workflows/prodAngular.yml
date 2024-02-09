@@ -40,11 +40,21 @@ jobs:
     needs: build
     runs-on: self-hosted
     steps:
-      - name: Pull image from docker hub
-        run: sudo docker pull zmartins11/angularf1-image
+      - name: Stop Docker Compose
+        run: sudo docker-compose -f /home/ec2-user/code/docker-compose.yml down
       - name: Clean up Docker
         run: |
           sudo docker system prune -af
           sudo docker volume prune -f
-      - name: Run docker compose
-        run: sudo docker-compose -f /home/ec2-user/code/docker-compose.yml up -d
+      - name: Pull images from docker hub
+        run: |
+          sudo docker pull zmartins11/angularf1-image
+          sudo docker pull zmartins11/springf1-image
+          sudo docker pull zmartins11/pythonf1-image
+          sudo docker pull mysql:latest
+      - name: Start MySql container
+        run: |
+          sudo docker-compose -f /home/ec2-user/code/docker-compose.yml up -d mysqldb
+      - name: Start angular python spring
+        run: |
+          sudo docker-compose -f /home/ec2-user/code/docker-compose.yml up -d angular-app spring-boot-app python-flask-app
