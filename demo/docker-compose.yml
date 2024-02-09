@@ -29,7 +29,7 @@ services:
 
   python-flask-app:
     container_name: python-flask-app
-    image: pythonf1-image:latest
+    image: zmartins11/pythonf1-image:latest
     restart: always
     ports:
       - "5000:5000"
