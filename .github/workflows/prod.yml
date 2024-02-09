@@ -32,7 +32,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Stop Docker Compose
-        run: docker-compose -f /home/ec2-user/code/docker-compose.yml down
+        run: sudo docker-compose -f /home/ec2-user/code/docker-compose.yml down
       - name: Remove existing Spring Image
         run: sudo docker rmi springf1-image
       - name: Pull image from docker hub
