@@ -34,3 +34,13 @@ jobs:
 
       - name: Push Docker image for Angular app
         run: docker push zmartins11/angularf1-image
+
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - name: Pull image from docker hub
+        run: docker pull zmartins11/angularf1-image
+      - name: Run docker compose
+        run: docker-compose -f /home/ec2-user/code/docker-compose.yml up -d
