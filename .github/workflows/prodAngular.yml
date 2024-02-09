@@ -42,5 +42,9 @@ jobs:
     steps:
       - name: Pull image from docker hub
         run: sudo docker pull zmartins11/angularf1-image
+      - name: Clean up Docker
+        run: |
+          sudo docker system prune -af
+          sudo docker volume prune -f
       - name: Run docker compose
         run: sudo docker-compose -f /home/ec2-user/code/docker-compose.yml up -d
