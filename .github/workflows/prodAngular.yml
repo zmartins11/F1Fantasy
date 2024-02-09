@@ -40,6 +40,10 @@ jobs:
     needs: build
     runs-on: self-hosted
     steps:
+      - name: Stop Docker Compose
+        run: docker-compose -f /home/ec2-user/code/docker-compose.yml down
+      - name: Remove existing Angular Image
+        run: sudo docker rmi angularf1-image
       - name: Pull image from docker hub
         run: sudo docker pull zmartins11/angularf1-image
       - name: Run docker compose

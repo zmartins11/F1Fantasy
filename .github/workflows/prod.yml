@@ -26,3 +26,14 @@ jobs:
         run: docker build -t zmartins11/springf1-image .
       - name: Push image docker
         run: docker push zmartins11/springf1-image
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - name: Stop Docker Compose
+        run: docker-compose -f /home/ec2-user/code/docker-compose.yml down
+      - name: Remove existing Spring Image
+        run: sudo docker rmi springf1-image
+      - name: Pull image from docker hub
+        run: sudo docker pull zmartins11/springf1-image
