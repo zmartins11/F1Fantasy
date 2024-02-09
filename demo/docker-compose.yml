@@ -2,7 +2,7 @@ version: "3"
 services:
   spring-boot-app:
     container_name: spring-boot-app
-    image: springf1-image:latest
+    image: zmartins11/springf1-image:latest
     restart: always
     ports:
       - "8080:8080"
@@ -23,7 +23,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
 
   angular-app:
-    image: angularf1-image:latest
+    image: zmartins11/angularf1-image:latest
     ports:
       - "80:80"
 
