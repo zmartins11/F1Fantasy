@@ -41,7 +41,9 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Remove existing Angular Image
-        run: sudo docker rmi zmartins11/angularf1-image
+        run: |
+          if sudo docker images -q zmartins11/angularf1-image; then sudo docker rmi zmartins11/angularf1-image
+          fi
       - name: Pull image from docker hub
         run: sudo docker pull zmartins11/angularf1-image
       - name: Run docker compose

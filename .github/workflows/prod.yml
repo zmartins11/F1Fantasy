@@ -34,6 +34,8 @@ jobs:
       - name: Stop Docker Compose
         run: sudo docker-compose -f /home/ec2-user/code/docker-compose.yml down
       - name: Remove existing Spring Image
-        run: sudo docker rmi zmartins11/springf1-image
+        run: |
+          if sudo docker images -q zmartins11/springf1-image; then sudo docker rmi zmartins11/springf1-image
+          fi
       - name: Pull image from docker hub
         run: sudo docker pull zmartins11/springf1-image
