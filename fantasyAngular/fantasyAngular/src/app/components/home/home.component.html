@@ -342,18 +342,21 @@
 
     <div *ngIf="isLoggedIn and !errorMessage" class="container mt-5 mb-5">
       <div class="row justify-content-center mb-5">
-        <div class="col-md-6 mb-5">
-          <div style="width: 617px; float: left; margin-right: 20px;">
+        <div class="col-md-6 col-sm-6 mb-5">
+          <!-- Twitter feed -->
+          <div style="width: 100%; max-width: 617px; margin-right: 20px;">
             <angular-twitter-timeline [data]="{sourceType: 'url', url: 'https://twitter.com/F1'}"
               [opts]="{tweetLimit: 10, height: 500}">
             </angular-twitter-timeline>
           </div>
         </div>
-        <div class="col-md-6 mb-5">
-          <div style="float: right;border-radius: 10px;overflow: hidden;">
+        <div class="col-md-6 col-sm-6 mb-5">
+          <!-- YouTube player -->
+          <div style="width: 100%; overflow: hidden;">
             <youtube-player [videoId]="videoId" suggestedQuality="highres" [height]="500" [width]="610">
             </youtube-player>
           </div>
         </div>
       </div>
     </div>
+    

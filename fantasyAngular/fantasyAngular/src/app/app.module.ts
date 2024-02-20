@@ -65,6 +65,7 @@ import { WeatherForecastPopupComponent } from './components/weather-forecast-pop
     AngularTwitterTimelineModule,
     YouTubePlayerModule,
     ModalModule.forRoot()
+    
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
