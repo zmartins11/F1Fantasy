@@ -1,29 +1,29 @@
-name: Deploy Application
+#name: Deploy Application
 
-on:
-  push:
-    branches: [off-season]
+#on:
+#  push:
+#    branches: [main]
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: demo
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-      - name: Build project
-        run: mvn clean install -DskipTests
-      - name: Login Docker Hub
-        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
-      - name: Build docker image
-        run: docker build -t zmartins11/springf1-image .
-      - name: Push image docker
-        run: docker push zmartins11/springf1-image
+#jobs:
+#  build:
+#    runs-on: ubuntu-latest
+#    defaults:
+#      run:
+#        working-directory: demo
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v3
+#      - name: Setup Java
+#        uses: actions/setup-java@v3
+#        with:
+#          distribution: 'temurin'
+#          java-version: '17'
+#      - name: Build project
+#        run: mvn clean install -DskipTests
+#      - name: Login Docker Hub
+#        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+#      - name: Build docker image
+#        run: docker build -t zmartins11/springf1-image .
+#      - name: Push image docker
+#        run: docker push zmartins11/springf1-image
 

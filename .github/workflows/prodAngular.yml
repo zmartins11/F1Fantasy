@@ -1,8 +1,8 @@
-name: Deploy Angular Application
+#name: Deploy Angular Application
 
-on:
-  push:
-    branches: [off-season]
+#on:
+#  push:
+#    branches: [main]
 
 jobs:
   build:

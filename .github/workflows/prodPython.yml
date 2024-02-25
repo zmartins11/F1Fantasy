@@ -1,8 +1,8 @@
 name: Deploy Python Application
 
-on:
-  push:
-    branches: [off-season]
+#on:
+#  push:
+#    branches: [main]
 
 jobs:
   build:
