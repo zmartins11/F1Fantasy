@@ -5,7 +5,7 @@ import { DateTimeServiceService } from 'src/app/_services/date-time-service.serv
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { UserService } from 'src/app/_services/user.service';
 import { DateTimeResponse } from 'src/app/model/DateTimeResponse';
-import * as moment from 'moment';
+import moment from 'moment';
 import { Formula1Driver, Formula1Drivers } from 'src/app/model/Formula1Drivers';
 import { SipnnerService } from 'src/app/_services/SpinnerService';
 import { PredictService } from 'src/app/_services/predict.service';
@@ -16,7 +16,6 @@ import { TotalPointsResponse } from 'src/app/model/TotalPointsResponse';
 import { PointsInfo } from 'src/app/model/PointsInfo';
 import { DriverMappingService } from 'src/app/_services/driver-mapping-service.service';
 import { Standings } from 'src/app/model/Standings';
-import { DarkModeService } from 'angular-dark-mode';
 import { Observable } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NextRaceInfo } from 'src/app/model/NextRaceInfo';
@@ -27,6 +26,8 @@ import { YoutubeService } from 'src/app/_services/youtube.service';
 import { WeatherService } from 'src/app/_services/weather.service';
 import { WeatherComponent } from '../weather/weather.component';
 import { Weather } from 'src/app/model/Weather';
+import { F1Service } from 'src/app/_services/f1.service';
+import { Driver } from 'src/app/model/Driver';
 
 
 
@@ -37,19 +38,16 @@ import { Weather } from 'src/app/model/Weather';
 })
 export class HomeComponent implements OnInit {
 
-  darkMode$: Observable<boolean> = this.darkModeService.darkMode$;
-
-
   constructor(private userService: UserService, private authService: AuthService,
     private dateTimeService: DateTimeServiceService, private spinnerService: SipnnerService,
     private predictService: PredictService,
     private driverMappingService: DriverMappingService,
-    private darkModeService: DarkModeService,
     private sanitizer: DomSanitizer,
     private router: Router,
     private modalService: BsModalService,
     private youtubeService: YoutubeService,
-    private weatherService: WeatherService
+    private weatherService: WeatherService,
+    private f1Service: F1Service
   ) { }
 
   // Reference to the modal element
@@ -65,8 +63,8 @@ export class HomeComponent implements OnInit {
   nameRace: string = '';
   country: string = '';
   city: string = '';
-  drivers: Formula1Driver[] = [];
-  saveDriversToPredict: Formula1Driver[] = [];
+  drivers: Driver[] = [];
+  saveDriversToPredict: Driver[] = [];
   showDrivers = false;
   showDriversFastest = false;
   errorMessage = null;
@@ -90,11 +88,12 @@ export class HomeComponent implements OnInit {
   constructorStandings: TotalPointsResponse[] | null = null;
   safeUrl: any;
   bsModalRef: BsModalRef | undefined;
+  currentSeason = new Date().getFullYear();
 
   pointsInfo: PointsInfo[] = [];
   showPopUpDriversPoints = false;
   totalPoints: number = 0;
-  highlightedDriver: Formula1Driver | null = null;
+  highlightedDriver: Driver | null = null;
   currentTable: string = 'userPoints';
   currentPredictionCard: string = 'podium';
   totalLength: any;
@@ -136,7 +135,9 @@ export class HomeComponent implements OnInit {
 
 
       //getting all drivers
-      this.drivers = Formula1Drivers;
+      this.f1Service.getDriversList(this.currentSeason).subscribe(drivers => {
+        this.drivers = drivers;
+      });
       //getting info for nexRace
       this.dateTimeService.getNextRaceInfo(this.user).subscribe(response => {
         this.raceDate = response.time;
@@ -153,7 +154,7 @@ export class HomeComponent implements OnInit {
         this.raceMonth = date.getMonth() + 1;
         //ajust timezone
         this.raceHour = parseInt(response.raceTime, 10);
-        this.populateWeatherWidget();
+        //this.populateWeatherWidget();
         if (response.predictedPodium) {
           this.pHasPodium = true;
           this.pFirst = F1DriversService.getDriverNameByNumber(response.first);
@@ -190,7 +191,7 @@ export class HomeComponent implements OnInit {
 
       this.getPointsInfo();
       this.populatePointsTables();
-      this.getYTBVideo();
+      //this.getYTBVideo();
       this.getStandings();
       
     }
@@ -269,7 +270,7 @@ export class HomeComponent implements OnInit {
     })
   }
 
-  populateWeatherWidget() {
+  /*populateWeatherWidget() {
     //getting weather for day
     this.weatherService.getWeather(this.country, this.city, this.raceHour, this.raceDay, this.raceMonth, false).subscribe(
       (response: any) => {
@@ -291,7 +292,7 @@ export class HomeComponent implements OnInit {
         console.error('Error fetching weather data:', error.message);
       }
     );
-  }
+  } */
 
   openRacePopup() {
     // Fetch races from your service and subscribe to the observable
@@ -313,7 +314,7 @@ export class HomeComponent implements OnInit {
         let countdown = 3; // Set the initial countdown value
 
         const intervalId = setInterval(() => {
-          this.errorMessagePopUp = `Your session has expired. You will be logged out in ${countdown} seconds...`;
+          this.errorMessagePopUp = `Your2 session has expired. You will be logged out in ${countdown} seconds...`;
           countdown--;
           if (countdown === 0) {
             clearInterval(intervalId);
@@ -362,7 +363,7 @@ export class HomeComponent implements OnInit {
     };
   }
 
-  selectDriver(selectDriver: Formula1Driver) {
+  selectDriver(selectDriver: Driver) {
 
     const numberOfSelections = this.drivers.filter(driver => driver.selection).length;
 
@@ -383,32 +384,32 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  selectFastestDriver(selectDriver: Formula1Driver) {
-    this.fastest = selectDriver.number;
+  selectFastestDriver(selectDriver: Driver) {
+    this.fastest = selectDriver.permanentNumber;
   }
 
-  addDriverToSelection(driver: Formula1Driver, position: number) {
+  addDriverToSelection(driver: Driver, position: number) {
     switch (position) {
       case 1:
-        this.first = driver.number;
+        this.first = driver.permanentNumber;
         break;
       case 2:
-        this.second = driver.number;
+        this.second =driver.permanentNumber;
         break;
       case 3:
-        this.third = driver.number;
+        this.third = driver.permanentNumber;
         break;
       default:
         // Handle unexpected position
         break;
     }
   }
-  removeDriverFromSelection(driver: Formula1Driver) {
-    if (this.first === driver.number) {
+  removeDriverFromSelection(driver: Driver) {
+    if (this.first === driver.permanentNumber) {
       this.first = 0;
-    } else if (this.second === driver.number) {
+    } else if (this.second === driver.permanentNumber) {
       this.second = 0;
-    } else if (this.third === driver.number) {
+    } else if (this.third === driver.permanentNumber) {
       this.third = 0;
     }
   }
@@ -465,7 +466,7 @@ export class HomeComponent implements OnInit {
         this.errorMessage = error.error.message;
         let countdown = 3; // Set the initial countdown value
         const intervalId = setInterval(() => {
-          this.sessionExpiredMessage = `Your session has expired. You will be logged out in ${countdown} seconds...`;
+          this.sessionExpiredMessage = `Your1 session has expired. You will be logged out in ${countdown} seconds...`;
           countdown--;
 
           if (countdown === 0) {
@@ -506,11 +507,11 @@ export class HomeComponent implements OnInit {
     modal.style.display = 'none';
   }
 
-  highlightDriver(driver: Formula1Driver) {
+  highlightDriver(driver: Driver) {
     this.highlightedDriver = driver;
   }
 
-  unhighlightDriver(driver: Formula1Driver) {
+  unhighlightDriver(driver: Driver) {
     if (this.highlightedDriver === driver) {
       this.highlightedDriver = null;
     }

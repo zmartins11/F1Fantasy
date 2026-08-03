@@ -36,39 +36,71 @@ public class ErgastService {
 
 
 	public List<Race> getRaces(String season) throws JsonProcessingException {
-		String url = "http://ergast.com/api/f1/" + season + "/races.json";
+		String url = "https://api.jolpi.ca/ergast/f1/" + season + "/races.json";
+
 		ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 		ObjectMapper mapper = new ObjectMapper();
 		RaceResponse racesResponse = mapper.readValue(response.getBody(), RaceResponse.class);
 		return racesResponse.getMrData().getRaceTable().getRace();
-
 	}
 
-	public RaceResult getRaceResult(String season, String round) throws JsonMappingException, JsonProcessingException {
-		List<Results> resultsRace = null;
-		Results fastesLap = null;
-		String urlRaceResult = "http://ergast.com/api/f1/" + season + "/" + round + "/results.json?limit=3";
-		String fastestLap = "http://ergast.com/api/f1/" + season + "/" + round + "/fastest/1/results.json";
+	public RaceResultDto getRaceResult(String season, String round)
+			throws JsonProcessingException {
 
-		ResponseEntity<String> response = restTemplate.getForEntity(urlRaceResult, String.class);
-		ResponseEntity<String> responseFastesLap = restTemplate.getForEntity(fastestLap, String.class);
+		String urlRaceResult =
+				"https://api.jolpi.ca/ergast/f1/" + season + "/" + round + "/results.json?limit=3";
+		ResponseEntity<String> response =
+				restTemplate.getForEntity(urlRaceResult, String.class);
+
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		RaceResultsResponse resultsResponse = objectMapper.readValue(response.getBody(), RaceResultsResponse.class);
-		RaceResultsResponse resultsResponseFastestLap = objectMapper.readValue(responseFastesLap.getBody(), RaceResultsResponse.class);
 
-		resultsRace = resultsResponse.getMrData().getRaceTable().getRaces().get(0).getResults();
-		fastesLap = resultsResponseFastestLap.getMrData().getRaceTable().getRaces().get(0).getResults().get(0);
+		RaceResultsResponse resultsResponse =
+				objectMapper.readValue(response.getBody(), RaceResultsResponse.class);
 
-        return resultMapper.map(resultsRace, fastesLap, round, season);
+		RaceResultDto dto = new RaceResultDto();
+		List<Race> races = resultsResponse.getMrData().getRaceTable().getRaces();
+		if (races == null || races.isEmpty()) {
+			dto.setSeason(season);
+			dto.setRound(Integer.parseInt(round));
+			dto.setRaceFinished(false);
+			return dto;
+		}
+		List<Results> resultsRace =
+				resultsResponse.getMrData()
+						.getRaceTable()
+						.getRaces()
+						.get(0)
+						.getResults();
 
+		String fastestLapUrl =
+				"https://api.jolpi.ca/ergast/f1/" + season + "/" + round + "/fastest/1/results.json";
+
+		ResponseEntity<String> responseFastest =
+				restTemplate.getForEntity(fastestLapUrl, String.class);
+
+		RaceResultsResponse fastestResponse =
+				objectMapper.readValue(responseFastest.getBody(), RaceResultsResponse.class);
+
+		Results fastestLap =
+				fastestResponse.getMrData()
+						.getRaceTable()
+						.getRaces()
+						.get(0)
+						.getResults()
+						.get(0);
+
+		dto = resultMapper.map(resultsRace, fastestLap, round, season);
+		dto.setRaceFinished(true);
+
+		return dto;
 	}
 
-	public List<Driver> rawData(String season, String round) throws JsonProcessingException {
+	public List<Driver> rawData(String season) throws JsonProcessingException {
 
 		List<Driver> driversInSeason = null;
 
-		String urlDriversByYear = "http://ergast.com/api/f1/" + season + "/drivers.json";
+		String urlDriversByYear = "https://api.jolpi.ca/ergast/f1/" + season + "/drivers.json";
 
 		ResponseEntity<String> response = restTemplate.getForEntity(urlDriversByYear, String.class);
 
@@ -78,14 +110,18 @@ public class ErgastService {
 
 		driversInSeason = driverResponse.getMrData().getDriverTable().getDrivers();
 
+		//remove drivers without nationality
+		driversInSeason.removeIf(driver ->
+				driver.getNationality() == null || driver.getNationality().isBlank());
+
 		getFlagCode(driversInSeason);
 
-		//getting the constructor 
+		//getting the constructor
 //		http://ergast.com/api/f1/2010/drivers/alonso/constructors
-		for (Driver driver : driversInSeason) {
+		/*for (Driver driver : driversInSeason) {
 
 			String constructorReturned = null;
-			String urlConstructor = "http://ergast.com/api/f1/" + season + "/drivers/" + driver.getDriverId() + "/constructors.json";
+			String urlConstructor = "https://api.jolpi.ca/ergast/f1/" + season + "/drivers/" + driver.getDriverId() + "/constructors.json";
 
 			ResponseEntity<String> responseConstructor = restTemplate.getForEntity(urlConstructor, String.class);
 
@@ -97,9 +133,9 @@ public class ErgastService {
 			if (constructorReturned != null) {
 				driver.setConstructorId(constructorReturned);
 			}
-			///GET WINS 
+			///GET WINS
 //			http://ergast.com/api/f1/2010/drivers/alonso/results/1
-			String winsUrl = "http://ergast.com/api/f1/" + season + "/drivers/" + driver.getDriverId() + "/results/1.json";
+			String winsUrl = "https://api.jolpi.ca/ergast/f1/" + season + "/drivers/" + driver.getDriverId() + "/results/1.json";
 
 			ResponseEntity<String> responseWins = restTemplate.getForEntity(winsUrl, String.class);
 			ObjectMapper mapperW = new ObjectMapper();
@@ -108,10 +144,8 @@ public class ErgastService {
 			WinsResponse data = mapperW.readValue(responseWins.getBody(), WinsResponse.class);
 			String winsSeason = String.valueOf(data.getMrData().getTotal());
 
-			if (winsSeason != null) {
-				driver.setWinsSeason(winsSeason);
-			}
-		}
+			driver.setWinsSeason(winsSeason);
+		} */
 		return driversInSeason;
 	}
 
@@ -142,13 +176,12 @@ public class ErgastService {
 				driver.setFlagCode(flagCode);
 			}
 		}
-
 	}
 
 	public ArrayList<String> getNameRaces(String season) throws JsonMappingException, JsonProcessingException {
 		ArrayList<String> names = new ArrayList<>();
 
-		String url = "http://ergast.com/api/f1/" + season + "/races.json";
+		String url = "https://api.jolpi.ca/ergast/f1/" + season + "/races.json";
 		ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 		ObjectMapper mapper = new ObjectMapper();
 		RaceResponse racesResponse = mapper.readValue(response.getBody(), RaceResponse.class);
@@ -162,24 +195,31 @@ public class ErgastService {
 
 
 	public List<RaceInfo> getAllRaces(String season) throws JsonMappingException, JsonProcessingException {
-		ArrayList<RaceInfo> races = new ArrayList<>();
-		String url = "http://ergast.com/api/f1/" + season + "/races.json";
+		String url = "https://api.jolpi.ca/ergast/f1/" + season + "/races.json";
 		ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 		ObjectMapper mapper = new ObjectMapper();
 		RaceResponse racesResponse = mapper.readValue(response.getBody(), RaceResponse.class);
 
-		for (Race race : racesResponse.getMrData().getRaceTable().getRaces()) {
-			RaceInfo tmpRace = new RaceInfo();
-			if (race.getCircuit().getLocation().getCountry().equals("United States")) {
-				tmpRace.setCountry("USA");
-			} else {
-				tmpRace.setCountry(race.getCircuit().getLocation().getCountry());
-			}
-			tmpRace.setRaceName(race.getRaceName());
-			tmpRace.setRound(race.getRound());
-			races.add(tmpRace);
-		}
-		return races;
+		return racesResponse.getMrData()
+				.getRaceTable()
+				.getRaces()
+				.stream()
+				.map(this::toRaceInfo)
+				.toList();
+	}
+
+	private RaceInfo toRaceInfo(Race race) {
+		RaceInfo raceInfo = new RaceInfo();
+
+		raceInfo.setCountry(
+				"United States".equals(race.getCircuit().getLocation().getCountry())
+						? "USA"
+						: race.getCircuit().getLocation().getCountry());
+
+		raceInfo.setRaceName(race.getRaceName());
+		raceInfo.setRound(race.getRound());
+
+		return raceInfo;
 	}
 
 	public HashMap<Integer, Integer> testApiGetResult(String position, Integer racesCurrentSeason, String driver) throws JsonProcessingException {
@@ -189,7 +229,7 @@ public class ErgastService {
 		racesCurrentSeason = 19;
 
 		int numberResult = 0;
-		String winsUrl = "http://ergast.com/api/f1/" + SEASON_2023 + "/drivers/" + driver.toLowerCase() + "/results/" + position + ".json";
+		String winsUrl = "https://api.jolpi.ca/ergast/f1/" + SEASON_2023 + "/drivers/" + driver.toLowerCase() + "/results/" + position + ".json";
 
 		ResponseEntity<String> responseWins = restTemplate.getForEntity(winsUrl, String.class);
 		ObjectMapper mapperW = new ObjectMapper();
@@ -201,7 +241,7 @@ public class ErgastService {
 		resultSeason.put(numberResult, racesCurrentSeason);
 
 		if (racesCurrentSeason < 20) {
-			String winsUrlLastSeason = "http://ergast.com/api/f1/" + SEASON_2022 + "/drivers/" + driver.toLowerCase() + "/results/" + position + ".json";
+			String winsUrlLastSeason = "https://api.jolpi.ca/ergast/f1/" + SEASON_2022 + "/drivers/" + driver.toLowerCase() + "/results/" + position + ".json";
 
 			ResponseEntity<String> responseWinsLastSeason = restTemplate.getForEntity(winsUrlLastSeason, String.class);
 			ObjectMapper mapperWLastSeason = new ObjectMapper();
@@ -216,55 +256,85 @@ public class ErgastService {
 		return resultSeason;
 	}
 
-	public NextRaceInfoDto getScheduleRace(RaceResult nextRace) throws JsonProcessingException {
+	public NextRaceInfoDto getScheduleRace() throws JsonProcessingException {
 
-		NextRaceInfoDto nextRaceInfo = new NextRaceInfoDto();
-		LocalDateTime currentDateTime = LocalDateTime.now();
-		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+		ResponseEntity<String> response;
 
-		ResponseEntity<String> response = null;
+		String url = "https://api.jolpi.ca/ergast/f1/current/races/";
 
-		//get next race info
-		String round = String.valueOf(nextRace.getRound());
-		String url = "http://ergast.com/api/f1/2023/" + round + ".json";
 		try {
 			response = restTemplate.getForEntity(url, String.class);
 		} catch (HttpServerErrorException e) {
 			e.printStackTrace();
 			throw new HttpServerErrorException(HttpStatusCode.valueOf(500));
 		}
+
 		ObjectMapper mapper = new ObjectMapper();
 		RaceResponse racesResponse = mapper.readValue(response.getBody(), RaceResponse.class);
-		LocalDate qualiDate = racesResponse.getMrData().getRaceTable().getRaces().get(0).getQualifying().getDate();
-		LocalTime qualiTime = racesResponse.getMrData().getRaceTable().getRaces().get(0).getQualifying().getTime();
-		LocalDate raceDate = racesResponse.getMrData().getRaceTable().getRaces().get(0).getDate();
-		LocalDateTime nextSunday = currentDateTime.with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
 
-		//convert time to gmt
-		LocalDateTime qualiDateTime = LocalDateTime.of(2023, 1, 1, qualiTime.getHour(), qualiTime.getMinute(), qualiTime.getSecond());
-		ZonedDateTime gmtQualiDateTime = ZonedDateTime.of(qualiDateTime, ZoneId.of("GMT"));
-		LocalTime gmtQualiTime = gmtQualiDateTime.toLocalTime();
+		LocalDateTime now = LocalDateTime.now();
 
+		Race nextRace = racesResponse.getMrData()
+				.getRaceTable()
+				.getRaces()
+				.stream()
+				.filter(race -> {
 
-		LocalDateTime localDateTimeQuali = LocalDateTime.of(qualiDate, gmtQualiTime);
-		LocalDateTime date24Before = localDateTimeQuali.minusHours(24);
+					LocalTime raceTime = race.getTime() != null
+							? race.getTime()
+							: LocalTime.MIDNIGHT;
 
-		//check if have to lock the predicion
+					LocalDateTime raceDateTime = LocalDateTime.of(
+							race.getDate(),
+							raceTime);
 
-		if (date24Before.isAfter(localDateTimeQuali)) {
-			nextRaceInfo.setPredictionLocked(Boolean.TRUE);
+					return raceDateTime.isAfter(now);
+
+				})
+				.findFirst()
+				.orElseThrow(() -> new RuntimeException("No next race found"));
+
+		NextRaceInfoDto dto = new NextRaceInfoDto();
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+
+		LocalTime raceTime = nextRace.getTime() != null
+				? nextRace.getTime()
+				: LocalTime.MIDNIGHT;
+
+		LocalDateTime raceDateTime = LocalDateTime.of(
+				nextRace.getDate(),
+				raceTime);
+
+		dto.setTime(raceDateTime.format(formatter));
+		dto.setNameRace(nextRace.getRaceName());
+		dto.setRound(nextRace.getRound());
+		dto.setCountry(nextRace.getCircuit().getLocation().getCountry());
+		dto.setCity(nextRace.getCircuit().getLocation().getLocality());
+		dto.setRaceDate(nextRace.getDate());
+		dto.setRaceTime(nextRace.getTime());
+
+		// Bloquear previsões 24 horas antes da qualificação
+		if (nextRace.getQualifying() != null) {
+
+			LocalTime qualiTime = nextRace.getQualifying().getTime() != null
+					? nextRace.getQualifying().getTime()
+					: LocalTime.MIDNIGHT;
+
+			LocalDateTime qualiDateTime = LocalDateTime.of(
+					nextRace.getQualifying().getDate(),
+					qualiTime);
+
+			dto.setPredictionLocked(
+					now.isAfter(qualiDateTime.minusHours(24)));
+
 		} else {
-			nextRaceInfo.setPredictionLocked(Boolean.FALSE);
+
+			dto.setPredictionLocked(false);
+
 		}
 
-		nextRaceInfo.setTime(nextSunday.format(dateTimeFormatter));
-		nextRaceInfo.setNameRace(racesResponse.getMrData().getRaceTable().getRaces().get(0).getRaceName());
-		nextRaceInfo.setRound(racesResponse.getMrData().getRaceTable().getRaces().get(0).getRound());
-		nextRaceInfo.setCountry(racesResponse.getMrData().getRaceTable().getRaces().get(0).getCircuit().getLocation().getCountry());
-		nextRaceInfo.setCity(racesResponse.getMrData().getRaceTable().getRaces().get(0).getCircuit().getLocation().getLocality());
-		nextRaceInfo.setRaceDate(raceDate);
-		nextRaceInfo.setRaceTime(racesResponse.getMrData().getRaceTable().getRaces().get(0).getTime());
-		return nextRaceInfo;
+		return dto;
 	}
 
 	public StandingsDto getStandings() throws JsonProcessingException {
@@ -275,9 +345,8 @@ public class ErgastService {
 		List<TotalPointsDto> resultConstructors  = new ArrayList<>();
 
 
-
-		String urlDrivers = "http://ergast.com/api/f1/current/driverstandings.json";
-		String urlConstructor = "http://ergast.com/api/f1/current/constructorStandings.json";
+		String urlDrivers = "https://api.jolpi.ca/ergast/f1/current/driverstandings.json";
+		String urlConstructor = "https://api.jolpi.ca/ergast/f1/current/constructorStandings.json";
 
 		ResponseEntity<String> responseDriver = restTemplate.getForEntity(urlDrivers, String.class);
 		ResponseEntity<String> responseConstructor = restTemplate.getForEntity(urlConstructor, String.class);
@@ -326,7 +395,28 @@ public class ErgastService {
 		return standingsDto;
 	}
 
-	public void getAllRaces() {
+	public Race getRaceResults(String season, String round) throws JsonProcessingException {
 
+		String url = "https://api.jolpi.ca/ergast/f1/" + season + "/" + round + "/results.json";
+
+		ResponseEntity<String> response;
+
+		try {
+			response = restTemplate.getForEntity(url, String.class);
+		} catch (HttpServerErrorException e) {
+			e.printStackTrace();
+			throw new HttpServerErrorException(HttpStatusCode.valueOf(500));
+		}
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		RaceResponse raceResponse = mapper.readValue(response.getBody(), RaceResponse.class);
+
+		return raceResponse.getMrData()
+				.getRaceTable()
+				.getRaces()
+				.stream()
+				.findFirst()
+				.orElseThrow(() -> new RuntimeException("Race not found"));
 	}
 }

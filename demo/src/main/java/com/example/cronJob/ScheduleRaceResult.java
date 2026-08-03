@@ -43,7 +43,7 @@ public class ScheduleRaceResult {
         //TODO : if sunday enter try catch
         try {
             RaceResult currentRace = raceResultRepository.findTopByRaceFinishedFalseOrderByRoundAsc();
-            RaceResult raceResultTemp = ergastService.getRaceResult(currentRace.getSeason(), String.valueOf(currentRace.getRound()));
+            RaceResult raceResultTemp = null;
             if (raceResultTemp != null) {
                 //TODO : comentar para testes
                 currentRace.setRaceFinished(true);

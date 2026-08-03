@@ -24,7 +24,6 @@ import { AuthInterceptor } from 'src/_helpers/auth.interceptor';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { CalendarComponent } from './components/calendar/calendar.component';
 import { RaceDetailsComponent } from './components/race-details/race-details.component';
-import { AngularTwitterTimelineModule } from 'angular-twitter-timeline';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 import { RacePopupComponent } from './components/race-popup/race-popup.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
@@ -62,7 +61,6 @@ import { WeatherForecastPopupComponent } from './components/weather-forecast-pop
     NgxSpinnerModule,
     BrowserAnimationsModule,
     NgxPaginationModule,
-    AngularTwitterTimelineModule,
     YouTubePlayerModule,
     ModalModule.forRoot()
     

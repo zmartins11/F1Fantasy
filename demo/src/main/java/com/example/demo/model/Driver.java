@@ -9,7 +9,7 @@ public class Driver {
 	private String driverId;
 	private String code;
 	private String url;
-	private String permanentNumber;
+	private Integer permanentNumber;
 	private String givenName;
 	@JsonProperty("familyName")
 	private String familyName;
@@ -39,10 +39,10 @@ public class Driver {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	public String getPermanentNumber() {
+	public Integer getPermanentNumber() {
 		return permanentNumber;
 	}
-	public void setPermanentNumber(String permanentNumber) {
+	public void setPermanentNumber(Integer permanentNumber) {
 		this.permanentNumber = permanentNumber;
 	}
 	public String getGivenName() {

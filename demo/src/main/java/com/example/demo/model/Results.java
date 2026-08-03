@@ -1,11 +1,6 @@
 package com.example.demo.model;
 
-import java.time.LocalTime;
-
-import com.example.utils.LocalTimeDeserializer;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 public class Results {
 	
@@ -16,11 +11,12 @@ public class Results {
 	private String grid;
 	private String laps;
 	private String status;
-	
-	@JsonDeserialize(using = LocalTimeDeserializer.class)
-	private LocalTime time;
-	@JsonIgnore
-	private FastesLap fastestLap;
+
+	@JsonProperty("Time")
+	private TimeResult time;
+
+	@JsonProperty("FastestLap")
+	private FastestLap fastestLap;
 	
 	@JsonProperty("Driver")
 	Driver driver;
@@ -83,16 +79,16 @@ public class Results {
 		this.status = status;
 	}
 
-	public FastesLap getFastestLap() {
+	public FastestLap getFastestLap() {
 		return fastestLap;
 	}
-	public void setFastestLap(FastesLap fastestLap) {
+	public void setFastestLap(FastestLap fastestLap) {
 		this.fastestLap = fastestLap;
 	}
-	public LocalTime getTime() {
+	public TimeResult getTime() {
 		return time;
 	}
-	public void setTime(LocalTime time) {
+	public void setTime(TimeResult time) {
 		this.time = time;
 	}
 	

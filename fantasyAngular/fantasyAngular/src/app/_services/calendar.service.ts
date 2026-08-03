@@ -33,13 +33,5 @@ export class CalendarService {
         return this.httpClient.get<Race[]>(`${this.baseApi}/${season}`);
     }
 
-    getDriversList(season: number): Observable<Driver[]> {
-        const search = `${this.baseUrl}/${season}`;
-        return this.httpClient.get<Driver[]>(search);
-    }
-
-    getRaceResult() {
-        
-    }
 
 }

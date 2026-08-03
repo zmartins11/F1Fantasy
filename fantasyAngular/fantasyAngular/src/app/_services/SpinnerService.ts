@@ -10,10 +10,18 @@ export class SipnnerService {
   public numberOfRequests: number = 0;
   public showSpinner: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  handleRequest = (state: string = 'minus'): void => {
-    this.numberOfRequests = (state === 'plus') ? this.numberOfRequests + 1 : this.numberOfRequests - 1;
-    this.showSpinner.next(this.numberOfRequests > 0);
-  };
+  handleRequest(state: string = 'minus'): void {
+
+  if (state === 'plus') {
+    this.numberOfRequests++;
+  } else {
+    this.numberOfRequests--;
+  }
+
+  console.log("Spinner:", state, "contador =", this.numberOfRequests);
+
+  this.showSpinner.next(this.numberOfRequests > 0);
+}
   
 
 }

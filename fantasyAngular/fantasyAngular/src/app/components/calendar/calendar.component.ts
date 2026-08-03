@@ -36,39 +36,20 @@ export class CalendarComponent {
 
   showNextSeason() {
     this.currentSeason += 1;
-    console.log(this.currentSeason);
+    this.getRaces();
   }
 
   
   getRaces() {
-    this.calendarService.getRaces(2023).subscribe(data => {
+    this.calendarService.getRaces(this.currentSeason).subscribe(data => {
       this.races = data;
       console.log(this.races);
     })
   }
 
-
- 
-  getRaceResults(season: string, round :string) {
-   
-  }
-
-
-
-  openRaceDetails(race: Race) {
+  openRaceDetailsComponent(race: Race) {
     this.f1Service.setRaceData(race);
-
-    const initialState = {
-      race: race
-    };
-
-    if(this.currentSeason === this.currentYear) {
-      this.modalService.show(RaceDetailsComponent, { initialState });
-    } else {
-      this.modalService.show(RaceDetailsComponent, { initialState })
-    }
-    
-    
+    this.modalService.show(RaceDetailsComponent);
   }
 
   scrollToTop() {

@@ -1,9 +1,11 @@
 package com.example.demo.controller;
 
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.example.demo.dto.DateTimeResponseDto;
+import com.example.demo.model.*;
 import com.example.demo.model.fantasy.RaceResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -14,10 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import com.example.demo.model.Driver;
-import com.example.demo.model.DriverResponse;
-import com.example.demo.model.Race;
-import com.example.demo.model.Results;
 import com.example.demo.service.ErgastService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -53,7 +51,7 @@ public class F1Controller {
 	  
 	  @GetMapping("/rawData/{season}")
 	  public List<Driver> rawDataDrivers(@PathVariable String season) throws JsonProcessingException {
-		  return ergastService.rawData(season, "");
+		  return ergastService.rawData(season);
 	  }
 	  
 	  
@@ -63,9 +61,7 @@ public class F1Controller {
 	  }
 	  
 	  @GetMapping("/raceResult/{season}/{round}")
-	  public RaceResult getRaceResult(@PathVariable String season, @PathVariable String round) throws JsonMappingException, JsonProcessingException {
+	  public RaceResultDto getRaceResult(@PathVariable String season,@PathVariable String round) throws JsonMappingException, JsonProcessingException {
 		  return ergastService.getRaceResult(season,round);
 	  }
-
-	  
 }

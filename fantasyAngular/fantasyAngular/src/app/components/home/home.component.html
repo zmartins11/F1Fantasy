@@ -165,7 +165,7 @@
                         (click)="selectDriver(driver)">
                         <div class="driver-name"
                           [ngClass]="{'selected-1st': driver.selection === 1, 'selected-2nd': driver.selection === 2, 'selected-3rd': driver.selection === 3}">
-                          {{ driver.name }} {{ driver.selection }}
+                          {{ driver.familyName }} {{ driver.selection }}
                         </div>
                       </li>
                     </ul>
@@ -177,7 +177,7 @@
                         (click)="selectDriver(driver)">
                         <div class="driver-name"
                           [ngClass]="{'selected-1st': driver.selection === 1, 'selected-2nd': driver.selection === 2, 'selected-3rd': driver.selection === 3}">
-                          {{ driver.name }} {{ driver.selection }}
+                          {{ driver.familyName }} {{ driver.selection }}
                         </div>
                       </li>
                     </ul>
@@ -228,8 +228,8 @@
                     <ul>
                       <li *ngFor="let driver of drivers.slice(0, 10)" class="list-group-item"
                         (mouseover)="highlightDriver(driver)" (mouseout)="unhighlightDriver(driver)"
-                        (click)="selectFastestDriver(driver)" [class.fastest-driver]="driver.number === fastest">
-                        {{ driver.name }}
+                        (click)="selectFastestDriver(driver)" [class.fastest-driver]="driver.permanentNumber === fastest">
+                        {{ driver.familyName }}
                       </li>
                     </ul>
                   </div>
@@ -237,8 +237,8 @@
                     <ul>
                       <li *ngFor="let driver of drivers.slice(10)" class="list-group-item"
                         (mouseover)="highlightDriver(driver)" (mouseout)="unhighlightDriver(driver)"
-                        (click)="selectFastestDriver(driver)" [class.fastest-driver]="driver.number === fastest">
-                        {{ driver.name }}
+                        (click)="selectFastestDriver(driver)" [class.fastest-driver]="driver.permanentNumber === fastest">
+                        {{ driver.familyName }}
                       </li>
                     </ul>
                   </div>
@@ -343,11 +343,11 @@
     <div *ngIf="isLoggedIn and !errorMessage" class="container mt-5 mb-5">
       <div class="row justify-content-center mb-5">
         <div class="col-md-6 col-sm-6 mb-5">
-          <!-- Twitter feed -->
+          <!-- Twitter feed 
           <div style="width: 100%; max-width: 617px; margin-right: 20px;">
             <angular-twitter-timeline [data]="{sourceType: 'url', url: 'https://twitter.com/F1'}"
               [opts]="{tweetLimit: 10, height: 500}">
-            </angular-twitter-timeline>
+            </angular-twitter-timeline> -->
           </div>
         </div>
         <div class="col-md-6 col-sm-6 mb-5">

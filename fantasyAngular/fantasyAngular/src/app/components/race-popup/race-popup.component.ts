@@ -12,6 +12,7 @@ export class RacePopupComponent implements OnInit {
   races!: RaceInfo[];
   round!: string;
   errorMessage!:string;
+  currentYear = new Date().getFullYear();
 
   constructor(public bsModalRef: BsModalRef)  { }
 

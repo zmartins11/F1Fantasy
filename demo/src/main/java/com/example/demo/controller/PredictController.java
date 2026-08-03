@@ -50,8 +50,8 @@ public class PredictController {
     @GetMapping("/raceSchedule")
     private NextRaceInfoDto getRaceInfo(@RequestParam String username) throws JsonProcessingException, InterruptedException {
         //TimeUnit.SECONDS.sleep(3);
-        RaceResult nextRaceInfo = predictService.getNextRaceInfo();
-        NextRaceInfoDto nextRaceInfoDto = ergastService.getScheduleRace(nextRaceInfo);
+        //RaceResult nextRaceInfo = predictService.getNextRaceInfo();
+        NextRaceInfoDto nextRaceInfoDto = ergastService.getScheduleRace();
 
         //houve atualizacao do predictionLocked
 //        if (!nextRaceInfoDto.getPredictionLocked().equals(nextRaceInfo.get().isPredictionLocked())) {
@@ -96,7 +96,7 @@ public class PredictController {
 
     @GetMapping("/allRaces")
     private List<RaceInfo> getAllRaces() throws JsonProcessingException {
-        return ergastService.getAllRaces("2023");
+        return ergastService.getAllRaces(Year.now().toString());
     }
 
 }

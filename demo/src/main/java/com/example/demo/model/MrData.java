@@ -18,6 +18,7 @@ public class MrData {
 	@JsonProperty("RaceTable")
 	private RaceTable raceTable;
 
+	@JsonProperty("DriverTable")
 	private DriverTable driverTable;
 
 	private ConstructorTable constructorTable; 

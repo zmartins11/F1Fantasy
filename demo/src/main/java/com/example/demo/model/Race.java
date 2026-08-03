@@ -20,6 +20,8 @@ public class Race {
 	private String round;
 	private String url;
 	private String raceName;
+
+	private Boolean raceFinished;
 	
 	@JsonProperty("Results")
 	private List<Results> results;
@@ -47,7 +49,21 @@ public class Race {
 	
 	@JsonProperty("Sprint")
 	private Sprint spring;
-	
+
+	@JsonProperty("SprintQualifying")
+	private SprintQualifying sprintQualifying;
+
+	@JsonProperty("SprintShootout")
+	private SprintShootout sprintShootout;
+
+	public Boolean getRaceFinished() {
+		return raceFinished;
+	}
+
+	public void setRaceFinished(Boolean raceFinished) {
+		this.raceFinished = raceFinished;
+	}
+
 	public Qualifying getQualifying() {
 		return qualifying;
 	}
@@ -154,7 +170,21 @@ public class Race {
 	public void setSpring(Sprint spring) {
 		this.spring = spring;
 	}
-	
-	
 
+
+	public SprintQualifying getSprintQualifying() {
+		return sprintQualifying;
+	}
+
+	public void setSprintQualifying(SprintQualifying sprintQualifying) {
+		this.sprintQualifying = sprintQualifying;
+	}
+
+	public SprintShootout getSprintShootout() {
+		return sprintShootout;
+	}
+
+	public void setSprintShootout(SprintShootout sprintShootout) {
+		this.sprintShootout = sprintShootout;
+	}
 }
