@@ -13,30 +13,27 @@ export class WeatherService {
   private baseApi = environment.apiPythonUrl;
   private apiPython = `${this.baseApi}/weather`;
 
-  getWeather(country:string, city: string, hour: number, day: number, month:number, forecast : boolean): Observable<Weather> {
-    console.log('TESTE SEEFIVCECEPOR:' + hour + day )
+  getWeather(country:string, city: string, hour: number, day: number, month:number, forecast : boolean): Observable<Weather[]> {
     const params = {
-      country: country,
-      city: city,
+      country,
+      city,
       hour: hour.toString(),
       day: day.toString(),
       month: month.toString(),
-      forecast : forecast
+      forecast: forecast.toString()
     };
-    const headers = new HttpHeaders();
 
-    return this.http.get<Weather>(this.apiPython, {params, headers});
+    return this.http.get<Weather[]>(this.apiPython, { params });
   }
 
   getWeatherForecast(country: string, city: string, hour: number, day: number, month: number, forecast: boolean): Observable<Weather[]> {
-    
     const params = {
-      country: country,
-      city: city,
+      country,
+      city,
       hour: hour.toString(),
       day: day.toString(),
       month: month.toString(),
-      forecast: forecast.toString() // convert boolean to string
+      forecast: forecast.toString()
     };
 
     return this.http.get<Weather[]>(this.apiPython, { params });

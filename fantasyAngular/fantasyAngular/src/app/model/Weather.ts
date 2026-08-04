@@ -1,8 +1,8 @@
 export interface Weather {
     date: string;
-    weather : string;
-    temperature : string;
+    weather: string;
+    temperature: number;
     humidity: number;
     wind_speed: number;
-    current_weather : Boolean;
+    current_weather: boolean;
 }

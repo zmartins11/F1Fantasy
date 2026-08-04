@@ -1,10 +1,169 @@
-.highlight-card:hover {
-    cursor: pointer;
-    box-shadow: 0 0 10px #ccc;
-    border: 2px solid blue;
+.calendar-shell {
+  padding: 2rem 0;
+}
+
+.calendar-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.75rem;
+  padding: 1.75rem 1.5rem;
+  border-radius: 28px;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 58, 138, 0.95));
+  color: #f8fafc;
+  box-shadow: 0 24px 50px rgba(15, 23, 42, 0.15);
+}
+
+.label {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(248, 250, 252, 0.72);
+}
+
+.calendar-topbar h2 {
+  margin: 0;
+  font-size: clamp(1.8rem, 2.4vw, 2.2rem);
+}
+
+.intro {
+  margin: 0.8rem 0 0;
+  color: rgba(248, 250, 252, 0.82);
+  max-width: 42rem;
+}
+
+.calendar-controls {
+  display: flex;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.nav-button {
+  background: #f8fafc;
+  border: none;
+  color: #0f172a;
+  padding: 0.85rem 1.4rem;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.nav-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: #e2e8f0;
+}
+
+.nav-button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.race-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  box-shadow: 0 24px 45px rgba(15, 23, 42, 0.08);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.race-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 30px 60px rgba(15, 23, 42, 0.12);
+}
+
+.race-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.14);
+  color: #1d4ed8;
+  font-weight: 700;
+  font-size: 0.86rem;
+}
+
+.flag-icon {
+  width: 64px;
+  border-radius: 14px;
+  object-fit: cover;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.race-card h3 {
+  margin: 0.75rem 0 0;
+  font-size: 1.15rem;
+  line-height: 1.2;
+}
+
+.race-info {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.race-date {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.circuit-name,
+.race-venue {
+  margin: 0;
+  color: #475569;
+}
+
+.race-meta {
+  display: grid;
+  gap: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.meta-title {
+  display: block;
+  font-size: 0.8rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.track-preview {
+  width: 100%;
+  height: auto;
+  border-radius: 18px;
+  object-fit: cover;
+}
+
+@media (max-width: 900px) {
+  .calendar-topbar {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
   }
 
-.flag-large {
-    font-size: 2.2em;
-
+  .calendar-controls {
+    justify-content: center;
   }
+}

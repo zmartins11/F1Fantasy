@@ -9,12 +9,9 @@ import { DateTimeServiceService } from 'src/app/_services/date-time-service.serv
 })
 export class SpinnerComponent {
 
- 
-  spinnerActive: boolean = true;
+  spinnerActive: boolean = false;
 
-  constructor(
-    public spinnerHandler: SipnnerService
-  ) {
+  constructor(private spinnerHandler: SipnnerService) {
     this.spinnerHandler.showSpinner.subscribe(this.showSpinner.bind(this));
   }
 

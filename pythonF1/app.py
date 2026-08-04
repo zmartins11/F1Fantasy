@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from youtube_search import YoutubeSearch
+#from youtube_search import YoutubeSearch
 from flask_cors import CORS  
 import requests
 from datetime import datetime
@@ -13,7 +13,7 @@ CORS(app)
 def test():
     return 'TESTING DOCKER ENDPOINT'
 
-
+"""
 @app.route('/video-search', methods=['POST'])
 def video_search():
     try:
@@ -22,20 +22,20 @@ def video_search():
         return jsonify({'videoId': video_id})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
+"""
 @app.route('/weather', methods=['GET'])
 def weather():
     try:
         print('Calling the APi Weather')
         country = request.args.get('country', type=str)
         city = request.args.get('city', default='Lisbon', type=str)
-        hour = request.args.get('hour', type=str)
-        day = request.args.get('day', type=str)
-        month = request.args.get('month', type=str)
+        hour = request.args.get('hour', type=int)
+        day = request.args.get('day', type=int)
+        month = request.args.get('month', type=int)
         get_forecast_for_week = request.args.get('forecast', default='false', type=str).lower() == 'true'
 
         weather_data = get_race_weather(country, city, hour, day, month, get_forecast_for_week)
-        return jsonify({'weather': weather_data})
+        return jsonify(weather_data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -66,26 +66,21 @@ def get_race_weather(country, city, hour, day, month, get_forecast_for_week):
             humidity = item['main']['humidity']
             wind_speed = item['wind']['speed']
             temperature_celcius = round(temperature_kelvin - 273.15, 1)
+            forecast_item = {
+                'date': date.strftime('%Y-%m-%dT%H:%M:%S'),
+                'weather': weather,
+                'temperature': temperature_celcius,
+                'humidity': humidity,
+                'wind_speed': wind_speed,
+                'current_weather': False
+            }
             if not get_forecast_for_week:
-                if date.hour == hour and date.day == day and date.month == month:
-                    forecast.append({
-                        'date': date,
-                        'weather': weather,
-                        'temperature': temperature_celcius,
-                        'humidity' : humidity,
-                        'wind_speed' : wind_speed,
-                        'current_weather': False
-                    })
+                if hour is not None and day is not None and month is not None:
+                    if date.hour == hour and date.day == day and date.month == month:
+                        forecast.append(forecast_item)
             else:
-                if(date.hour== 12):
-                    forecast.append({
-                        'date': date,
-                        'weather': weather,
-                        'temperature': temperature_celcius,
-                        'humidity' : humidity,
-                        'wind_speed' : wind_speed,
-                        'current_weather': False
-                    })
+                if date.hour == 12:
+                    forecast.append(forecast_item)
 
         if not forecast:
             print(f'No forecast found for {day}/{month}. Getting current weather.')
@@ -94,6 +89,7 @@ def get_race_weather(country, city, hour, day, month, get_forecast_for_week):
             current_weather_data = current_weather_response.json()
 
             current_weather = {
+                'date': datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
                 'weather': current_weather_data['weather'][0]['description'],
                 'temperature': round(current_weather_data['main']['temp'] - 273.15, 1),
                 'humidity': current_weather_data['main']['humidity'],

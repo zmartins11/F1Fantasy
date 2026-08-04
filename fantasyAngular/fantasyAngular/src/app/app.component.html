@@ -1,44 +1,39 @@
-<div id="app" class="wraper">
-  <nav class="navbar navbar-expand navbar-dark bg-dark">
-    <a href="#" class="navbar-brand"> F1Predictor</a>
-    <ul class="navbar-nav mr-auto" routerLinkActive="active">
-      <li class="nav-item" *ngIf="showAdminBoard">
-        <a href="/admin" class="nav-link" routerLink="admin">Admin Board</a>
-      </li>
-      <li class="nav-item" *ngIf="showModeratorBoard">
-        <a href="/mod" class="nav-link" routerLink="mod">Moderator Board</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" *ngIf="checkLogin()" routerLink="calendar">Calendar</a>
-      </li>
-    </ul>
+<div id="app" class="app-shell">
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-mark">F1</div>
+      <div>
+        <a routerLink="/" class="brand-title">F1Predictor</a>
+        <p class="brand-tagline">Race insights, predictions and weather for every weekend.</p>
+      </div>
+    </div>
 
-    <ul class="navbar-nav ml-auto" *ngIf="!checkLogin()">
-      <li class="nav-item">
-        <a href="/register" class="nav-link" routerLink="register">Sign Up</a>
-      </li>
-      <li class="nav-item">
-        <a href="/login" class="nav-link" routerLink="login">Login</a>
-      </li>
-    </ul>
+    <nav class="app-nav">
+      <a routerLink="/calendar" routerLinkActive="active" *ngIf="checkLogin()">Calendar</a>
+      <a routerLink="/admin" routerLinkActive="active" *ngIf="showAdminBoard">Admin</a>
+      <a routerLink="/mod" routerLinkActive="active" *ngIf="showModeratorBoard">Moderator</a>
+      <a routerLink="/profile" *ngIf="checkLogin()">{{ getUsername() }}</a>
+    </nav>
 
-    <ul class="navbar-nav ml-auto" *ngIf="checkLogin()">
-      <li class="nav-item">
-        <a href="/profile" class="nav-link" routerLink="profile">{{ getUsername() }}</a>
-      </li>
-      <li class="nav-item">
-        <a href class="nav-link" (click)="logout()">Logout</a>
-      </li>
-    </ul>
-  </nav>
+    <div class="app-actions">
+      <a routerLink="/register" *ngIf="!checkLogin()">Sign Up</a>
+      <a routerLink="/login" *ngIf="!checkLogin()">Login</a>
+      <button type="button" class="logout-button" *ngIf="checkLogin()" (click)="logout()">Logout</button>
+    </div>
+  </header>
 
-  <div class="container mb-5" style="background-color: rgba(245, 244, 244, 0.89);">
+  <main class="app-content container mb-5">
     <router-outlet></router-outlet>
     <app-spinner></app-spinner>
-  </div>
-  <!-- Sticky Footer -->
-  <footer class="navbar navbar-expand navbar-dark bg-dark footer">
-    <span class="navbar-brand">&copy; 2024 F1Predictor</span>
-  </footer>
+  </main>
 
+  <footer class="app-footer">
+    <div class="footer-row">
+      <span>© 2024 F1Predictor</span>
+      <div class="footer-links">
+        <a routerLink="/">Home</a>
+        <a routerLink="/calendar">Calendar</a>
+      </div>
+    </div>
+  </footer>
 </div>

@@ -1,23 +1,89 @@
-td {
-    width: 200px;
-    height: 75px;
-  }
+.race-details-modal {
+  color: #212529;
+}
 
-.highlity-month {
-    display: inline-block;
-    padding: 5px;
-    border-radius: 50%;
-    background-color: grey;
-  }
+.race-details-header {
+  border-bottom: 1px solid #dee2e6;
+}
 
-.day-month-raceDetails {
-    font-size: 20px;
-    padding-left: 10px;
-    padding-top: 20px; 
-    padding-bottom: 40px;
-    border-right: 1px dotted black;
-    width: 100px;
-    
-    justify-content: center;
-    align-items: center;
+.race-details-title {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.location-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  background-color: #e9f2ff;
+  color: #0d6efd;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.country-flag {
+  width: 22px;
+  height: 14px;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.schedule-section {
+  padding: 1rem 0;
+}
+
+.session-card,
+.result-card {
+  background: #f8f9fa;
+  border: none;
+  border-radius: 1rem;
+  min-height: 140px;
+}
+
+.session-card:hover,
+.result-card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease-in-out;
+}
+
+.session-label {
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.82rem;
+}
+
+.session-time {
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.position-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #dee2e6;
+  color: #212529;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.position-badge.winner {
+  background: #ffd700;
+  color: #212529;
+}
+
+.finished-card {
+  background: #ffffff;
+}
+
+@media (max-width: 767px) {
+  .race-details-header {
+    text-align: left;
+  }
 }

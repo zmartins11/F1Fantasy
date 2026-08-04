@@ -78,7 +78,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (this.user) {
       this.isLoggedIn = true;
       console.log(this.isLoggedIn);
-      this.roles = this.user.role;
+      this.roles = this.user.role || '';
       this.showAdminBoard = this.roles.includes('ADMIN');
       this.showModeratorBoard = this.roles.includes('ROLE_MODERATOR');
     }

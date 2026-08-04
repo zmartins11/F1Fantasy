@@ -1,35 +1,49 @@
-<h2>Race Calendar Season: {{currentSeason}}</h2>
-<div class="row">
-    <div *ngFor="let race of races" class="col-sm-3">
-        <div class="col-12 my-3">
-            <div class="card highlight-card" (click)="openRaceDetailsComponent(race)"
-                style="width: 18rem; height: 350px; overflow: hidden;">
-                <div class="card-body">
-                    <h5 style="color: blue;">Round {{race.round}}</h5> <img
-                        src="assets/images/flags/{{race.Circuit.Location.country}}.png"
-                        style="position: absolute; top: 20px; right: 20px; padding-right: 25px;width: 100px;height: 37px;">
-                    <h5 style="color: blue;">{{race.FirstPractice.date | date: 'd'}}-{{race.date | date : 'd'}}
-                        {{race.FirstPractice.date | date: 'MMM'}} </h5>
-                    <div style="height: 1.6em; overflow: hidden;">
-                        <h5 class="card-title">{{race.raceName}}</h5>
-                    </div>
-                    <hr>
-                    <p class="card-text">{{race.Circuit.circuitName}}</p>
-                </div>
-                <ng-container *ngIf="currentSeason === currentYear">
-                    <img src="assets/images/tracks/{{race.Circuit.circuitId}}.png" class="card-img-top mx-auto"
-                        alt="..." style="width: 150px; height: auto; margin-bottom: 35px;">
-                </ng-container>
-                
-            </div>
-        </div>
+<section class="calendar-shell">
+  <header class="calendar-topbar">
+    <div>
+      <p class="label">Race Calendar</p>
+      <h2>Season {{ currentSeason }} schedule</h2>
+      <p class="intro">Explore each Grand Prix with circuit details, flag visuals, and round-by-round timing.</p>
     </div>
+    <div class="calendar-controls">
+      <button class="nav-button" (click)="showPrevSeason(); scrollToTop()">Previous season</button>
+      <button class="nav-button" (click)="showNextSeason(); scrollToTop()" [disabled]="currentSeason === currentYear">
+        <span *ngIf="currentSeason != currentYear">Next season</span>
+        <span *ngIf="currentSeason === currentYear">Current season</span>
+      </button>
+    </div>
+  </header>
 
-    <button class="btn btn-secondary" (click)="showPrevSeason();scrollToTop()">Go to Season {{currentSeason -
-        1}}</button>
-    <button class="btn btn-secondary" (click)="showNextSeason();scrollToTop()"
-        [disabled]="currentSeason === currentYear">
-        <ng-container *ngIf="currentSeason != currentYear">Go to Season {{currentSeason + 1}}</ng-container>
-    </button>
+  <div class="calendar-grid">
+    <article *ngFor="let race of races" class="race-card" (click)="openRaceDetailsComponent(race)">
+      <div class="race-card-header">
+        <div>
+          <span class="badge">Round {{ race.round }}</span>
+          <h3>{{ race.raceName }}</h3>
+        </div>
+        <img class="flag-icon" src="assets/images/flags/{{ race.Circuit.Location.country }}.png" alt="{{ race.Circuit.Location.country }} flag"/>
+      </div>
 
-</div>
+      <div class="race-info">
+        <span class="race-date">{{ race.FirstPractice.date | date: 'dd MMM' }} – {{ race.date | date: 'dd MMM' }}</span>
+        <p class="circuit-name">{{ race.Circuit.circuitName }}</p>
+        <p class="race-venue">{{ race.Circuit.Location.locality }}, {{ race.Circuit.Location.country }}</p>
+      </div>
+
+      <div class="race-meta">
+        <div>
+          <span class="meta-title">Start</span>
+          <p>{{ race.time || 'TBD' }}</p>
+        </div>
+        <div>
+          <span class="meta-title">Track</span>
+          <p>{{ race.Circuit.circuitId }}</p>
+        </div>
+      </div>
+
+      <ng-container *ngIf="currentSeason === currentYear">
+        <img class="track-preview" src="assets/images/tracks/{{ race.Circuit.circuitId }}.png" alt="Track preview" />
+      </ng-container>
+    </article>
+  </div>
+</section>

@@ -1,7 +1,7 @@
 export const environment = {
     production: false,
     apiSpringUrl: 'http://localhost:8080',
-    apiPythonUrl: 'http://ec2-13-40-175-14.eu-west-2.compute.amazonaws.com:5000'
+    apiPythonUrl: 'http://localhost:5000'
     /* apiPythonUrl: 'http://172.17.0.2:5000'   dockker*/
   };
   

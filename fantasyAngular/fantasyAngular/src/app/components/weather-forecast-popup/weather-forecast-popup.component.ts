@@ -18,12 +18,9 @@ export class WeatherForecastPopupComponent implements OnInit {
 
 
   ngOnInit(): void {
-    console.log("errorMESSA:");
-    console.log('')
-    this.weatherService.getWeatherForecast(this.country,this.city,0, 0, 0, true).subscribe((response:any) => {
-      const weatherInfo = response.weather;
-      this.weatherData = weatherInfo;
-    })
+    this.weatherService.getWeatherForecast(this.country, this.city, 0, 0, 0, true).subscribe((response: Weather[]) => {
+      this.weatherData = response || [];
+    });
   }
 
   closePopup() {

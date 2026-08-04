@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { Weather } from 'src/app/model/Weather';
 import { WeatherForecastPopupComponent } from '../weather-forecast-popup/weather-forecast-popup.component';
 
 @Component({
@@ -9,14 +10,13 @@ import { WeatherForecastPopupComponent } from '../weather-forecast-popup/weather
 })
 export class WeatherComponent {
 
-
-  constructor(private modalService: BsModalService){}
+  constructor(private modalService: BsModalService) {}
 
   bsModalRef: BsModalRef | undefined;
 
-  @Input() weather : any;
-  @Input() city : string = '';
-  @Input() country : string = '';
+  @Input() weather: Weather | null = null;
+  @Input() city: string = '';
+  @Input() country: string = '';
 
   getWeatherIconClass(weather: string): string {
     if (weather.includes('clear sky')) {

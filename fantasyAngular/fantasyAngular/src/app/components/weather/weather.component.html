@@ -1,33 +1,32 @@
-<!--<div class="weather-widget mt-n1" style="margin-right: 13px;" id="weather-widget" (click)="onWeatherWidgetClick()" (mouseover)="onWeatherWidgetMouseOver()" (mouseout)="onWeatherWidgetMouseOut()">
-    <h6 *ngIf="!weather.current_weather">Weather in {{ city }} for Sunday Race Day: </h6>
-    <h6 *ngIf="weather.current_weather">Current weather in {{ city }}: </h6>
-    <span>{{weather.weather}}</span>
-    <div class="weather-details mt-3">
-      <div class="temperature">
-        <i [class]="getWeatherIconClass(weather.weather)" class="moving-icon" style="font-size: 28px; margin-right: 8px;"
-         data-toggle="tooltip" data-placement="top"
-          title="{{ weather.weather }}" data-delay="0"></i>
-        {{ weather.temperature }} °C
-      </div>
-  
-      <div class="wind">
-        <i class="fa-solid fa-wind" style="font-size: 28px; margin-right: 8px;" data-toggle="tooltip" data-placement="top"
-        title="Wind"></i>
-        {{ weather.wind_speed }} m/s
-      </div>
-  
-      <div class="humidity">
-        <i class="fa-solid fa-droplet" style="font-size: 28px; margin-right: 8px;" 
-        data-toggle="tooltip" data-placement="top"
-        title="Humidity"></i>
-        {{ weather.humidity }}%
-      </div>
+<div class="weather-widget" id="weather-widget" *ngIf="weather" (click)="onWeatherWidgetClick()">
+  <div class="weather-header">
+    <div>
+      <p class="weather-type">{{ weather.current_weather ? 'Current weather' : 'Race day weather' }}</p>
+      <h4 class="weather-location">{{ city || 'Unknown city' }}, {{ country || 'N/A' }}</h4>
+    </div>
+    <div class="weather-icon">
+      <i [class]="getWeatherIconClass(weather.weather)"></i>
     </div>
   </div>
-  
-  <script>
-    // Initialize Bootstrap tooltips
-    $(function () {
-      $('[data-toggle="tooltip"]').tooltip()
-    })
-  </script> -->
+
+  <div class="weather-main">
+    <div class="temp-value">{{ weather.temperature }}°C</div>
+    <div class="temp-desc">{{ weather.weather }}</div>
+  </div>
+
+  <div class="weather-meta">
+    <div class="meta-item">
+      <i class="fa-solid fa-droplet"></i>
+      <span>{{ weather.humidity }}%</span>
+    </div>
+    <div class="meta-item">
+      <i class="fa-solid fa-wind"></i>
+      <span>{{ weather.wind_speed }} m/s</span>
+    </div>
+  </div>
+
+  <div class="weather-footer">
+    <span>Tap for 5-day forecast</span>
+    <i class="fa-solid fa-chevron-right"></i>
+  </div>
+</div>
