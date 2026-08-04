@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.*;
 import com.example.demo.exception.SavePredictionException;
+import com.example.demo.model.Race;
 import com.example.demo.model.fantasy.Prediction;
 import com.example.demo.model.fantasy.RaceResult;
 import com.example.demo.service.ErgastService;
@@ -62,6 +63,11 @@ public class PredictController {
         nextRaceInfoDto = predictService.getUserPrediction(nextRaceInfoDto, username);
 
         return nextRaceInfoDto;
+    }
+
+    @GetMapping("/nextRaceDetails")
+    private Race getNextRaceDetails() throws JsonProcessingException {
+        return ergastService.getNextRace();
     }
 
     @GetMapping("/pointsInfo")

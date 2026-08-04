@@ -42,6 +42,11 @@ export class DateTimeServiceService {
     return this.http.get<Standings>(url);
   }
 
+  getNextRaceDetails(): Observable<Race> {
+    const url = `${this.apiUrl}/nextRaceDetails`;
+    return this.http.get<Race>(url);
+  }
+
   getAllRaces(): Observable<RaceInfo []> {
     const url = `${this.apiUrl}/allRaces`;
     return this.http.get<RaceInfo[]>(url);

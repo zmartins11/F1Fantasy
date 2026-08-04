@@ -19,7 +19,7 @@ import { Observable } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NextRaceInfo } from 'src/app/model/NextRaceInfo';
 import { Router } from '@angular/router';
-import { RacePopupComponent } from '../race-popup/race-popup.component';
+import { RaceDetailsComponent } from '../race-details/race-details.component';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { YoutubeService } from 'src/app/_services/youtube.service';
 import { WeatherService } from 'src/app/_services/weather.service';
@@ -33,7 +33,7 @@ import { Driver } from 'src/app/model/Driver';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css', './home.component.align.css']
 })
 export class HomeComponent implements OnInit {
 
@@ -112,7 +112,7 @@ export class HomeComponent implements OnInit {
   faArrowUp = faArrowUp;
   events!: any;
   videoId: string = "";
-  weatherData: Weather | undefined;
+  weatherData: Weather | null = null;
   raceDay: number = 0;
   raceMonth: number = 0;
   raceHour: number = 0;
@@ -159,7 +159,7 @@ export class HomeComponent implements OnInit {
         this.raceMonth = date.getMonth() + 1;
         //ajust timezone
         this.raceHour = parseInt(response.raceTime, 10);
-        //this.populateWeatherWidget();
+        this.populateWeatherWidget();
         if (response.predictedPodium) {
           this.pHasPodium = true;
           this.pFirst = this.getDriverName(Number(response.first));
@@ -266,7 +266,7 @@ export class HomeComponent implements OnInit {
   getPointsInfo() {
     //get info points
     this.dateTimeService.getPointsInfo(this.user).subscribe(response => {
-      this.pointsInfo = response;
+      this.pointsInfo = response || [];
       if (this.pointsInfo.length !== 0) {
         this.showPopUpDriversPoints = true;
         for (let pointInfo of this.pointsInfo) {
@@ -278,15 +278,17 @@ export class HomeComponent implements OnInit {
         this.showPopUpDriversPoints = false;
         console.log("dont showpop")
       }
+    }, error => {
+      this.showPopUpDriversPoints = false;
+      console.error('Error fetching pointsInfo:', error);
     })
   }
 
-  /*populateWeatherWidget() {
-    //getting weather for day
+  populateWeatherWidget() {
     this.weatherService.getWeather(this.country, this.city, this.raceHour, this.raceDay, this.raceMonth, false).subscribe(
-      (response: any) => {
-        if (response && response.weather && response.weather.length > 0) {
-          const weatherInfo = response.weather[0];
+      (response: Weather[]) => {
+        if (Array.isArray(response) && response.length > 0) {
+          const weatherInfo = response[0];
 
           this.weatherData = {
             date: weatherInfo.date,
@@ -300,18 +302,15 @@ export class HomeComponent implements OnInit {
         }
       },
       error => {
-        console.error('Error fetching weather data:', error.message);
+        console.error('Error fetching weather data:', error.message || error);
       }
     );
-  } */
+  }
 
   openRacePopup() {
-    // Fetch races from your service and subscribe to the observable
-    this.dateTimeService.getAllRaces().subscribe(races => {
+    this.dateTimeService.getNextRaceDetails().subscribe(race => {
       const initialState = {
-        races: races,
-        round: this.round,
-        error: null
+        race: race
       };
 
       const modalOptions = {
@@ -319,13 +318,13 @@ export class HomeComponent implements OnInit {
         class: 'modal-lg',
       };
 
-      this.bsModalRef = this.modalService.show(RacePopupComponent, modalOptions);
+      this.bsModalRef = this.modalService.show(RaceDetailsComponent, modalOptions);
     },
       error => {
         let countdown = 3; // Set the initial countdown value
 
         const intervalId = setInterval(() => {
-          this.errorMessagePopUp = `Your2 session has expired. You will be logged out in ${countdown} seconds...`;
+          this.errorMessagePopUp = `Your session has expired. You will be logged out in ${countdown} seconds...`;
           countdown--;
           if (countdown === 0) {
             clearInterval(intervalId);

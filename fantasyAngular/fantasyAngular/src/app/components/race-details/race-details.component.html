@@ -1,128 +1,116 @@
-<div *ngIf="raceResult; else loading">
-
-    <!-- Corrida terminada -->
-    <div *ngIf="raceResult.raceFinished; else sessionsTemplate">
-
-        <!-- Pódio -->
-        <div class="container text-center">
-
-            <div class="mb-4">
-                <h1>🥇</h1>
-                <h4>{{ raceResult.first }}</h4>
-            </div>
-
-            <div class="row">
-                <div class="col-6">
-                    <h2>🥈</h2>
-                    <h5>{{ raceResult.second }}</h5>
-                </div>
-
-                <div class="col-6">
-                    <h2>🥉</h2>
-                    <h5>{{ raceResult.third }}</h5>
-                </div>
-            </div>
-
-            <hr>
-
-            <h5>
-                ⚡ Fastest Lap: {{ raceResult.fastestLap }}
-            </h5>
-
+﻿<div *ngIf="raceData; else loading" class="race-details-modal">
+  <div class="race-details-header mb-4 p-3 rounded-4 shadow-sm bg-white">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3">
+      <div>
+        <p class="text-uppercase text-muted mb-1">Next race details</p>
+        <h2 class="race-details-title mb-2">{{ raceData.raceName }}</h2>
+        <p class="mb-1"><strong>Round</strong> {{ raceData.round }}</p>
+        <p class="mb-0 text-secondary d-flex align-items-center gap-2">
+          <img class="country-flag" [src]="getFlagPath(raceData.Circuit.Location.country)" [alt]="raceData.Circuit.Location.country" />
+          {{ raceData.Circuit.circuitName }} • {{ raceData.Circuit.Location.locality }}, {{ raceData.Circuit.Location.country }}
+        </p>
+      </div>
+      <div class="text-md-end">
+        <span class="location-chip">Circuit: {{ raceData.Circuit.circuitId }}</span>
+        <div class="mt-3">
+          <p class="mb-1 small text-muted">Race date</p>
+          <p class="mb-0 fw-bold">{{ raceData.date | date:'EEEE, MMM d' }}</p>
+          <p class="text-secondary">{{ raceData.time?.slice(0,5) }}</p>
         </div>
-
+      </div>
     </div>
+  </div>
 
+  <div *ngIf="raceResult?.raceFinished; else scheduleSection" class="finished-card p-4 rounded-4 shadow-sm bg-white">
+    <div class="text-center mb-4">
+      <h4 class="mb-1">Race finished</h4>
+      <p class="text-muted mb-0">Podium and fastest lap results</p>
+    </div>
+    <div class="row g-3">
+      <div class="col-12 col-md-4">
+        <div class="result-card p-4 h-100 text-center">
+          <div class="position-badge winner mb-3">1</div>
+          <p class="text-muted mb-1">Winner</p>
+          <h5 class="mb-0">{{ raceResult?.first }}</h5>
+        </div>
+      </div>
+      <div class="col-6 col-md-4">
+        <div class="result-card p-4 h-100 text-center">
+          <div class="position-badge mb-3">2</div>
+          <p class="text-muted mb-1">Second</p>
+          <h5 class="mb-0">{{ raceResult?.second }}</h5>
+        </div>
+      </div>
+      <div class="col-6 col-md-4">
+        <div class="result-card p-4 h-100 text-center">
+          <div class="position-badge mb-3">3</div>
+          <p class="text-muted mb-1">Third</p>
+          <h5 class="mb-0">{{ raceResult?.third }}</h5>
+        </div>
+      </div>
+    </div>
+    <div class="mt-4 text-center text-secondary">
+      ⚡ Fastest Lap: <strong>{{ raceResult?.fastestLap }}</strong>
+    </div>
+  </div>
+
+  <ng-template #scheduleSection>
+    <div class="schedule-section p-3 rounded-4 shadow-sm bg-white">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
+        <div>
+          <h4 class="mb-1">Event schedule</h4>
+          <p class="text-muted mb-0">All sessions for the upcoming race.</p>
+        </div>
+        <span class="badge bg-primary text-white">{{ raceData.Circuit.Location.country }}</span>
+      </div>
+      <div class="row g-3">
+        <div class="col-12 col-sm-6 col-lg-4" *ngIf="raceData.FirstPractice">
+          <div class="session-card p-3 h-100">
+            <p class="session-label mb-1">First Practice</p>
+            <h5 class="session-time mb-1">{{ raceData.FirstPractice.time?.slice(0,5) }}</h5>
+            <p class="text-muted mb-0">{{ raceData.FirstPractice.date | date:'EEE, MMM d' }}</p>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4" *ngIf="raceData.SecondPractice">
+          <div class="session-card p-3 h-100">
+            <p class="session-label mb-1">Second Practice</p>
+            <h5 class="session-time mb-1">{{ raceData.SecondPractice.time?.slice(0,5) }}</h5>
+            <p class="text-muted mb-0">{{ raceData.SecondPractice.date | date:'EEE, MMM d' }}</p>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4" *ngIf="raceData.ThirdPractice">
+          <div class="session-card p-3 h-100">
+            <p class="session-label mb-1">Third Practice</p>
+            <h5 class="session-time mb-1">{{ raceData.ThirdPractice.time?.slice(0,5) }}</h5>
+            <p class="text-muted mb-0">{{ raceData.ThirdPractice.date | date:'EEE, MMM d' }}</p>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4" *ngIf="raceData.Qualifying">
+          <div class="session-card p-3 h-100">
+            <p class="session-label mb-1">Qualifying</p>
+            <h5 class="session-time mb-1">{{ raceData.Qualifying.time?.slice(0,5) }}</h5>
+            <p class="text-muted mb-0">{{ raceData.Qualifying.date | date:'EEE, MMM d' }}</p>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4" *ngIf="raceData.Sprint">
+          <div class="session-card p-3 h-100">
+            <p class="session-label mb-1">Sprint</p>
+            <h5 class="session-time mb-1">{{ raceData.Sprint.time?.slice(0,5) }}</h5>
+            <p class="text-muted mb-0">{{ raceData.Sprint.date | date:'EEE, MMM d' }}</p>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="session-card p-3 h-100">
+            <p class="session-label mb-1">Race</p>
+            <h5 class="session-time mb-1">{{ raceData.time?.slice(0,5) }}</h5>
+            <p class="text-muted mb-0">{{ raceData.date | date:'EEE, MMM d' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
 </div>
 
-<!-- Horários -->
-<ng-template #sessionsTemplate>
-
-    <table class="table">
-
-        <tbody>
-            <tr>
-                <td class="day-month-raceDetails text-center align-middle">&nbsp;{{raceData.FirstPractice.date | date :
-                    'dd'}}
-                    <br>
-                    <div class="bg-secondary rounded p-2 d-inline-block">
-                        <h6 class="font-weight-bold text-white mb-0">{{raceData.FirstPractice.date | date : 'MMM'}}</h6>
-                    </div>
-                </td>
-                <td>
-                    <h6 class="font-weight-bold">FirstPractice</h6>
-                    <br>
-                    {{ raceData.FirstPractice.time.slice(0,5)}}
-                </td>
-            </tr>
-            <tr *ngIf="raceData.SecondPractice">
-                <td class="day-month-raceDetails text-center align-middle">&nbsp;{{raceData.SecondPractice.date | date :
-                    'dd'}}
-                    <br>
-                    <div class="bg-secondary rounded p-2 d-inline-block">
-                        <h6 class="font-weight-bold text-white mb-0">{{raceData.SecondPractice.date | date : 'MMM'}}</h6>
-                    </div>
-                </td>
-                <td>
-                    <h6 class="font-weight-bold">SecondPractice</h6>
-                    <br>
-                    {{ raceData.SecondPractice.time.slice(0,5)}}
-                </td>
-            </tr>
-            <tr *ngIf="raceData.ThirdPractice">
-                <td class="day-month-raceDetails text-center align-middle">&nbsp;{{raceData.ThirdPractice.date | date :
-                    'dd'}}
-                    <br>
-                    <div class="bg-secondary rounded p-2 d-inline-block">
-                        <h6 class="font-weight-bold text-white mb-0">{{raceData.ThirdPractice.date | date : 'MMM'}}</h6>
-                    </div>
-                </td>
-                <td>
-                    <h6 class="font-weight-bold">ThirdPractice</h6>
-                    <br>
-                    {{ raceData.ThirdPractice.time.slice(0,5)}}
-                </td>
-            </tr>
-            <tr>
-                <td class="day-month-raceDetails text-center align-middle">&nbsp;{{raceData.Qualifying.date | date : 'dd'}}
-                    <br>
-                    <div class="bg-secondary rounded p-2 d-inline-block">
-                        <h6 class="font-weight-bold text-white mb-0">{{raceData.Qualifying.date | date : 'MMM'}}</h6>
-                    </div>
-                </td>
-                <td>
-                    <h6 class="font-weight-bold">Qualifying</h6>
-                    <br>
-                    {{ raceData.Qualifying.time.slice(0,5)}}
-                </td>
-            </tr>
-            <tr>
-                <td class="day-month-raceDetails text-center align-middle">&nbsp;{{raceData.date | date : 'dd'}}
-                    <br>
-                    <div class="bg-secondary rounded p-2 d-inline-block">
-                        <h6 class="font-weight-bold text-white mb-0">{{raceData.date | date : 'MMM'}}</h6>
-                    </div>
-                </td>
-                <td>
-                    <h6 class="font-weight-bold">Race</h6>
-                    <br>
-                    {{ raceData.time.slice(0,5)}}
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-</ng-template>
-
-<!-- Enquanto espera pela resposta -->
 <ng-template #loading>
-
-    <div class="text-center p-4">
-        Loading...
-    </div>
-
+  <div class="text-center p-4">Loading...</div>
 </ng-template>
-
-<div>
-    
-</div>

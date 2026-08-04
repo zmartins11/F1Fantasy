@@ -337,6 +337,47 @@ public class ErgastService {
 		return dto;
 	}
 
+	public Race getNextRace() throws JsonProcessingException {
+
+		ResponseEntity<String> response;
+
+		String url = "https://api.jolpi.ca/ergast/f1/current/races/";
+
+		try {
+			response = restTemplate.getForEntity(url, String.class);
+		} catch (HttpServerErrorException e) {
+			e.printStackTrace();
+			throw new HttpServerErrorException(HttpStatusCode.valueOf(500));
+		}
+
+		ObjectMapper mapper = new ObjectMapper();
+		RaceResponse racesResponse = mapper.readValue(response.getBody(), RaceResponse.class);
+
+		LocalDateTime now = LocalDateTime.now();
+
+		Race nextRace = racesResponse.getMrData()
+				.getRaceTable()
+				.getRaces()
+				.stream()
+				.filter(race -> {
+
+					LocalTime raceTime = race.getTime() != null
+							? race.getTime()
+							: LocalTime.MIDNIGHT;
+
+					LocalDateTime raceDateTime = LocalDateTime.of(
+						race.getDate(),
+						raceTime);
+
+					return raceDateTime.isAfter(now);
+
+				})
+				.findFirst()
+				.orElseThrow(() -> new RuntimeException("No next race found"));
+
+		return nextRace;
+	}
+
 	public StandingsDto getStandings() throws JsonProcessingException {
 		StandingsDto standingsDto = new StandingsDto();
 		RestTemplate restTemplate = new RestTemplate();
