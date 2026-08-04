@@ -10,7 +10,6 @@ import { Formula1Driver, Formula1Drivers } from 'src/app/model/Formula1Drivers';
 import { SipnnerService } from 'src/app/_services/SpinnerService';
 import { PredictService } from 'src/app/_services/predict.service';
 import { Prediction } from 'src/app/model/Prediction';
-import { F1DriversService } from 'src/app/_services/f1-drivers.service';
 import { faArrowDown, faArrowUp, faGaugeSimpleMed } from '@fortawesome/free-solid-svg-icons'
 import { TotalPointsResponse } from 'src/app/model/TotalPointsResponse';
 import { PointsInfo } from 'src/app/model/PointsInfo';
@@ -64,6 +63,7 @@ export class HomeComponent implements OnInit {
   country: string = '';
   city: string = '';
   drivers: Driver[] = [];
+  driverMap = new Map<number, Driver>();
   saveDriversToPredict: Driver[] = [];
   showDrivers = false;
   showDriversFastest = false;
@@ -134,10 +134,16 @@ export class HomeComponent implements OnInit {
       }
 
 
-      //getting all drivers
+      //getting all drivers backend api
       this.f1Service.getDriversList(this.currentSeason).subscribe(drivers => {
         this.drivers = drivers;
+        this.driverMap.clear();
+
+        drivers.forEach(driver => {
+          this.driverMap.set(driver.permanentNumber, driver);
+        });
       });
+
       //getting info for nexRace
       this.dateTimeService.getNextRaceInfo(this.user).subscribe(response => {
         this.raceDate = response.time;
@@ -149,7 +155,6 @@ export class HomeComponent implements OnInit {
         const date = new Date(response.raceDate);
 
 
-        console.log('hour:' + this.raceHour);
         this.raceDay = date.getDate();
         this.raceMonth = date.getMonth() + 1;
         //ajust timezone
@@ -157,12 +162,12 @@ export class HomeComponent implements OnInit {
         //this.populateWeatherWidget();
         if (response.predictedPodium) {
           this.pHasPodium = true;
-          this.pFirst = F1DriversService.getDriverNameByNumber(response.first);
-          this.pSecond = F1DriversService.getDriverNameByNumber(response.second);
-          this.pThird = F1DriversService.getDriverNameByNumber(response.third);
+          this.pFirst = this.getDriverName(Number(response.first));
+          this.pSecond = this.getDriverName(Number(response.second));
+          this.pThird = this.getDriverName(Number(response.third));
           if (response.predictedFastestLap) {
             this.pHasFastestLap = true;
-            this.pFastestLap = F1DriversService.getDriverNameByNumber(response.fastestLap);
+            this.pFastestLap = this.getDriverName(Number(response.fastestLap));
           }
         }
         //testCoundtow
@@ -193,8 +198,14 @@ export class HomeComponent implements OnInit {
       this.populatePointsTables();
       //this.getYTBVideo();
       this.getStandings();
-      
+
     }
+  }
+
+  private getDriverName(permanentNumber: number): string | undefined {
+    return this.drivers.find(driver =>
+      driver.permanentNumber === permanentNumber
+    )?.familyName;
   }
 
 
@@ -252,7 +263,7 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  getPointsInfo()  {
+  getPointsInfo() {
     //get info points
     this.dateTimeService.getPointsInfo(this.user).subscribe(response => {
       this.pointsInfo = response;
@@ -394,7 +405,7 @@ export class HomeComponent implements OnInit {
         this.first = driver.permanentNumber;
         break;
       case 2:
-        this.second =driver.permanentNumber;
+        this.second = driver.permanentNumber;
         break;
       case 3:
         this.third = driver.permanentNumber;
@@ -434,10 +445,10 @@ export class HomeComponent implements OnInit {
 
     this.predictService.savePrediction(this.first, this.second, this.third, this.fastest, this.user, this.round)
       .subscribe(response => {
-        this.pFirst = F1DriversService.getDriverNameByNumber(response.first);
-        this.pSecond = F1DriversService.getDriverNameByNumber(response.second);
-        this.pThird = F1DriversService.getDriverNameByNumber(response.third);
-        this.pFastestLap = F1DriversService.getDriverNameByNumber(response.fastestLap);
+        this.pFirst = this.getDriverName(Number(response.first));
+        this.pSecond = this.getDriverName(Number(response.second));
+        this.pThird = this.getDriverName(Number(response.third));
+        this.pFastestLap = this.getDriverName(Number(response.fastestLap));
         this.resetPredictions();
         this.showDrivers = false;
         this.showDriversFastest = false;

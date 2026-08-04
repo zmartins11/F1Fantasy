@@ -28,11 +28,6 @@ public class F1Controller {
 	@Autowired
 	private ErgastService ergastService;
 
-	
-	
-	 public F1Controller(RestTemplateBuilder restTemplateBuilder) {
-		  }
-	 
 	 @GetMapping("/teste")
 	 public String teste() {
 		 return "testing docker";

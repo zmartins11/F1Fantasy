@@ -54,7 +54,7 @@ public class ScheduleRaceResult {
                 raceResultRepository.save(currentRace);
 
                 // check if there are predictions for the raceResult added :
-                List<Prediction> listPredictions = predictRepository.findByRaceId(String.valueOf(currentRace.getId()));
+               /* List<Prediction> listPredictions = predictRepository.findByRaceId(String.valueOf(currentRace.getId()));
                 if (!listPredictions.isEmpty()) {
                     for (Prediction prediction : listPredictions) {
                         if (predictionResultRepository.findByPredictionId(String.valueOf(prediction.getId())).isEmpty()) {
@@ -68,7 +68,7 @@ public class ScheduleRaceResult {
                             predictionResultRepository.save(predictionResult);
                         }
                     }
-                }
+                } */
             }
         } catch (Exception e) {
             System.out.println("Round -  not finished!");

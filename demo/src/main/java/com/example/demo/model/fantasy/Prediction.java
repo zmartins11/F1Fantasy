@@ -14,7 +14,6 @@ public class Prediction {
     @GeneratedValue()
     private Integer id;
     private String userId;
-    private String raceId;
     private String round;
     private String first;
     private String second;

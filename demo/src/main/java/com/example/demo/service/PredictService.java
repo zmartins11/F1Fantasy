@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 public class PredictService {
@@ -55,42 +56,39 @@ public class PredictService {
         return race.isRaceFinished();
     }
 
-    public Prediction savePrediction(PredictionDto prediction) {
-        //nova prediction :
-        // 1- if podium != null
-        // 2- if fastestLap != null
-        Prediction predictionSaved = predictRepository.findByUserIdAndRound(prediction.getUser(), prediction.getRound());
-        if (predictionSaved != null) {
-            if (prediction.getFirst() != null) {
-                predictionSaved.setFirst(prediction.getFirst());
-                predictionSaved.setSecond(prediction.getSecond());
-                predictionSaved.setThird(prediction.getThird());
-                predictionSaved.setPredictedPodium(Boolean.TRUE);
-            }
-            if (prediction.getFastestLap() != null) {                predictionSaved.setFastestLap(prediction.getFastestLap());
-                predictionSaved.setPredictedFastestLap(Boolean.TRUE);
-            }
-            return predictRepository.save(predictionSaved);
-        } else {
-            Prediction newPrediction = new Prediction();
-            newPrediction.setUserId(prediction.getUser());
-            newPrediction.setRound(prediction.getRound());
-            newPrediction.setPredictedFastestLap(Boolean.FALSE);
-            newPrediction.setPredictedPodium(Boolean.FALSE);
-           if (prediction.getFirst() != null) {
-                newPrediction.setFirst(prediction.getFirst());
-                newPrediction.setSecond(prediction.getSecond());
-                newPrediction.setThird(prediction.getThird());
-                newPrediction.setPredictedPodium(Boolean.TRUE);
-            }
-            if (prediction.getFastestLap() != null) {
-                newPrediction.setFastestLap(prediction.getFastestLap());
-                newPrediction.setPredictedFastestLap(Boolean.TRUE);
-            }
-            RaceResult race = raceResultRepository.findByRound(prediction.getRound());
-            newPrediction.setRaceId(race.getId().toString());
-            return predictRepository.save(newPrediction);
+    public Prediction savePrediction(PredictionDto dto) {
+
+        Prediction prediction = predictRepository
+                .findByUserIdAndRound(dto.getUser(), dto.getRound())
+                .orElseGet(() -> createNewPrediction(dto));
+
+        if (dto.getFirst() != null) {
+            prediction.setFirst(dto.getFirst());
+            prediction.setSecond(dto.getSecond());
+            prediction.setThird(dto.getThird());
+            prediction.setPredictedPodium(true);
         }
+
+        if (dto.getFastestLap() != null) {
+            prediction.setFastestLap(dto.getFastestLap());
+            prediction.setPredictedFastestLap(true);
+        }
+
+        return predictRepository.save(prediction);
+    }
+
+
+    private Prediction createNewPrediction(PredictionDto dto) {
+
+        Prediction prediction = new Prediction();
+
+        prediction.setUserId(dto.getUser());
+        prediction.setRound(dto.getRound());
+
+        prediction.setPredictedPodium(false);
+        prediction.setPredictedFastestLap(false);
+
+        return prediction;
     }
 
 
@@ -191,20 +189,21 @@ public class PredictService {
     }
 
     public NextRaceInfoDto getUserPrediction(NextRaceInfoDto nextRaceInfoDto, String username) {
-        Prediction userPrediction = predictRepository.findByUserIdAndRound(username, nextRaceInfoDto.getRound());
-        if (userPrediction != null) {
-            nextRaceInfoDto.setUserHavePrediction(Boolean.TRUE);
-            nextRaceInfoDto.setFirst(userPrediction.getFirst());
-            nextRaceInfoDto.setSecond(userPrediction.getSecond());
-            nextRaceInfoDto.setThird(userPrediction.getThird());
-            if (userPrediction.getPredictedPodium()) {
-                nextRaceInfoDto.setFastestLap(userPrediction.getFastestLap());
-            }
-            nextRaceInfoDto.setPredictedPodium(userPrediction.getPredictedPodium());
-            nextRaceInfoDto.setPredictedFastestLap(userPrediction.getPredictedFastestLap());
-        } else {
-            nextRaceInfoDto.setUserHavePrediction(Boolean.FALSE);
-        }
+        predictRepository.findByUserIdAndRound(username, nextRaceInfoDto.getRound())
+                .ifPresentOrElse(userPrediction -> {
+
+                    nextRaceInfoDto.setUserHavePrediction(true);
+                    nextRaceInfoDto.setFirst(userPrediction.getFirst());
+                    nextRaceInfoDto.setSecond(userPrediction.getSecond());
+                    nextRaceInfoDto.setThird(userPrediction.getThird());
+
+                    if (Boolean.TRUE.equals(userPrediction.getPredictedFastestLap())) {
+                        nextRaceInfoDto.setFastestLap(userPrediction.getFastestLap());
+                    }
+                    nextRaceInfoDto.setPredictedPodium(userPrediction.getPredictedPodium());
+                    nextRaceInfoDto.setPredictedFastestLap(userPrediction.getPredictedFastestLap());
+
+                }, () -> nextRaceInfoDto.setUserHavePrediction(false));
         return nextRaceInfoDto;
     }
 
@@ -251,29 +250,47 @@ public class PredictService {
     }
 
     public List<PointsInfoDto> getPointsInfo(String username, String round) {
-        //ir buscar os driverpoints para aquela raceId
-        //ir buscar a predicion do user
-        ArrayList<PointsInfoDto> pointsInfo = new ArrayList<>();
+
         RaceResult raceResult = raceResultRepository.findByRound(round);
 
-        Prediction prediction = predictRepository.findByUserIdAndRound(username, round);
-        List<PredictionResult> predictionResult = predictionResultRepository.findByPredictionId(String.valueOf(prediction.getId()));
-        PredictionResult predicTemp = predictionResult.get(0);
-        if (prediction != null) {
-            List<String> drivers  = List.of(prediction.getFirst(), prediction.getSecond(), prediction.getThird(), prediction.getFastestLap());
-            List<DriversPoints> driversPoints = driversPointsRepository.findByDriverInAndRaceId(drivers, String.valueOf(raceResult.getId()));
-
-            for (DriversPoints driversPoints1 : driversPoints) {
-                PointsInfoDto tmPoints = new PointsInfoDto();
-                tmPoints.setDriver(driversPoints1.getDriver());
-                tmPoints.setPoints(driversPoints1.getPoints());
-                tmPoints.setPosition(driversPoints1.getPosition());
-                pointsInfo.add(tmPoints);
-            }
-            predicTemp.setShowPointsUser(false);
-            predictionResultRepository.save(predicTemp);
+        if (raceResult == null) {
+            return Collections.emptyList();
         }
 
-        return pointsInfo;
+        Prediction prediction = predictRepository
+                .findByUserIdAndRound(username, round)
+                .orElseThrow(() -> new RuntimeException("Prediction not found"));
+
+        List<PredictionResult> predictionResults =
+                predictionResultRepository.findByPredictionId(String.valueOf(prediction.getId()));
+
+        if (!predictionResults.isEmpty()) {
+            PredictionResult predictionResult = predictionResults.get(0);
+            predictionResult.setShowPointsUser(false);
+            predictionResultRepository.save(predictionResult);
+        }
+
+        List<String> drivers = Stream.of(
+                        prediction.getFirst(),
+                        prediction.getSecond(),
+                        prediction.getThird(),
+                        prediction.getFastestLap())
+                .filter(Objects::nonNull)
+                .toList();
+
+        List<DriversPoints> driversPoints =
+                driversPointsRepository.findByDriverInAndRaceId(
+                        drivers,
+                        String.valueOf(raceResult.getId()));
+
+        return driversPoints.stream()
+                .map(driver -> {
+                    PointsInfoDto dto = new PointsInfoDto();
+                    dto.setDriver(driver.getDriver());
+                    dto.setPoints(driver.getPoints());
+                    dto.setPosition(driver.getPosition());
+                    return dto;
+                })
+                .toList();
     }
 }

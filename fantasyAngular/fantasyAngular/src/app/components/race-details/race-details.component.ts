@@ -12,14 +12,21 @@ export class RaceDetailsComponent implements OnInit {
 
   raceData! : Race;
 
-  raceResults! : RaceResults;
 
-  race!: Race;
+  raceResult: RaceResults | undefined;
 
   constructor(private f1Service: F1Service) { }
 
   ngOnInit(): void {
     this.raceData = this.f1Service.getRaceData();
+
+    this.f1Service.getRaceResults(
+    this.raceData.season,
+    this.raceData.round
+  ).subscribe(result => {
+    this.raceResult = result;
+
+  });
   }
 
 }

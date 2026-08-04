@@ -2,7 +2,7 @@ export class Driver{
     driverId!: string;
     code! : string;
     url! : string;
-    permanentNumber! : string;
+    permanentNumber! : number;
     givenName! : string;
     familyName! : string;
     dateOfBirth! : Date;
@@ -10,6 +10,7 @@ export class Driver{
     flagCode! : string;
     constructorId! : string;
     winsSeason! : string;
+    selection?: number;
 
     constructor() {}
 }
