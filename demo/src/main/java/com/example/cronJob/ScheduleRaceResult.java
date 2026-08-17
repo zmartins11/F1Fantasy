@@ -1,5 +1,6 @@
 package com.example.cronJob;
 
+import com.example.demo.model.RaceResultDto;
 import com.example.demo.model.fantasy.Prediction;
 import com.example.demo.model.fantasy.PredictionResult;
 import com.example.demo.model.fantasy.RaceResult;
@@ -14,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class ScheduleRaceResult {
@@ -39,39 +41,70 @@ public class ScheduleRaceResult {
 
     @Scheduled(fixedRate = 30 * 60 * 1000)
     public void populateRaceResult() throws JsonProcessingException {
-        boolean sunday = true;
-        //TODO : if sunday enter try catch
-        try {
-            RaceResult currentRace = raceResultRepository.findTopByRaceFinishedFalseOrderByRoundAsc();
-            RaceResult raceResultTemp = null;
-            if (raceResultTemp != null) {
-                //TODO : comentar para testes
-                currentRace.setRaceFinished(true);
-                currentRace.setFirst(raceResultTemp.getFirst());
-                currentRace.setSecond(raceResultTemp.getSecond());
-                currentRace.setThird(raceResultTemp.getThird());
-                currentRace.setFastestLap(raceResultTemp.getFastestLap());
-                raceResultRepository.save(currentRace);
+        RaceResult currentRace =
+                raceResultRepository.findTopByRaceFinishedFalseOrderByRoundAsc();
 
-                // check if there are predictions for the raceResult added :
-               /* List<Prediction> listPredictions = predictRepository.findByRaceId(String.valueOf(currentRace.getId()));
-                if (!listPredictions.isEmpty()) {
-                    for (Prediction prediction : listPredictions) {
-                        if (predictionResultRepository.findByPredictionId(String.valueOf(prediction.getId())).isEmpty()) {
-                            int points = predictService.calculate(prediction, currentRace);
-                            PredictionResult predictionResult = new PredictionResult();
-                            predictionResult.setPredictionId(String.valueOf(prediction.getId()));
-                            predictionResult.setPoints(points);
-                            predictionResult.setRaceId(String.valueOf(currentRace.getId()));
-                            predictionResult.setUserId(prediction.getUserId());
-                            predictionResult.setShowPointsUser(Boolean.TRUE);
-                            predictionResultRepository.save(predictionResult);
-                        }
-                    }
-                } */
-            }
-        } catch (Exception e) {
-            System.out.println("Round -  not finished!");
+        if (currentRace == null) {
+            return;
         }
+
+        try {
+
+            RaceResultDto apiRaceResult = ergastService.getRaceResult(
+                    currentRace.getSeason(),
+                    String.valueOf(currentRace.getRound()));
+
+            // ainda não existem resultados
+            if (apiRaceResult == null) {
+                return;
+            }
+
+            updateRaceResult(currentRace, apiRaceResult);
+
+            if (!Boolean.TRUE.equals(currentRace.isPointsCalculated())) {
+                calculatePoints(currentRace);
+            }
+
+        } catch (Exception e) {
+            System.out.println("Race " + currentRace.getRound() + " not finished yet.");
+        }
+    }
+
+    private void updateRaceResult(RaceResult currentRace, RaceResultDto apiRaceResult) {
+        currentRace.setRaceFinished(true);
+        currentRace.setFirst(apiRaceResult.getFirst());
+        currentRace.setSecond(apiRaceResult.getSecond());
+        currentRace.setThird(apiRaceResult.getThird());
+        currentRace.setFastestLap(apiRaceResult.getFastestLap());
+
+        raceResultRepository.save(currentRace);
+    }
+
+    private void calculatePoints(RaceResult currentRace) throws JsonProcessingException {
+
+        List<Prediction> predictions =
+                predictRepository.findBySeasonAndRound(
+                        currentRace.getSeason(),
+                        currentRace.getRound());
+
+        Map<String, Integer> driverPoints = predictService.buildDriverPoints(currentRace);
+
+        for (Prediction prediction : predictions) {
+
+            int points = predictService.calculate(prediction, currentRace, driverPoints);
+
+            PredictionResult result = new PredictionResult();
+            result.setPredictionId(String.valueOf(prediction.getId()));
+            result.setUserId(prediction.getUserId());
+            result.setSeason(currentRace.getSeason());
+            result.setRound(currentRace.getRound());
+            result.setPoints(points);
+            result.setShowPointsUser(Boolean.TRUE);
+
+            predictionResultRepository.save(result);
+        }
+
+        currentRace.setPointsCalculated(true);
+        raceResultRepository.save(currentRace);
     }
 }

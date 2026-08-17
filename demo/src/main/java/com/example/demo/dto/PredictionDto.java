@@ -13,4 +13,5 @@ public class PredictionDto {
     private String fastestLap;
     private Boolean predictedPodium;
     private Boolean predictedFastestLap;
+    private Integer season;
 }

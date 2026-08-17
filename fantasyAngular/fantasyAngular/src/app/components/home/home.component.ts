@@ -1,5 +1,5 @@
 import { DatePipe, Time } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, NgZone, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { AuthService } from 'src/app/_services/auth.service';
 import { DateTimeServiceService } from 'src/app/_services/date-time-service.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
@@ -46,7 +46,8 @@ export class HomeComponent implements OnInit {
     private modalService: BsModalService,
     private youtubeService: YoutubeService,
     private weatherService: WeatherService,
-    private f1Service: F1Service
+    private f1Service: F1Service,
+    private renderer: Renderer2
   ) { }
 
   // Reference to the modal element
@@ -108,6 +109,8 @@ export class HomeComponent implements OnInit {
   pFastestLap: string | undefined = "";
   pHasPodium: Boolean = false;
   pHasFastestLap: Boolean = false;
+  @Output() darkModeChange = new EventEmitter<boolean>();
+  darkMode: boolean = false;
   faArrowDown = faArrowDown;
   faArrowUp = faArrowUp;
   events!: any;
@@ -198,7 +201,11 @@ export class HomeComponent implements OnInit {
       this.populatePointsTables();
       //this.getYTBVideo();
       this.getStandings();
+    }
 
+    const storedTheme = localStorage.getItem('homeDarkMode');
+    if (storedTheme !== null) {
+      this.darkMode = JSON.parse(storedTheme);
     }
   }
 
@@ -214,6 +221,16 @@ export class HomeComponent implements OnInit {
       this.driversStandings = response.drivers;
       this.constructorStandings = response.constructors;
     })
+  }
+
+  emitDarkModeToggle(): void {
+    const body = document.body;
+    if (this.darkMode) {
+      this.renderer.addClass(body, 'dark-mode');
+    } else {
+      this.renderer.removeClass(body, 'dark-mode');
+    }
+    this.darkModeChange.emit(this.darkMode);
   }
 
   getYTBVideo() {
@@ -442,7 +459,7 @@ export class HomeComponent implements OnInit {
   savePredictions() {
     this.saveDriversToPredict = this.drivers.filter(driver => driver.selection !== undefined);
 
-    this.predictService.savePrediction(this.first, this.second, this.third, this.fastest, this.user, this.round)
+    this.predictService.savePrediction(this.first, this.second, this.third, this.fastest, this.user, this.round, this.currentSeason)
       .subscribe(response => {
         this.pFirst = this.getDriverName(Number(response.first));
         this.pSecond = this.getDriverName(Number(response.second));

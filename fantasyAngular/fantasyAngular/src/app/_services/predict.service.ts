@@ -16,7 +16,7 @@ export class PredictService {
   constructor(private http : HttpClient) { }
 
  
-  savePrediction(first:number, second: number, third:number, fastest:number, user:string, round: string): Observable<Prediction> {
+  savePrediction(first:number, second: number, third:number, fastest:number, user:string, round: string, season: number): Observable<Prediction> {
 
     // Helper function to convert 0 to null
   const convertToNullIfZero = (value: number): string | null => {
@@ -29,7 +29,8 @@ export class PredictService {
       third: convertToNullIfZero(third),
       fastestLap: convertToNullIfZero(fastest),
       user: user,
-      round: round
+      round: round,
+      season: season
     };
 
     return this.http.post<Prediction>(this.baseUrl, predictionDTO);

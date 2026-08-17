@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface PredictRepository extends JpaRepository<Prediction, Integer> {
     Optional<Prediction> findByUserIdAndRound(String userId, String round);
+
+    List<Prediction> findBySeasonAndRound(String season, Integer round);
 }

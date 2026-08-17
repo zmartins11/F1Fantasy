@@ -87,73 +87,136 @@ public class PredictService {
 
         prediction.setPredictedPodium(false);
         prediction.setPredictedFastestLap(false);
+        prediction.setSeason(dto.getSeason());
 
         return prediction;
     }
 
 
     // método chamado quando o RaceResult com o race_id da prediction é preenchido
-    public int calculate(Prediction prediction, RaceResult raceResult) throws JsonProcessingException {
+    public int calculate(Prediction prediction, RaceResult raceResult, Map<String, Integer> driverPoints) {
+
         int points = 0;
-        HashMap<Integer, Integer> resultsPercentage = new HashMap<>();
-        int racesCurrentSeason = getSeasonRaces(SEASON_2023);
 
-        if (prediction.getPredictedPodium()) {
-            if ((!prediction.getFirst().equals(raceResult.getFirst())) &&
-                    (!prediction.getSecond().equals(raceResult.getSecond())) &&
-                    (!prediction.getThird().equals(raceResult.getThird())) && (!prediction.getFastestLap().equals(raceResult.getFastestLap()))) {
+        if (Boolean.TRUE.equals(prediction.getPredictedPodium())) {
 
-                createDriversPoints(prediction.getFirst() ,raceResult.getId(), points, "1");
-                createDriversPoints(prediction.getSecond(),raceResult.getId(), points, "2");
-                createDriversPoints(prediction.getThird(), raceResult.getId(), points, "3");
+            points += processDriver(
+                    "1",
+                    raceResult.getId(),
+                    prediction.getFirst(),
+                    raceResult.getFirst(),
+                    driverPoints);
 
-            }
+            points += processDriver(
+                    "2",
+                    raceResult.getId(),
+                    prediction.getSecond(),
+                    raceResult.getSecond(),
+                    driverPoints);
 
-            points = processDriver("1", raceResult.getId(), prediction.getFirst(), raceResult.getFirst(), points, racesCurrentSeason);
-            points = processDriver("2", raceResult.getId(),prediction.getSecond(), raceResult.getSecond(), points, racesCurrentSeason);
-            points = processDriver("3", raceResult.getId(), prediction.getThird(), raceResult.getThird(), points, racesCurrentSeason);
-
+            points += processDriver(
+                    "3",
+                    raceResult.getId(),
+                    prediction.getThird(),
+                    raceResult.getThird(),
+                    driverPoints);
         }
-        if (prediction.getPredictedFastestLap()) {
-            if (prediction.getFastestLap().equals(raceResult.getFastestLap())) {
-                int poinsToSave = 0;
-                points += 5;
-                poinsToSave = 5;
-                //createDriversPoints(predictedDriver,raceId, 1, position);
-                createDriversPoints(prediction.getFastestLap(), raceResult.getId(),poinsToSave,"fastestLap");
-            } else {
-                createDriversPoints(prediction.getFastestLap(), raceResult.getId(), 0, "fastestLap");
-            }
+
+        if (Boolean.TRUE.equals(prediction.getPredictedFastestLap())) {
+
+            int fastestLapPoints =
+                    prediction.getFastestLap().equals(raceResult.getFastestLap())
+                            ? 5
+                            : 0;
+
+            createDriversPoints(
+                    prediction.getFastestLap(),
+                    raceResult.getId(),
+                    fastestLapPoints,
+                    "fastestLap");
+
+            points += fastestLapPoints;
         }
 
         return points;
     }
 
-    private int processDriver(String position, Integer raceId, String predictedDriver, String raceResultDriver, int points, int racesCurrentSeason) throws JsonProcessingException {
-        if (predictedDriver.equals(raceResultDriver)) {
-            Map<Integer, Integer> resultsPercentage = ergastService.testApiGetResult(position, racesCurrentSeason, Formula1DriverEnum.getNameByNumber(Integer.parseInt(raceResultDriver)));
-            Iterator<Map.Entry<Integer, Integer>> iterator = resultsPercentage.entrySet().iterator();
-            if (iterator.hasNext()) {
-                Map.Entry<Integer, Integer> firstEntry = iterator.next();
-                int percentage = (int)((double) firstEntry.getKey() / firstEntry.getValue() * 100);
-                if (percentage >= 75) {
-                    points += 1;
-                    createDriversPoints(predictedDriver,raceId, 1, position);
-                } else if (percentage >= 50) {
-                    points += 3;
-                    createDriversPoints(predictedDriver,raceId, 3, position);
-                } else if (percentage >= 25) {
-                    points += 5;
-                    createDriversPoints(predictedDriver,raceId, 5, position);
-                } else {
-                    points += 10;
-                    createDriversPoints(predictedDriver,raceId, 10, position);
-                }
-            }
-        } else {
-            createDriversPoints(predictedDriver,raceId,0, position);
+    private int processDriver(String position, Integer raceId, String predictedDriver, String resultDriver, Map<String, Integer> driverPoints) {
+
+        if (!predictedDriver.equals(resultDriver)) {
+            createDriversPoints(predictedDriver, raceId, 0, position);
+            return 0;
         }
+
+        int points = driverPoints.get(resultDriver);
+
+        createDriversPoints(predictedDriver, raceId, points, position);
+
         return points;
+    }
+
+    public Map<String, Integer> buildDriverPoints(RaceResult raceResult)
+            throws JsonProcessingException {
+
+        int racesCurrentSeason = getSeasonRaces(raceResult.getSeason());
+
+        Map<String, Integer> driverPoints = new HashMap<>();
+
+        driverPoints.put(
+                raceResult.getFirst(),
+                calculateDriverPoints(
+                        "1",
+                        raceResult.getFirst(),
+                        racesCurrentSeason));
+
+        driverPoints.put(
+                raceResult.getSecond(),
+                calculateDriverPoints(
+                        "2",
+                        raceResult.getSecond(),
+                        racesCurrentSeason));
+
+        driverPoints.put(
+                raceResult.getThird(),
+                calculateDriverPoints(
+                        "3",
+                        raceResult.getThird(),
+                        racesCurrentSeason));
+
+        return driverPoints;
+    }
+
+    private int calculateDriverPoints(
+            String position,
+            String driverNumber,
+            int racesCurrentSeason)
+            throws JsonProcessingException {
+
+        Map<Integer, Integer> stats =
+                ergastService.testApiGetResult(
+                        position,
+                        racesCurrentSeason,
+                        Formula1DriverEnum.getNameByNumber(
+                                Integer.parseInt(driverNumber)));
+
+        Map.Entry<Integer, Integer> entry =
+                stats.entrySet().iterator().next();
+
+        int percentage = entry.getKey() * 100 / entry.getValue();
+
+        if (percentage >= 75) {
+            return 1;
+        }
+
+        if (percentage >= 50) {
+            return 3;
+        }
+
+        if (percentage >= 25) {
+            return 5;
+        }
+
+        return 10;
     }
 
     private void createDriversPoints(String driver, Integer raceResultId, int points, String position) {
@@ -173,9 +236,6 @@ public class PredictService {
         return racesBySeason.size();
     }
 
-    public RaceResult getNextRaceInfo() {
-        return raceResultRepository.findTopByRaceFinishedFalseOrderByRoundAsc();
-    }
 
     public RaceResult getRacePassed() {
         return raceResultRepository.findTopByRaceFinishedTrueOrderByRoundDesc();

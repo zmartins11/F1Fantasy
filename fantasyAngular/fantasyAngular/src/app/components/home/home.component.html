@@ -26,7 +26,7 @@
     </div>
   </div>
 
-  <div class="container" [ngClass]="{'fade-out': showPopUpDriversPoints}">
+  <div class="container home-root" [ngClass]="{'fade-out': showPopUpDriversPoints, 'dark-mode': darkMode}">
     <div *ngIf="errorMessage" class="alert alert-danger font-weight-bold" role="alert">
       {{ sessionExpiredMessage }}
     </div>
@@ -66,6 +66,15 @@
           </p>
         </div>
         <div class="hero-badge">Open race details</div>
+      </div>
+      <div class="hero-control-row">
+        <div class="theme-toggle">
+          <span class="toggle-label">Dark mode</span>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="darkMode" (change)="emitDarkModeToggle()" />
+            <span class="slider"></span>
+          </label>
+        </div>
       </div>
 
       <div class="row mt-4 align-items-stretch" *ngIf="!predictionLocked">
@@ -111,7 +120,7 @@
 
 
     <div *ngIf="isLoggedIn && !errorMessage" class="mt-5">
-      <div class="row justify-content-between align-items-stretch">
+      <div class="row align-items-stretch gx-4">
         <div class="col-md-6 d-flex">
           <div class="card prediction-card-shell h-100">
             <div class="prediction-switcher">
@@ -272,7 +281,7 @@
           </div>
         </div>
 
-        <div class="col-md-6 d-flex">
+        <div class="col-md-5 d-flex">
           <div class="card leaderboard-card h-100">
             <div class="leaderboard-switcher">
               <button type="button" class="leaderboard-switch" (click)="switchTable('userPoints')"

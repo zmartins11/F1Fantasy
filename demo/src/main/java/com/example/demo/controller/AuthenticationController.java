@@ -4,7 +4,6 @@ import com.example.demo.dto.AuthReponseDto;
 import com.example.demo.dto.LoginDto;
 import com.example.demo.dto.RegisterDto;
 import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.fantasy.Roles;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JWTGenerator;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import com.example.demo.model.fantasy.User;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 
 @RestController
@@ -73,12 +71,12 @@ public class AuthenticationController {
 
 	@PostMapping("register")
 	public ResponseEntity<String> register (@RequestBody RegisterDto registerDto) {
-		if (userRepository.existsByUserName(registerDto.getUserName())) {
+		if (userRepository.existsByUserName(registerDto.getUsername())) {
 			return new ResponseEntity<>("UserName is taken!" , HttpStatus.BAD_REQUEST);
 		}
 
 		User user = new User();
-		user.setUserName(registerDto.getUserName());
+		user.setUserName(registerDto.getUsername());
 		user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
 		user.setEmailId(registerDto.getEmail());
 

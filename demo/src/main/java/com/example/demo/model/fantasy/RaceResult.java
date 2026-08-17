@@ -26,5 +26,5 @@ public class RaceResult {
     private String fastestLap;
     private boolean raceFinished;
     private boolean predictionLocked;
-
+    private boolean pointsCalculated;
 }

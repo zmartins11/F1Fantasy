@@ -13,8 +13,9 @@ public class PredictionResult {
     @GeneratedValue()
     private Integer id;
     private String userId;
-    private String raceId;
     private Integer points;
     private String predictionId;
     private Boolean showPointsUser;
+    private String season;
+    private Integer round;
 }
