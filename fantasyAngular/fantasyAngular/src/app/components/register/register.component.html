@@ -5,7 +5,7 @@
             <h3>Create your account</h3>
         </div>
 
-        <form *ngIf="!isSuccessful" name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
+        <form *ngIf="!isSuccessful" name="form" (ngSubmit)="onSubmit()" #f="ngForm" novalidate>
             <div class="form-group">
                 <label for="username">Username</label>
                 <input id="username" type="text" class="form-control modern-input" name="username" [(ngModel)]="form.username" required minlength="3" maxlength="20" #username="ngModel" />

@@ -35,7 +35,9 @@ export class AuthService {
       username,
       email,
       password
-    }, httpOptions);
+    },{
+      responseType: 'text'
+    });
   }
 
   signOut(): void {
