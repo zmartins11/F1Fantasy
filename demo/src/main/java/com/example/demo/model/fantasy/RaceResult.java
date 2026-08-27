@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Column;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,11 +16,13 @@ import lombok.Setter;
 public class RaceResult {
 
     @Id
-    @GeneratedValue()
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Column(name = "round")
     private Integer round;
     private String circuit;
-    private String season;
+    @Column(name = "season")
+    private Integer season;
     private String first;
     private String second;
     private String third;

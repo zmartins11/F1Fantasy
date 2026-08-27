@@ -30,36 +30,21 @@ public class PredictService {
     @Autowired
     private DriversPointsRepository driversPointsRepository;
 
-    private final static String SEASON_2023 = "2023";
-    private final static String SEASON_2022 = "2022";
-
     public RaceResult findBySeasonAndRound(String season, String round) {
-        return raceResultRepository.findBySeasonAndRound(season, round);
+        return raceResultRepository.findBySeasonAndRound(
+                Integer.parseInt(season),
+                Integer.parseInt(round));
     }
 
-
-    public void saveRace(RaceResult raceResult) {
-
-        RaceResult existingRaceResult = raceResultRepository.findBySeasonAndRound(raceResult.getSeason(), String.valueOf(raceResult.getRound()));
-        if(existingRaceResult != null) {
-            return;
-        }
-        raceResultRepository.save(raceResult);
-    }
 
     public RaceResult getRace(String season, String round) {
         return findBySeasonAndRound(season, round);
     }
 
-    public boolean checkRaceFinished(String season, String round) {
-        RaceResult race = getRace(season, round);
-        return race.isRaceFinished();
-    }
-
     public Prediction savePrediction(PredictionDto dto) {
 
         Prediction prediction = predictRepository
-                .findByUserIdAndRound(dto.getUser(), dto.getRound())
+                .findByUserIdAndRound(dto.getUserId(), dto.getRound())
                 .orElseGet(() -> createNewPrediction(dto));
 
         if (dto.getFirst() != null) {
@@ -82,7 +67,7 @@ public class PredictService {
 
         Prediction prediction = new Prediction();
 
-        prediction.setUserId(dto.getUser());
+        prediction.setUserId(dto.getUserId());
         prediction.setRound(dto.getRound());
 
         prediction.setPredictedPodium(false);
@@ -231,7 +216,7 @@ public class PredictService {
     }
 
 
-    public int getSeasonRaces(String season) {
+    public int getSeasonRaces(Integer season) {
         List<RaceResult> racesBySeason = raceResultRepository.findBySeason(season);
         return racesBySeason.size();
     }
@@ -241,15 +226,8 @@ public class PredictService {
         return raceResultRepository.findTopByRaceFinishedTrueOrderByRoundDesc();
     }
 
-    public void updatePredictionLocked(NextRaceInfoDto nextRaceInfo) {
-        RaceResult raceResult = raceResultRepository.findByRound(nextRaceInfo.getRound());
-        raceResult.setPredictionLocked(nextRaceInfo.getPredictionLocked());
-        raceResultRepository.save(raceResult);
-
-    }
-
-    public NextRaceInfoDto getUserPrediction(NextRaceInfoDto nextRaceInfoDto, String username) {
-        predictRepository.findByUserIdAndRound(username, nextRaceInfoDto.getRound())
+    public NextRaceInfoDto getUserPrediction(NextRaceInfoDto nextRaceInfoDto, Integer userId) {
+        predictRepository.findByUserIdAndRound(userId, Integer.parseInt(nextRaceInfoDto.getRound()))
                 .ifPresentOrElse(userPrediction -> {
 
                     nextRaceInfoDto.setUserHavePrediction(true);
@@ -267,30 +245,16 @@ public class PredictService {
         return nextRaceInfoDto;
     }
 
-    public TotalPointsDto getTotalPointsByUser(String username) {
-        TotalPointsDto totalPointsDto = new TotalPointsDto();
-        Long points = predictionResultRepository.sumPointsByUserId(username);
-        if (points==null) {
-            points = 0L;
-        }
-
-        totalPointsDto.setUsername(username);
-        totalPointsDto.setPoints(String.valueOf(points));
-
-        return totalPointsDto;
-    }
-
     public List<TotalPointsDto> getTotalPoints() {
         List<TotalPointsDto> listUsers = new ArrayList<>();
-        List<Object[]> result = predictionResultRepository.findTotalPointsByUser();
         List<User> users = userRepository.findAll();
 
         for (User user : users) {
-           List<PredictionResult> predictsByUserTemp =  predictionResultRepository.findByUserId(user.getUserName());
+           List<PredictionResult> predictsByUserTemp = predictionResultRepository.findByUserId(user.getId());
            if (!predictsByUserTemp.isEmpty()) {
                TotalPointsDto tmpP = new TotalPointsDto();
                tmpP.setUsername(user.getUserName());
-               tmpP.setPoints(String.valueOf(predictionResultRepository.sumPointsByUserId(user.getUserName())));
+               tmpP.setPoints(String.valueOf(predictionResultRepository.sumPointsByUserId(user.getId())));
                listUsers.add(tmpP);
 
            } else {
@@ -309,16 +273,16 @@ public class PredictService {
         return listUsers;
     }
 
-    public List<PointsInfoDto> getPointsInfo(String username, String round) {
+    public List<PointsInfoDto> getPointsInfo(Integer userId, String round) {
 
-        RaceResult raceResult = raceResultRepository.findByRound(round);
+        RaceResult raceResult = raceResultRepository.findByRound(Integer.parseInt(round));
 
         if (raceResult == null) {
             return Collections.emptyList();
         }
 
         Prediction prediction = predictRepository
-                .findByUserIdAndRound(username, round)
+                .findByUserIdAndRound(userId, Integer.parseInt(round))
                 .orElseThrow(() -> new RuntimeException("Prediction not found"));
 
         List<PredictionResult> predictionResults =

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PredictRepository extends JpaRepository<Prediction, Integer> {
-    Optional<Prediction> findByUserIdAndRound(String userId, String round);
+    Optional<Prediction> findByUserIdAndRound(Integer userId, Integer round);
 
-    List<Prediction> findBySeasonAndRound(String season, Integer round);
+    List<Prediction> findBySeasonAndRound(Integer season, Integer round);
 }

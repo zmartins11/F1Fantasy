@@ -5,6 +5,7 @@ public class AuthReponseDto {
     private String tokenType = "Bearer ";
     private String role;
     private String username;
+    private Integer userId;
 
     public AuthReponseDto() {
     }
@@ -41,5 +42,13 @@ public class AuthReponseDto {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 }

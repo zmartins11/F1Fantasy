@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { DateTimeResponse } from '../model/DateTimeResponse';
@@ -22,19 +22,22 @@ export class DateTimeServiceService {
 
   constructor(private http: HttpClient) { }
 
-  getNextRaceInfo(username: string): Observable<NextRaceInfo> {
-    const url = `${this.apiUrl}/raceSchedule?username=${username}`;
-    return this.http.get<NextRaceInfo>(url);
+  getNextRaceInfo(userId: number): Observable<NextRaceInfo> {
+    return this.http.get<NextRaceInfo>(`${this.apiUrl}/raceSchedule`, {
+      params: new HttpParams().set('userId', userId)
+    });
   }
 
   getTotalPoints(username: string): Observable<TotalPointsResponse> {
-    const url = `${this.apiUrl}/totalPoints?username=${username}`;
-    return this.http.get<TotalPointsResponse>(url);
+    return this.http.get<TotalPointsResponse>(`${this.apiUrl}/totalPoints`, {
+      params: new HttpParams().set('username', username)
+    });
   }
 
-  getPointsInfo(username: string): Observable<PointsInfo []> {
-    const url = `${this.apiUrl}/pointsInfo?username=${username}`;
-    return this.http.get<PointsInfo[]>(url);
+  getPointsInfo(userId: number): Observable<PointsInfo []> {
+    return this.http.get<PointsInfo[]>(`${this.apiUrl}/pointsInfo`, {
+      params: new HttpParams().set('userId', userId)
+    });
   }
 
   getStandingsSeason(): Observable<Standings> {

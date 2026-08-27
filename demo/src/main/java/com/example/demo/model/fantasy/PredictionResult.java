@@ -2,7 +2,9 @@ package com.example.demo.model.fantasy;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Column;
 import lombok.Data;
 
 @Entity
@@ -10,12 +12,15 @@ import lombok.Data;
 public class PredictionResult {
 
     @Id
-    @GeneratedValue()
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String userId;
+    @Column(name = "user_id")
+    private Integer userId;
     private Integer points;
     private String predictionId;
     private Boolean showPointsUser;
-    private String season;
+    @Column(name = "season")
+    private Integer season;
+    @Column(name = "round")
     private Integer round;
 }

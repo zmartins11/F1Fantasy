@@ -8,12 +8,12 @@ import java.util.List;
 
 public interface PredictionResultRepository extends JpaRepository<PredictionResult, Integer> {
 
-    public List<PredictionResult> findByUserId(String userId);
+    List<PredictionResult> findByUserId(Integer userId);
     @Query("SELECT SUM(p.points) FROM PredictionResult p WHERE p.userId = :userId")
-    Long sumPointsByUserId(String userId);
+    Long sumPointsByUserId(Integer userId);
     @Query("SELECT p.userId, SUM(p.points) FROM PredictionResult p GROUP BY p.userId ORDER BY SUM(p.points) DESC")
     List<Object[]> findTotalPointsByUser();
 
-    public List<PredictionResult> findByPredictionId(String id);
+    List<PredictionResult> findByPredictionId(String id);
 
 }

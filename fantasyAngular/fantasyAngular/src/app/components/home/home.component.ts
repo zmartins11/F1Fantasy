@@ -57,6 +57,7 @@ export class HomeComponent implements OnInit {
   content: String | undefined;
   isLoggedIn: Boolean = false;
   user: string = '';
+  userId: number | null = null;
   raceDate: string = '';
   round: string = '';
   timeRemaining: any;
@@ -134,6 +135,7 @@ export class HomeComponent implements OnInit {
       const userString = this.authService.getUser();
       if (userString) {
         this.user = userString.username;
+        this.userId = userString.userId;
       }
 
 
@@ -148,7 +150,13 @@ export class HomeComponent implements OnInit {
       });
 
       //getting info for nexRace
-      this.dateTimeService.getNextRaceInfo(this.user).subscribe(response => {
+      if (this.userId === null) {
+        this.authService.signOut();
+        this.router.navigate(['/login']);
+        return;
+      }
+
+      this.dateTimeService.getNextRaceInfo(this.userId).subscribe(response => {
         this.raceDate = response.time;
         this.nameRace = response.nameRace;
         this.round = response.round;
@@ -178,7 +186,10 @@ export class HomeComponent implements OnInit {
       },
         error => {
           this.showAlert = true;
-          this.errorMessage = error.error.message;
+          this.errorMessage = error.error?.message || 'Unable to load the next race.';
+          if (error.status !== 401) {
+            return;
+          }
           let countdown = 3; // Set the initial countdown value
 
           const intervalId = setInterval(() => {
@@ -194,7 +205,7 @@ export class HomeComponent implements OnInit {
               this.router.navigate(['/home']);
             }
           }, 1000); // Update the countdown every second
-        });
+      });
 
 
       this.getPointsInfo();
@@ -282,7 +293,11 @@ export class HomeComponent implements OnInit {
 
   getPointsInfo() {
     //get info points
-    this.dateTimeService.getPointsInfo(this.user).subscribe(response => {
+    if (this.userId === null) {
+      return;
+    }
+
+    this.dateTimeService.getPointsInfo(this.userId).subscribe(response => {
       this.pointsInfo = response || [];
       if (this.pointsInfo.length !== 0) {
         this.showPopUpDriversPoints = true;
@@ -298,7 +313,7 @@ export class HomeComponent implements OnInit {
     }, error => {
       this.showPopUpDriversPoints = false;
       console.error('Error fetching pointsInfo:', error);
-    })
+    });
   }
 
   populateWeatherWidget() {
@@ -459,7 +474,11 @@ export class HomeComponent implements OnInit {
   savePredictions() {
     this.saveDriversToPredict = this.drivers.filter(driver => driver.selection !== undefined);
 
-    this.predictService.savePrediction(this.first, this.second, this.third, this.fastest, this.user, this.round, this.currentSeason)
+    if (this.userId === null) {
+      return;
+    }
+
+    this.predictService.savePrediction(this.first, this.second, this.third, this.fastest, this.userId, Number(this.round), this.currentSeason)
       .subscribe(response => {
         this.pFirst = this.getDriverName(Number(response.first));
         this.pSecond = this.getDriverName(Number(response.second));

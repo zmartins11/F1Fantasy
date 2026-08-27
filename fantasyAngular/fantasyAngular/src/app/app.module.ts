@@ -29,6 +29,7 @@ import { RacePopupComponent } from './components/race-popup/race-popup.component
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { WeatherComponent } from './components/weather/weather.component';
 import { WeatherForecastPopupComponent } from './components/weather-forecast-popup/weather-forecast-popup.component';
+import { F1NewsComponent } from './components/f1-news/f1-news.component';
 
 
 
@@ -50,7 +51,8 @@ import { WeatherForecastPopupComponent } from './components/weather-forecast-pop
     RaceDetailsComponent,
     RacePopupComponent,
     WeatherComponent,
-    WeatherForecastPopupComponent
+    WeatherForecastPopupComponent,
+    F1NewsComponent
   ],
   imports: [
     BrowserModule,

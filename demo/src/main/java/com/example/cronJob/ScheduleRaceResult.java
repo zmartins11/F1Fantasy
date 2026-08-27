@@ -10,22 +10,20 @@ import com.example.demo.repository.RaceResultRepository;
 import com.example.demo.service.ErgastService;
 import com.example.demo.service.PredictService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 
 import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Component
+@Slf4j
 public class ScheduleRaceResult {
-
-    // task runns every monday / tuesday
-    // para correr api : round (vou buscar à tabela race_result : select * from table where finished = false)
-    //                  season (vou buscar à tabela)
-    // if mrData.getRaces is null (corrida ainda não terminada)
-    // deste component passar o resultado para o predictService para guardar results.
-    // no fim desta operacao fazer calculo dos pontos
 
     @Autowired
     private RaceResultRepository raceResultRepository;
@@ -41,32 +39,52 @@ public class ScheduleRaceResult {
 
     @Scheduled(fixedRate = 30 * 60 * 1000)
     public void populateRaceResult() throws JsonProcessingException {
-        RaceResult currentRace =
-                raceResultRepository.findTopByRaceFinishedFalseOrderByRoundAsc();
+        Set<String> checkedRaces = new HashSet<>();
 
-        if (currentRace == null) {
-            return;
-        }
-
-        try {
-
-            RaceResultDto apiRaceResult = ergastService.getRaceResult(
-                    currentRace.getSeason(),
-                    String.valueOf(currentRace.getRound()));
-
-            // ainda não existem resultados
-            if (apiRaceResult == null) {
-                return;
+        for (Prediction prediction : predictRepository.findAll()) {
+            if (prediction.getSeason() == null || prediction.getRound() == null) {
+                continue;
             }
 
-            updateRaceResult(currentRace, apiRaceResult);
+            Integer season = prediction.getSeason();
+            Integer round = prediction.getRound();
+            String raceKey = season + "-" + round;
 
-            if (!Boolean.TRUE.equals(currentRace.isPointsCalculated())) {
+            if (!checkedRaces.add(raceKey)) {
+                continue;
+            }
+
+            RaceResult currentRace = raceResultRepository.findBySeasonAndRound(season, round);
+            if (currentRace != null && currentRace.isPointsCalculated()) {
+                log.debug("Skipping already processed race {}-{}", season, round);
+                continue;
+            }
+
+            try {
+                RaceResultDto apiRaceResult = ergastService.getRaceResult(
+                    String.valueOf(season),
+                    String.valueOf(round));
+
+                if (apiRaceResult == null || !apiRaceResult.isRaceFinished()) {
+                    log.debug("Race {}-{} has no final result yet", season, round);
+                    continue;
+                }
+
+                if (currentRace == null) {
+                    currentRace = new RaceResult();
+                    currentRace.setSeason(season);
+                    currentRace.setRound(round);
+                }
+
+                updateRaceResult(currentRace, apiRaceResult);
                 calculatePoints(currentRace);
+            } catch (RestClientException exception) {
+                log.warn("Could not retrieve result for race {}-{}; it will be retried", season, round, exception);
+            } catch (JsonProcessingException exception) {
+                log.error("Could not parse result for race {}-{}", season, round, exception);
+            } catch (RuntimeException exception) {
+                log.error("Unexpected error processing race {}-{}", season, round, exception);
             }
-
-        } catch (Exception e) {
-            System.out.println("Race " + currentRace.getRound() + " not finished yet.");
         }
     }
 
