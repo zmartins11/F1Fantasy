@@ -162,7 +162,7 @@
                 <ng-container *ngIf="!showDrivers; else podiumPickerShown">
                   <div *ngIf="!predictionLocked" class="prediction-action-copy">
                     <p *ngIf="pHasPodium" class="mb-0">Change your podium prediction</p>
-                    <p *ngIf="!pHasPodium" class="mb-0">Make your podium prediction</p>
+                    <p *ngIf="!pHasPodium" queroclass="mb-0">Make your podium prediction</p>
                     <button type="button" class="text-link" (click)="showDrivers = true">
                       Select drivers
                     </button>
@@ -403,14 +403,9 @@
     </div>
 
     <div *ngIf="isLoggedIn && !errorMessage" class="container mt-5 mb-5">
-      <div class="row justify-content-center mb-5">
-        <div class="col-md-6 col-sm-6 mb-5">
-          <!-- Twitter feed 
-          <div style="width: 100%; max-width: 617px; margin-right: 20px;">
-            <angular-twitter-timeline [data]="{sourceType: 'url', url: 'https://twitter.com/F1'}"
-              [opts]="{tweetLimit: 10, height: 500}">
-            </angular-twitter-timeline> -->
-          </div>
+      <div class="row justify-content-center align-items-stretch mb-5">
+        <div class="col-md-6 mb-5">
+          <app-f1-news></app-f1-news>
         </div>
         <div class="col-md-6 col-sm-6 mb-5">
           <!-- YouTube player -->

@@ -30,7 +30,7 @@ export class AuthService {
     }, httpOptions);
   }
 
-  register(username: string, email: string, password: string): Observable<any> {
+  register(username: string, email: string, password: string): Observable<string> {
     return this.http.post(AUTH_API + 'register', {
       username,
       email,
@@ -42,7 +42,7 @@ export class AuthService {
 
   signOut(): void {
     window.sessionStorage.clear();
-    localStorage.clear
+    localStorage.clear();
   }
 
   public saveToken(token: string): void {

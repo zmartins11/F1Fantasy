@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.*;
-import com.example.demo.exception.SavePredictionException;
 import com.example.demo.model.Race;
 import com.example.demo.model.fantasy.Prediction;
 import com.example.demo.model.fantasy.RaceResult;
@@ -12,21 +11,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Year;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 public class PredictController {
 
-    @Autowired
-    PredictService predictService;
-    @Autowired
-    private ErgastService ergastService;
+    private final PredictService predictService;
+    private final ErgastService ergastService;
+
+    public PredictController(PredictService predictService, ErgastService ergastService) {
+        this.predictService = predictService;
+        this.ergastService = ergastService;
+    }
 
     @PostMapping("/predict")
-    private PredictionDto savePrediction(@RequestBody PredictionDto prediction) throws Exception {
+    public ResponseEntity<PredictionDto> savePrediction(@RequestBody PredictionDto prediction) {
         //TimeUnit.SECONDS.sleep(1);
         //season static value
         Year currentYear = Year.now();
@@ -44,39 +44,36 @@ public class PredictController {
         prediction.setSecond(savedPrediction.getSecond());
         prediction.setThird(savedPrediction.getThird());
         prediction.setFastestLap(savedPrediction.getFastestLap());
-        return prediction;
+        prediction.setUserId(savedPrediction.getUserId());
+        return ResponseEntity.ok(prediction);
     }
 
 
     @GetMapping("/raceSchedule")
-    private NextRaceInfoDto getRaceInfo(@RequestParam String username) throws JsonProcessingException, InterruptedException {
+    public ResponseEntity<NextRaceInfoDto> getRaceInfo(@RequestParam Integer userId) throws JsonProcessingException {
         //TimeUnit.SECONDS.sleep(3);
         //RaceResult nextRaceInfo = predictService.getNextRaceInfo();
         NextRaceInfoDto nextRaceInfoDto = ergastService.getScheduleRace();
 
-        //houve atualizacao do predictionLocked
-//        if (!nextRaceInfoDto.getPredictionLocked().equals(nextRaceInfo.get().isPredictionLocked())) {
-//            nextRaceInfo.get().setPredictionLocked(nextRaceInfoDto.getPredictionLocked());
-//            predictService.updatePredictionLocked(nextRaceInfoDto);
-//        }
-        //checkUserPredictions
-        nextRaceInfoDto = predictService.getUserPrediction(nextRaceInfoDto, username);
 
-        return nextRaceInfoDto;
+        //checkUserPredictions
+        nextRaceInfoDto = predictService.getUserPrediction(nextRaceInfoDto, userId);
+
+        return ResponseEntity.ok(nextRaceInfoDto);
     }
 
     @GetMapping("/nextRaceDetails")
-    private Race getNextRaceDetails() throws JsonProcessingException {
-        return ergastService.getNextRace();
+    public ResponseEntity<Race> getNextRaceDetails() throws JsonProcessingException {
+        return ResponseEntity.ok(ergastService.getNextRace());
     }
 
     @GetMapping("/pointsInfo")
-    private List<PointsInfoDto> getPointsInfo(@RequestParam String username) {
+    public ResponseEntity<List<PointsInfoDto>> getPointsInfo(@RequestParam Integer userId) {
         RaceResult racedPassed = predictService.getRacePassed();
         if (racedPassed != null) {
-            return predictService.getPointsInfo(username, String.valueOf(racedPassed.getRound()));
+            return ResponseEntity.ok(predictService.getPointsInfo(userId, String.valueOf(racedPassed.getRound())));
         } else {
-            return null;
+            return ResponseEntity.ok(List.of());
         }
     }
 
@@ -85,24 +82,19 @@ public class PredictController {
     //on predictionResult set column boolean : showPointsUser : false
 
     @GetMapping("/totalPoints")
-    private List<TotalPointsDto> getTotalPoints(@RequestParam String username) {
-        return predictService.getTotalPoints();
-    }
-
-    @GetMapping("/totalPointsByUser")
-    private TotalPointsDto getTotalPointsByUser(@RequestParam String username) {
-        return predictService.getTotalPointsByUser(username);
+    public ResponseEntity<List<TotalPointsDto>> getTotalPoints(@RequestParam String username) {
+        return ResponseEntity.ok(predictService.getTotalPoints());
     }
 
     @GetMapping("/standings")
-    private StandingsDto standingsSeason() throws JsonProcessingException {
-        return ergastService.getStandings();
+    public ResponseEntity<StandingsDto> standingsSeason() throws JsonProcessingException {
+        return ResponseEntity.ok(ergastService.getStandings());
     }
 
 
     @GetMapping("/allRaces")
-    private List<RaceInfo> getAllRaces() throws JsonProcessingException {
-        return ergastService.getAllRaces(Year.now().toString());
+    public ResponseEntity<List<RaceInfo>> getAllRaces() throws JsonProcessingException {
+        return ResponseEntity.ok(ergastService.getAllRaces(Year.now().toString()));
     }
 
 }

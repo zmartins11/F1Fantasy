@@ -37,11 +37,11 @@ public class ErgastService {
 
 	public List<Race> getRaces(String season) throws JsonProcessingException {
 		String url = "https://api.jolpi.ca/ergast/f1/" + season + "/races.json";
-
 		ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+
 		ObjectMapper mapper = new ObjectMapper();
 		RaceResponse racesResponse = mapper.readValue(response.getBody(), RaceResponse.class);
-		return racesResponse.getMrData().getRaceTable().getRace();
+		return racesResponse.getMrData().getRaceTable().getRaces();
 	}
 
 	public RaceResultDto getRaceResult(String season, String round)
@@ -176,21 +176,6 @@ public class ErgastService {
 				driver.setFlagCode(flagCode);
 			}
 		}
-	}
-
-	public ArrayList<String> getNameRaces(String season) throws JsonMappingException, JsonProcessingException {
-		ArrayList<String> names = new ArrayList<>();
-
-		String url = "https://api.jolpi.ca/ergast/f1/" + season + "/races.json";
-		ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-		ObjectMapper mapper = new ObjectMapper();
-		RaceResponse racesResponse = mapper.readValue(response.getBody(), RaceResponse.class);
-		List<Race> races = racesResponse.getMrData().getRaceTable().getRace();
-		for (Race r : races) {
-			names.add(r.getRaceName());
-		}
-
-		return names;
 	}
 
 
@@ -434,30 +419,5 @@ public class ErgastService {
 		standingsDto.setConstructors(resultConstructors);
 
 		return standingsDto;
-	}
-
-	public Race getRaceResults(String season, String round) throws JsonProcessingException {
-
-		String url = "https://api.jolpi.ca/ergast/f1/" + season + "/" + round + "/results.json";
-
-		ResponseEntity<String> response;
-
-		try {
-			response = restTemplate.getForEntity(url, String.class);
-		} catch (HttpServerErrorException e) {
-			e.printStackTrace();
-			throw new HttpServerErrorException(HttpStatusCode.valueOf(500));
-		}
-
-		ObjectMapper mapper = new ObjectMapper();
-
-		RaceResponse raceResponse = mapper.readValue(response.getBody(), RaceResponse.class);
-
-		return raceResponse.getMrData()
-				.getRaceTable()
-				.getRaces()
-				.stream()
-				.findFirst()
-				.orElseThrow(() -> new RuntimeException("Race not found"));
 	}
 }
