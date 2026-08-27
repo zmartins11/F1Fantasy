@@ -1,9 +1,9 @@
 export interface Prediction {
-    user : string;
+    userId : number;
     first : string;
     second : string;
     third : string;
-    round : string;
+    round : number;
     fastestLap: string;
     predictedPodium: Boolean;
     predictedFastestLap: Boolean;
