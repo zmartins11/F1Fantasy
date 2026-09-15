@@ -77,7 +77,7 @@ public class ScheduleRaceResult {
                 }
 
                 updateRaceResult(currentRace, apiRaceResult);
-                calculatePoints(currentRace);
+                calculateAndSavePoints(currentRace);
             } catch (RestClientException exception) {
                 log.warn("Could not retrieve result for race {}-{}; it will be retried", season, round, exception);
             } catch (JsonProcessingException exception) {
@@ -98,31 +98,37 @@ public class ScheduleRaceResult {
         raceResultRepository.save(currentRace);
     }
 
-    private void calculatePoints(RaceResult currentRace) throws JsonProcessingException {
+    private void calculateAndSavePoints(RaceResult currentRace) throws JsonProcessingException {
 
         List<Prediction> predictions =
                 predictRepository.findBySeasonAndRound(
                         currentRace.getSeason(),
                         currentRace.getRound());
 
-        Map<String, Integer> driverPoints = predictService.buildDriverPoints(currentRace);
-
         for (Prediction prediction : predictions) {
 
-            int points = predictService.calculate(prediction, currentRace, driverPoints);
+            int points = predictService.calculate(prediction, currentRace);
 
-            PredictionResult result = new PredictionResult();
-            result.setPredictionId(String.valueOf(prediction.getId()));
-            result.setUserId(prediction.getUserId());
-            result.setSeason(currentRace.getSeason());
-            result.setRound(currentRace.getRound());
-            result.setPoints(points);
-            result.setShowPointsUser(Boolean.TRUE);
-
-            predictionResultRepository.save(result);
+            savePredictionResult(prediction, currentRace, points);
         }
 
         currentRace.setPointsCalculated(true);
         raceResultRepository.save(currentRace);
+    }
+
+    private void savePredictionResult(
+            Prediction prediction,
+            RaceResult raceResult,
+            int points) {
+
+        PredictionResult result = new PredictionResult();
+        result.setPredictionId(String.valueOf(prediction.getId()));
+        result.setUserId(prediction.getUserId());
+        result.setSeason(raceResult.getSeason());
+        result.setRound(raceResult.getRound());
+        result.setPoints(points);
+        result.setShowPointsUser(Boolean.TRUE);
+
+        predictionResultRepository.save(result);
     }
 }

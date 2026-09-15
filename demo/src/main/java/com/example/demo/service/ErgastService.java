@@ -2,13 +2,10 @@ package com.example.demo.service;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAdjuster;
-import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 import com.example.demo.dto.*;
 import com.example.demo.model.*;
-import com.example.demo.model.fantasy.RaceResult;
 import com.example.utils.RaceResultMapper;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -21,16 +18,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.xml.transform.Result;
-
 @Service
 public class ErgastService {
 
 	private final RestTemplate restTemplate = new RestTemplate();
-
-	private final static String SEASON_2023 = "2023";
-	private final static String SEASON_2022 = "2022";
-
 
 	private final RaceResultMapper resultMapper = new RaceResultMapper();
 
@@ -96,7 +87,7 @@ public class ErgastService {
 		return dto;
 	}
 
-	public List<Driver> rawData(String season) throws JsonProcessingException {
+	public List<Driver> getDriversInSeason(String season) throws JsonProcessingException {
 
 		List<Driver> driversInSeason = null;
 
@@ -207,41 +198,27 @@ public class ErgastService {
 		return raceInfo;
 	}
 
-	public HashMap<Integer, Integer> testApiGetResult(String position, Integer racesCurrentSeason, String driver) throws JsonProcessingException {
+	public HashMap<Integer, Integer> getDriverPositionStats(
+			String season,
+			String position,
+			Integer racesCurrentSeason,
+			String driver) throws JsonProcessingException {
 		HashMap<Integer, Integer> resultSeason = new HashMap<>();
 
-		int races2022Season = 22;
-		racesCurrentSeason = 19;
-
-		int numberResult = 0;
-		String winsUrl = "https://api.jolpi.ca/ergast/f1/" + SEASON_2023 + "/drivers/" + driver.toLowerCase() + "/results/" + position + ".json";
+		String winsUrl = "https://api.jolpi.ca/ergast/f1/" + season + "/drivers/" + driver.toLowerCase() + "/results/" + position + ".json";
 
 		ResponseEntity<String> responseWins = restTemplate.getForEntity(winsUrl, String.class);
 		ObjectMapper mapperW = new ObjectMapper();
 		mapperW.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 		WinsResponse data = mapperW.readValue(responseWins.getBody(), WinsResponse.class);
-		numberResult = data.getMrData().getTotal();
-
+		int numberResult = data.getMrData().getTotal();
 		resultSeason.put(numberResult, racesCurrentSeason);
 
-		if (racesCurrentSeason < 20) {
-			String winsUrlLastSeason = "https://api.jolpi.ca/ergast/f1/" + SEASON_2022 + "/drivers/" + driver.toLowerCase() + "/results/" + position + ".json";
-
-			ResponseEntity<String> responseWinsLastSeason = restTemplate.getForEntity(winsUrlLastSeason, String.class);
-			ObjectMapper mapperWLastSeason = new ObjectMapper();
-			mapperWLastSeason.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-			WinsResponse dataLastSeason = mapperWLastSeason.readValue(responseWinsLastSeason.getBody(), WinsResponse.class);
-			int resultLastSeason = dataLastSeason.getMrData().getTotal();
-			resultSeason.remove(numberResult);
-			numberResult += resultLastSeason;
-			resultSeason.put(numberResult, racesCurrentSeason + races2022Season);
-		}
 		return resultSeason;
 	}
 
-	public NextRaceInfoDto getScheduleRace() throws JsonProcessingException {
+	public NextRaceInfoDto getNextRaceInfo() throws JsonProcessingException {
 
 		ResponseEntity<String> response;
 
@@ -310,8 +287,7 @@ public class ErgastService {
 					nextRace.getQualifying().getDate(),
 					qualiTime);
 
-			dto.setPredictionLocked(
-					now.isAfter(qualiDateTime.minusHours(24)));
+			dto.setPredictionLocked(false);
 
 		} else {
 

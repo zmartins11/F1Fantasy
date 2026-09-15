@@ -13,7 +13,6 @@ import { Prediction } from 'src/app/model/Prediction';
 import { faArrowDown, faArrowUp, faGaugeSimpleMed } from '@fortawesome/free-solid-svg-icons'
 import { TotalPointsResponse } from 'src/app/model/TotalPointsResponse';
 import { PointsInfo } from 'src/app/model/PointsInfo';
-import { DriverMappingService } from 'src/app/_services/driver-mapping-service.service';
 import { Standings } from 'src/app/model/Standings';
 import { Observable } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -40,7 +39,6 @@ export class HomeComponent implements OnInit {
   constructor(private userService: UserService, private authService: AuthService,
     private dateTimeService: DateTimeServiceService, private spinnerService: SipnnerService,
     private predictService: PredictService,
-    private driverMappingService: DriverMappingService,
     private sanitizer: DomSanitizer,
     private router: Router,
     private modalService: BsModalService,
@@ -301,9 +299,6 @@ export class HomeComponent implements OnInit {
       this.pointsInfo = response || [];
       if (this.pointsInfo.length !== 0) {
         this.showPopUpDriversPoints = true;
-        for (let pointInfo of this.pointsInfo) {
-          pointInfo.driverName = this.driverMappingService.getDriverName(parseInt(pointInfo.driver));
-        }
         this.calculateTotalPoints();
         this.openModal();
       } else {

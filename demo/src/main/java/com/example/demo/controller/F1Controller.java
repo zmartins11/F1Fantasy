@@ -30,7 +30,7 @@ public class F1Controller {
 
 	@GetMapping("/rawData/{season}")
 	public ResponseEntity<List<Driver>> rawDataDrivers(@PathVariable String season) throws JsonProcessingException {
-		return ResponseEntity.ok(ergastService.rawData(season));
+		return ResponseEntity.ok(ergastService.getDriversInSeason(season));
 	}
 
 	@GetMapping("/raceResult/{season}/{round}")

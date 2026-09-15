@@ -11,10 +11,10 @@ public class RaceResultMapper {
         RaceResultDto raceResultDto = new RaceResultDto();
         raceResultDto.setRound(Integer.parseInt(round));
         raceResultDto.setSeason(season);
-        raceResultDto.setFirst(results.get(0).getDriver().getFamilyName());
-        raceResultDto.setSecond(results.get(1).getDriver().getFamilyName());
-        raceResultDto.setThird(results.get(2).getDriver().getFamilyName());
-        raceResultDto.setFastestLap(fastestLap.getDriver().getFamilyName());
+        raceResultDto.setFirst(String.valueOf(results.get(0).getDriver().getPermanentNumber()));
+        raceResultDto.setSecond(String.valueOf(results.get(1).getDriver().getPermanentNumber()));
+        raceResultDto.setThird(String.valueOf(results.get(2).getDriver().getPermanentNumber()));
+        raceResultDto.setFastestLap(String.valueOf(fastestLap.getDriver().getPermanentNumber()));
         return raceResultDto;
     }
 

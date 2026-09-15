@@ -7,7 +7,6 @@ import com.example.demo.model.fantasy.RaceResult;
 import com.example.demo.service.ErgastService;
 import com.example.demo.service.PredictService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Year;
@@ -50,10 +49,10 @@ public class PredictController {
 
 
     @GetMapping("/raceSchedule")
-    public ResponseEntity<NextRaceInfoDto> getRaceInfo(@RequestParam Integer userId) throws JsonProcessingException {
+    public ResponseEntity<NextRaceInfoDto> getNextRaceInfo(@RequestParam Integer userId) throws JsonProcessingException {
         //TimeUnit.SECONDS.sleep(3);
         //RaceResult nextRaceInfo = predictService.getNextRaceInfo();
-        NextRaceInfoDto nextRaceInfoDto = ergastService.getScheduleRace();
+        NextRaceInfoDto nextRaceInfoDto = ergastService.getNextRaceInfo();
 
 
         //checkUserPredictions
@@ -68,7 +67,7 @@ public class PredictController {
     }
 
     @GetMapping("/pointsInfo")
-    public ResponseEntity<List<PointsInfoDto>> getPointsInfo(@RequestParam Integer userId) {
+    public ResponseEntity<List<PointsInfoDto>> getPointsInfo(@RequestParam Integer userId) throws JsonProcessingException {
         RaceResult racedPassed = predictService.getRacePassed();
         if (racedPassed != null) {
             return ResponseEntity.ok(predictService.getPointsInfo(userId, String.valueOf(racedPassed.getRound())));
@@ -76,10 +75,6 @@ public class PredictController {
             return ResponseEntity.ok(List.of());
         }
     }
-
-    //check if there are a raceCompleted before the currentOne
-    //check if the user has a prediction for that race
-    //on predictionResult set column boolean : showPointsUser : false
 
     @GetMapping("/totalPoints")
     public ResponseEntity<List<TotalPointsDto>> getTotalPoints(@RequestParam String username) {

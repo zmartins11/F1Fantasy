@@ -4,7 +4,7 @@ import com.example.demo.dto.NextRaceInfoDto;
 import com.example.demo.dto.PointsInfoDto;
 import com.example.demo.dto.PredictionDto;
 import com.example.demo.dto.TotalPointsDto;
-import com.example.demo.enums.Formula1DriverEnum;
+import com.example.demo.model.Driver;
 import com.example.demo.model.fantasy.*;
 import com.example.demo.repository.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -22,13 +23,13 @@ public class PredictService {
     @Autowired
     private PredictRepository predictRepository;
     @Autowired
-    private ErgastService ergastService;
-    @Autowired
     private PredictionResultRepository predictionResultRepository;
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private DriversPointsRepository driversPointsRepository;
+    @Autowired
+    private ErgastService ergastService;
 
     public RaceResult findBySeasonAndRound(String season, String round) {
         return raceResultRepository.findBySeasonAndRound(
@@ -79,7 +80,7 @@ public class PredictService {
 
 
     // método chamado quando o RaceResult com o race_id da prediction é preenchido
-    public int calculate(Prediction prediction, RaceResult raceResult, Map<String, Integer> driverPoints) {
+    public int calculate(Prediction prediction, RaceResult raceResult) {
 
         int points = 0;
 
@@ -89,22 +90,19 @@ public class PredictService {
                     "1",
                     raceResult.getId(),
                     prediction.getFirst(),
-                    raceResult.getFirst(),
-                    driverPoints);
+                    raceResult.getFirst());
 
             points += processDriver(
                     "2",
                     raceResult.getId(),
                     prediction.getSecond(),
-                    raceResult.getSecond(),
-                    driverPoints);
+                    raceResult.getSecond());
 
             points += processDriver(
                     "3",
                     raceResult.getId(),
                     prediction.getThird(),
-                    raceResult.getThird(),
-                    driverPoints);
+                    raceResult.getThird());
         }
 
         if (Boolean.TRUE.equals(prediction.getPredictedFastestLap())) {
@@ -126,82 +124,13 @@ public class PredictService {
         return points;
     }
 
-    private int processDriver(String position, Integer raceId, String predictedDriver, String resultDriver, Map<String, Integer> driverPoints) {
+    private int processDriver(String position, Integer raceId, String predictedDriver, String resultDriver) {
 
-        if (!predictedDriver.equals(resultDriver)) {
-            createDriversPoints(predictedDriver, raceId, 0, position);
-            return 0;
-        }
-
-        int points = driverPoints.get(resultDriver);
+        int points = Objects.equals(predictedDriver, resultDriver) ? 5 : 0;
 
         createDriversPoints(predictedDriver, raceId, points, position);
 
         return points;
-    }
-
-    public Map<String, Integer> buildDriverPoints(RaceResult raceResult)
-            throws JsonProcessingException {
-
-        int racesCurrentSeason = getSeasonRaces(raceResult.getSeason());
-
-        Map<String, Integer> driverPoints = new HashMap<>();
-
-        driverPoints.put(
-                raceResult.getFirst(),
-                calculateDriverPoints(
-                        "1",
-                        raceResult.getFirst(),
-                        racesCurrentSeason));
-
-        driverPoints.put(
-                raceResult.getSecond(),
-                calculateDriverPoints(
-                        "2",
-                        raceResult.getSecond(),
-                        racesCurrentSeason));
-
-        driverPoints.put(
-                raceResult.getThird(),
-                calculateDriverPoints(
-                        "3",
-                        raceResult.getThird(),
-                        racesCurrentSeason));
-
-        return driverPoints;
-    }
-
-    private int calculateDriverPoints(
-            String position,
-            String driverNumber,
-            int racesCurrentSeason)
-            throws JsonProcessingException {
-
-        Map<Integer, Integer> stats =
-                ergastService.testApiGetResult(
-                        position,
-                        racesCurrentSeason,
-                        Formula1DriverEnum.getNameByNumber(
-                                Integer.parseInt(driverNumber)));
-
-        Map.Entry<Integer, Integer> entry =
-                stats.entrySet().iterator().next();
-
-        int percentage = entry.getKey() * 100 / entry.getValue();
-
-        if (percentage >= 75) {
-            return 1;
-        }
-
-        if (percentage >= 50) {
-            return 3;
-        }
-
-        if (percentage >= 25) {
-            return 5;
-        }
-
-        return 10;
     }
 
     private void createDriversPoints(String driver, Integer raceResultId, int points, String position) {
@@ -273,7 +202,7 @@ public class PredictService {
         return listUsers;
     }
 
-    public List<PointsInfoDto> getPointsInfo(Integer userId, String round) {
+    public List<PointsInfoDto> getPointsInfo(Integer userId, String round) throws JsonProcessingException {
 
         RaceResult raceResult = raceResultRepository.findByRound(Integer.parseInt(round));
 
@@ -307,10 +236,19 @@ public class PredictService {
                         drivers,
                         String.valueOf(raceResult.getId()));
 
+        Map<String, String> driverNames = ergastService.getDriversInSeason(String.valueOf(raceResult.getSeason()))
+            .stream()
+            .filter(driver -> driver.getPermanentNumber() != null)
+            .collect(Collectors.toMap(
+                driver -> String.valueOf(driver.getPermanentNumber()),
+                Driver::getFamilyName,
+                (firstName, secondName) -> firstName));
+
         return driversPoints.stream()
                 .map(driver -> {
                     PointsInfoDto dto = new PointsInfoDto();
                     dto.setDriver(driver.getDriver());
+                dto.setFamilyName(driverNames.get(driver.getDriver()));
                     dto.setPoints(driver.getPoints());
                     dto.setPosition(driver.getPosition());
                     return dto;
