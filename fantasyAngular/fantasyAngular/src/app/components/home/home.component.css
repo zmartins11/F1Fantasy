@@ -112,3 +112,294 @@
 }
 
 
+
+.points-modal-overlay {
+  background: rgba(15, 23, 42, .58);
+  backdrop-filter: blur(5px);
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+
+.points-modal-overlay.show {
+  opacity: 1;
+}
+
+.points-modal {
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+
+.points-modal.show {
+  display: flex;
+  opacity: 1;
+}
+
+.points-modal-dialog {
+  width: min(100%, 500px);
+  margin: 0;
+  transform: translateY(12px) scale(.98);
+  transition: transform .25s ease;
+}
+
+.points-modal.show .points-modal-dialog {
+  transform: translateY(0) scale(1);
+}
+
+.points-modal-content {
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, .24);
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, .98), rgba(243, 247, 255, .98));
+  box-shadow: 0 28px 80px rgba(15, 23, 42, .24);
+}
+
+.points-modal-header,
+.points-modal-body,
+.points-modal-footer {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.points-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  padding-bottom: 1.25rem;
+  background: linear-gradient(135deg, rgba(37, 99, 235, .08), rgba(255, 122, 0, .08));
+  border-bottom: 1px solid rgba(148, 163, 184, .18);
+}
+
+.points-modal-eyebrow {
+  margin: 0 0 .35rem;
+  color: #2563eb;
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.points-modal-header h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 1.45rem;
+  font-weight: 800;
+}
+
+.points-modal-subtitle {
+  margin: .35rem 0 0;
+  color: #64748b;
+  font-size: .9rem;
+}
+
+.points-modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: 0 0 auto;
+  border: 1px solid rgba(148, 163, 184, .28);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .7);
+  color: #475569;
+  font-size: 1.5rem;
+  line-height: 1;
+  transition: background-color .2s ease, color .2s ease, transform .2s ease;
+}
+
+.points-modal-close:hover {
+  background: #fff;
+  color: #0f172a;
+  transform: rotate(90deg);
+}
+
+.points-modal-body {
+  padding-top: 1.25rem;
+  padding-bottom: .5rem;
+}
+
+.points-list {
+  display: grid;
+  gap: .65rem;
+}
+
+.point-row {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  min-height: 4.15rem;
+  padding: .75rem .9rem;
+  border: 1px solid rgba(148, 163, 184, .18);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .72);
+}
+
+.point-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 800;
+}
+
+.point-driver {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: .15rem;
+}
+
+.point-driver strong {
+  overflow: hidden;
+  color: #0f172a;
+  font-size: .98rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.point-driver span,
+.points-total span {
+  color: #64748b;
+  font-size: .78rem;
+}
+
+.point-score,
+.points-total-value {
+  color: #0f172a;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.point-score span,
+.points-total-value span {
+  color: #64748b;
+  font-size: .75rem;
+  font-weight: 700;
+}
+
+.points-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 1rem .9rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fff1f2, #fff7ed);
+}
+
+.points-total div {
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+}
+
+.points-total strong {
+  color: #0f172a;
+}
+
+.points-total-value {
+  font-size: 1.25rem;
+}
+
+.points-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  padding-bottom: 1.5rem;
+}
+
+.points-modal-button {
+  min-width: 6rem;
+  padding: .65rem 1.1rem;
+  border: 0;
+  border-radius: 999px;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, .2);
+  transition: background-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+.points-modal-button:hover {
+  background: #1d4ed8;
+  box-shadow: 0 10px 22px rgba(37, 99, 235, .28);
+  transform: translateY(-1px);
+}
+
+:host-context(body.dark-mode) .points-modal .points-modal-content {
+  background: #111827;
+  border-color: rgba(148, 163, 184, .18);
+}
+
+:host-context(body.dark-mode) .points-modal .points-modal-header {
+  background: linear-gradient(135deg, rgba(37, 99, 235, .18), rgba(255, 122, 0, .12));
+}
+
+:host-context(body.dark-mode) .points-modal .points-modal-header h2,
+:host-context(body.dark-mode) .points-modal .point-driver strong,
+:host-context(body.dark-mode) .points-modal .point-score,
+:host-context(body.dark-mode) .points-modal .points-total strong {
+  color: #f8fafc;
+}
+
+:host-context(body.dark-mode) .points-modal .points-modal-subtitle,
+:host-context(body.dark-mode) .points-modal .point-driver span,
+:host-context(body.dark-mode) .points-modal .points-total span,
+:host-context(body.dark-mode) .points-modal .point-score span {
+  color: #94a3b8;
+}
+
+:host-context(body.dark-mode) .points-modal .points-modal-close {
+  background: rgba(148, 163, 184, .12);
+  border-color: rgba(148, 163, 184, .2);
+  color: #cbd5e1;
+}
+
+:host-context(body.dark-mode) .points-modal .point-row {
+  background: rgba(30, 41, 59, .72);
+  border-color: rgba(148, 163, 184, .15);
+}
+
+:host-context(body.dark-mode) .points-modal .point-rank {
+  background: rgba(56, 189, 248, .14);
+  color: #bae6fd;
+}
+
+:host-context(body.dark-mode) .points-modal .points-total {
+  background: linear-gradient(135deg, rgba(190, 24, 93, .18), rgba(234, 88, 12, .16));
+}
+
+@media (max-width: 480px) {
+  .points-modal {
+    padding: .75rem;
+  }
+
+  .points-modal-header,
+  .points-modal-body,
+  .points-modal-footer {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .points-modal-header {
+    padding-top: 1.2rem;
+  }
+
+  .points-modal-footer {
+    padding-bottom: 1.2rem;
+  }
+}
+
+

@@ -1,6 +1,6 @@
 export interface PointsInfo {
     driver: string;
+    familyName: string;
     points: number;
-    driverName: string;
     position: string;
 }

@@ -1,26 +1,40 @@
-<div class="overlay" [ngClass]="{'show': showPopUpDriversPoints}"></div>
+<div class="overlay points-modal-overlay" [ngClass]="{'show': showPopUpDriversPoints}"></div>
 
-  <!-- Modal -->
-  <div class="modal" #myModal [ngClass]="{'show': showPopUpDriversPoints}" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Points earned in the last race</h5>
-          <button type="button" class="close" aria-label="Close" (click)="closePopup()">
+  <div class="modal points-modal" #myModal [ngClass]="{'show': showPopUpDriversPoints}" tabindex="-1" role="dialog"
+    aria-modal="true" aria-labelledby="points-modal-title">
+    <div class="modal-dialog points-modal-dialog" role="document">
+      <div class="modal-content points-modal-content">
+        <div class="points-modal-header">
+          <div>
+            <p class="points-modal-eyebrow">Race result</p>
+            <h2 id="points-modal-title">Points earned</h2>
+            <p class="points-modal-subtitle">Your score from the last race</p>
+          </div>
+          <button type="button" class="points-modal-close" aria-label="Close" (click)="closePopup()">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div class="modal-body">
-          <!-- Loop through the pointsInfo array and display each item -->
-          <div *ngFor="let pointInfo of pointsInfo">
-            {{ pointInfo.position }} -- {{ pointInfo.driverName }}: {{ pointInfo.points }} point{{ pointInfo.points !==
-            1
-            ? 's' : '' }}
+        <div class="points-modal-body">
+          <div class="points-list">
+            <div class="point-row" *ngFor="let pointInfo of pointsInfo">
+              <div class="point-rank">{{ pointInfo.position }}</div>
+              <div class="point-driver">
+                <strong>{{ pointInfo.familyName }}</strong>
+                <span>Prediction</span>
+              </div>
+              <strong class="point-score">{{ pointInfo.points }} <span>pts</span></strong>
+            </div>
           </div>
-          <div>Total Points: {{ totalPoints }} point{{ totalPoints !== 1 ? 's' : '' }}</div>
+          <div class="points-total">
+            <div>
+              <strong>Total points</strong>
+              <span>Combined score</span>
+            </div>
+            <strong class="points-total-value">{{ totalPoints }} <span>pts</span></strong>
+          </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="closePopup()">Close</button>
+        <div class="points-modal-footer">
+          <button type="button" class="points-modal-button" (click)="closePopup()">Close</button>
         </div>
       </div>
     </div>

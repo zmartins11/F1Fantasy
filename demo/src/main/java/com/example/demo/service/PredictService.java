@@ -108,7 +108,7 @@ public class PredictService {
         if (Boolean.TRUE.equals(prediction.getPredictedFastestLap())) {
 
             int fastestLapPoints =
-                    prediction.getFastestLap().equals(raceResult.getFastestLap())
+                    Objects.equals(prediction.getFastestLap(), raceResult.getFastestLap())
                             ? 5
                             : 0;
 

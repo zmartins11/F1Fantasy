@@ -35,6 +35,35 @@ public class ErgastService {
 		return racesResponse.getMrData().getRaceTable().getRaces();
 	}
 
+	public RaceResultDto getLastFinishedRaceResult() throws JsonProcessingException {
+		String season = String.valueOf(Year.now().getValue());
+		LocalDateTime now = LocalDateTime.now();
+
+		return getRaces(season).stream()
+				.filter(race -> race.getDate() != null)
+				.filter(race -> {
+					LocalTime raceTime = race.getTime() != null
+							? race.getTime()
+							: LocalTime.MIDNIGHT;
+					return !LocalDateTime.of(race.getDate(), raceTime).isAfter(now);
+				})
+				.sorted(Comparator.comparing(Race::getDate)
+						.thenComparing(race -> race.getTime() != null
+								? race.getTime()
+								: LocalTime.MIDNIGHT)
+						.reversed())
+				.map(race -> {
+					try {
+						return getRaceResult(race.getSeason(), race.getRound());
+					} catch (JsonProcessingException exception) {
+						throw new RuntimeException(exception);
+					}
+				})
+				.filter(RaceResultDto::isRaceFinished)
+				.findFirst()
+				.orElse(null);
+	}
+
 	public RaceResultDto getRaceResult(String season, String round)
 			throws JsonProcessingException {
 

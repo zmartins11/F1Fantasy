@@ -16,10 +16,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
-import java.util.List;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -39,73 +36,59 @@ public class ScheduleRaceResult {
 
     @Scheduled(fixedRate = 30 * 60 * 1000)
     public void populateRaceResult() throws JsonProcessingException {
-        Set<String> checkedRaces = new HashSet<>();
-
-        for (Prediction prediction : predictRepository.findAll()) {
-            if (prediction.getSeason() == null || prediction.getRound() == null) {
-                continue;
+        try {
+            RaceResultDto lastFinishedRaceResult = ergastService.getLastFinishedRaceResult();
+            if (lastFinishedRaceResult == null) {
+                log.debug("No finished race found");
+                return;
             }
 
-            Integer season = prediction.getSeason();
-            Integer round = prediction.getRound();
-            String raceKey = season + "-" + round;
-
-            if (!checkedRaces.add(raceKey)) {
-                continue;
-            }
-
+            Integer season = Integer.valueOf(lastFinishedRaceResult.getSeason());
+            Integer round = lastFinishedRaceResult.getRound();
             RaceResult currentRace = raceResultRepository.findBySeasonAndRound(season, round);
+
             if (currentRace != null && currentRace.isPointsCalculated()) {
                 log.debug("Skipping already processed race {}-{}", season, round);
-                continue;
+                return;
             }
 
-            try {
-                RaceResultDto apiRaceResult = ergastService.getRaceResult(
-                    String.valueOf(season),
-                    String.valueOf(round));
-
-                if (apiRaceResult == null || !apiRaceResult.isRaceFinished()) {
-                    log.debug("Race {}-{} has no final result yet", season, round);
-                    continue;
-                }
-
-                if (currentRace == null) {
-                    currentRace = new RaceResult();
-                    currentRace.setSeason(season);
-                    currentRace.setRound(round);
-                }
-
-                updateRaceResult(currentRace, apiRaceResult);
-                calculateAndSavePoints(currentRace);
-            } catch (RestClientException exception) {
-                log.warn("Could not retrieve result for race {}-{}; it will be retried", season, round, exception);
-            } catch (JsonProcessingException exception) {
-                log.error("Could not parse result for race {}-{}", season, round, exception);
-            } catch (RuntimeException exception) {
-                log.error("Unexpected error processing race {}-{}", season, round, exception);
+            if (currentRace == null) {
+                updateRaceResult(lastFinishedRaceResult, season, round);
             }
+
+            List<Prediction> predictions = predictRepository.findBySeasonAndRound(season, round);
+
+            calculateAndSavePoints(currentRace, predictions);
+        } catch (RestClientException exception) {
+            log.warn("Could not retrieve the latest race result; it will be retried", exception);
+        } catch (JsonProcessingException exception) {
+            log.error("Could not parse the latest race result", exception);
+        } catch (RuntimeException exception) {
+            log.error("Unexpected error processing the latest race result", exception);
         }
     }
 
-    private void updateRaceResult(RaceResult currentRace, RaceResultDto apiRaceResult) {
-        currentRace.setRaceFinished(true);
-        currentRace.setFirst(apiRaceResult.getFirst());
-        currentRace.setSecond(apiRaceResult.getSecond());
-        currentRace.setThird(apiRaceResult.getThird());
-        currentRace.setFastestLap(apiRaceResult.getFastestLap());
+    private void updateRaceResult(RaceResultDto apiRaceResult, Integer season, Integer round) {
+        RaceResult raceResultLastRace = new RaceResult();
+        raceResultLastRace.setSeason(season);
+        raceResultLastRace.setRound(round);
+        raceResultLastRace.setRaceFinished(true);
+        raceResultLastRace.setFirst(apiRaceResult.getFirst());
+        raceResultLastRace.setSecond(apiRaceResult.getSecond());
+        raceResultLastRace.setThird(apiRaceResult.getThird());
+        raceResultLastRace.setFastestLap(apiRaceResult.getFastestLap());
 
-        raceResultRepository.save(currentRace);
+        raceResultRepository.save(raceResultLastRace);
     }
 
-    private void calculateAndSavePoints(RaceResult currentRace) throws JsonProcessingException {
-
-        List<Prediction> predictions =
-                predictRepository.findBySeasonAndRound(
-                        currentRace.getSeason(),
-                        currentRace.getRound());
-
+    private void calculateAndSavePoints(
+            RaceResult currentRace,
+            List<Prediction> predictions) throws JsonProcessingException {
         for (Prediction prediction : predictions) {
+
+            if (!predictionResultRepository.findByPredictionId(String.valueOf(prediction.getId())).isEmpty()) {
+                continue;
+            }
 
             int points = predictService.calculate(prediction, currentRace);
 
