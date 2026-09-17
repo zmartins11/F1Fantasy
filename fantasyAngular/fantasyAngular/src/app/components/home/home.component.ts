@@ -156,7 +156,7 @@ export class HomeComponent implements OnInit {
         return;
       }
 
-      this.dateTimeService.getNextRaceInfo(this.userId).subscribe(response => {
+      this.dateTimeService.getNextRaceInfo().subscribe(response => {
         this.raceDate = response.time;
         this.nameRace = response.nameRace;
         this.round = response.round;
@@ -265,7 +265,7 @@ export class HomeComponent implements OnInit {
 
   populatePointsTables() {
     //populate tables
-    this.dateTimeService.getTotalPoints(this.user).subscribe(response => {
+    this.dateTimeService.getTotalPoints().subscribe(response => {
       if (Array.isArray(response)) {
         this.totalPointsData = response;
 
@@ -297,7 +297,7 @@ export class HomeComponent implements OnInit {
       return;
     }
 
-    this.dateTimeService.getPointsInfo(this.userId).subscribe(response => {
+    this.dateTimeService.getPointsInfo().subscribe(response => {
       this.pointsInfo = response || [];
       if (this.pointsInfo.length !== 0) {
         this.showPopUpDriversPoints = true;

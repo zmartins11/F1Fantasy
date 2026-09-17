@@ -212,7 +212,11 @@ public class PredictService {
 
         Prediction prediction = predictRepository
                 .findByUserIdAndRound(userId, Integer.parseInt(round))
-                .orElseThrow(() -> new RuntimeException("Prediction not found"));
+                .orElse(null);
+
+        if (prediction == null) {
+            return Collections.emptyList();
+        }
 
         List<PredictionResult> predictionResults =
                 predictionResultRepository.findByPredictionId(String.valueOf(prediction.getId()));

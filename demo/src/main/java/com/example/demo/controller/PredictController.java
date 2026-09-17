@@ -4,10 +4,12 @@ import com.example.demo.dto.*;
 import com.example.demo.model.Race;
 import com.example.demo.model.fantasy.Prediction;
 import com.example.demo.model.fantasy.RaceResult;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.ErgastService;
 import com.example.demo.service.PredictService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import java.time.Year;
 import java.util.List;
@@ -18,10 +20,13 @@ public class PredictController {
 
     private final PredictService predictService;
     private final ErgastService ergastService;
+    private final UserRepository userRepository;
 
-    public PredictController(PredictService predictService, ErgastService ergastService) {
+    public PredictController(PredictService predictService, ErgastService ergastService,
+                             UserRepository userRepository) {
         this.predictService = predictService;
         this.ergastService = ergastService;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/predict")
@@ -49,13 +54,14 @@ public class PredictController {
 
 
     @GetMapping("/raceSchedule")
-    public ResponseEntity<NextRaceInfoDto> getNextRaceInfo(@RequestParam Integer userId) throws JsonProcessingException {
+    public ResponseEntity<NextRaceInfoDto> getNextRaceInfo(Authentication authentication) throws JsonProcessingException {
         //TimeUnit.SECONDS.sleep(3);
         //RaceResult nextRaceInfo = predictService.getNextRaceInfo();
         NextRaceInfoDto nextRaceInfoDto = ergastService.getNextRaceInfo();
 
 
         //checkUserPredictions
+        Integer userId = getAuthenticatedUserId(authentication);
         nextRaceInfoDto = predictService.getUserPrediction(nextRaceInfoDto, userId);
 
         return ResponseEntity.ok(nextRaceInfoDto);
@@ -67,9 +73,10 @@ public class PredictController {
     }
 
     @GetMapping("/pointsInfo")
-    public ResponseEntity<List<PointsInfoDto>> getPointsInfo(@RequestParam Integer userId) throws JsonProcessingException {
+    public ResponseEntity<List<PointsInfoDto>> getPointsInfo(Authentication authentication) throws JsonProcessingException {
         RaceResult racedPassed = predictService.getRacePassed();
         if (racedPassed != null) {
+            Integer userId = getAuthenticatedUserId(authentication);
             return ResponseEntity.ok(predictService.getPointsInfo(userId, String.valueOf(racedPassed.getRound())));
         } else {
             return ResponseEntity.ok(List.of());
@@ -77,8 +84,14 @@ public class PredictController {
     }
 
     @GetMapping("/totalPoints")
-    public ResponseEntity<List<TotalPointsDto>> getTotalPoints(@RequestParam String username) {
+    public ResponseEntity<List<TotalPointsDto>> getTotalPoints() {
         return ResponseEntity.ok(predictService.getTotalPoints());
+    }
+
+    private Integer getAuthenticatedUserId(Authentication authentication) {
+        return userRepository.findByUserName(authentication.getName())
+                .orElseThrow(() -> new IllegalStateException("Authenticated user not found"))
+                .getId();
     }
 
     @GetMapping("/standings")
