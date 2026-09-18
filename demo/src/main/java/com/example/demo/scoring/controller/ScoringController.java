@@ -3,6 +3,7 @@ package com.example.demo.scoring.controller;
 import com.example.demo.scoring.dto.PointsInfoDto;
 import com.example.demo.scoring.dto.TotalPointsDto;
 import com.example.demo.f1.model.RaceResult;
+import com.example.demo.scoring.port.RaceResultData;
 import com.example.demo.scoring.service.ScoringService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +24,10 @@ public class ScoringController {
 
     @GetMapping("/pointsInfo")
     public ResponseEntity<List<PointsInfoDto>> getPointsInfo(Authentication authentication) throws JsonProcessingException {
-        RaceResult racedPassed = scoringService.getRacePassed();
+        RaceResultData racedPassed = scoringService.getRacePassed();
         if (racedPassed != null) {
             Integer userId = scoringService.getAuthenticatedUserId(authentication);
-            return ResponseEntity.ok(scoringService.getPointsInfo(userId, String.valueOf(racedPassed.getRound())));
+            return ResponseEntity.ok(scoringService.getPointsInfo(userId, String.valueOf(racedPassed.round())));
         } else {
             return ResponseEntity.ok(List.of());
         }

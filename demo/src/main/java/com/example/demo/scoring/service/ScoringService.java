@@ -1,22 +1,20 @@
 package com.example.demo.scoring.service;
 
-import com.example.demo.auth.model.User;
-import com.example.demo.auth.repository.UserRepository;
+import com.example.demo.auth.port.UserData;
+import com.example.demo.auth.port.UserReader;
 import com.example.demo.scoring.dto.PointsInfoDto;
 import com.example.demo.scoring.dto.TotalPointsDto;
-import com.example.demo.f1.model.Driver;
-import com.example.demo.f1.model.RaceResult;
-import com.example.demo.f1.service.ErgastService;
-import com.example.demo.f1.service.RaceResultService;
 import com.example.demo.scoring.model.DriversPoints;
 import com.example.demo.scoring.model.PredictionResult;
 import com.example.demo.scoring.repository.DriversPointsRepository;
-import com.example.demo.prediction.repository.PredictRepository;
 import com.example.demo.scoring.repository.PredictionResultRepository;
 import com.example.demo.scoring.port.PredictionData;
 import com.example.demo.scoring.port.PredictionReader;
 import com.example.demo.scoring.port.RaceResultData;
 import com.example.demo.scoring.port.RaceResultReader;
+import com.example.demo.scoring.port.RaceResultWriter;
+import com.example.demo.scoring.port.DriverData;
+import com.example.demo.scoring.port.DriverReader;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -30,45 +28,43 @@ public class ScoringService {
 
     private final PredictionResultRepository predictionResultRepository;
     private final DriversPointsRepository driversPointsRepository;
-    private final PredictRepository predictRepository;
-    private final RaceResultService raceResultService;
 
-    private final ErgastService ergastService;
-    private final UserRepository userRepository;
+    private final DriverReader driverReader;
     private final PredictionReader predictionReader;
     private final RaceResultReader raceResultReader;
+    private final RaceResultWriter raceResultWriter;
+
+    private final UserReader userReader;
 
     public ScoringService(PredictionResultRepository predictionResultRepository,
                           DriversPointsRepository driversPointsRepository,
-                          PredictRepository predictRepository,
-                          RaceResultService raceResultService,
-                          ErgastService ergastService,
-                          UserRepository userRepository,
                           PredictionReader predictionReader,
-                          RaceResultReader raceResultReader) {
+                          RaceResultReader raceResultReader,
+                          RaceResultWriter raceResultWriter,
+                          UserReader userReader,
+                          DriverReader driverReader) {
         this.predictionResultRepository = predictionResultRepository;
         this.driversPointsRepository = driversPointsRepository;
-        this.predictRepository = predictRepository;
-        this.raceResultService = raceResultService;
-        this.ergastService = ergastService;
-        this.userRepository = userRepository;
         this.predictionReader = predictionReader;
         this.raceResultReader = raceResultReader;
+        this.raceResultWriter = raceResultWriter;
+        this.userReader = userReader;
+        this.driverReader = driverReader;
     }
 
-    public RaceResult getRacePassed() {
-        return raceResultService.findTopByRaceFinishedTrueOrderByRoundDesc();
+    public RaceResultData getRacePassed() {
+        return raceResultReader.findTopByRaceFinishedTrueOrderByRoundDesc();
     }
 
     public Integer getAuthenticatedUserId(Authentication authentication) {
-        return userRepository.findByUserName(authentication.getName())
+        return userReader.findByUserName(authentication.getName())
                 .orElseThrow(() -> new IllegalStateException("Authenticated user not found"))
-                .getId();
+                .id();
     }
 
     public List<PointsInfoDto> getPointsInfo(Integer userId, String round) throws JsonProcessingException {
 
-        RaceResult raceResult = raceResultService.findByRound(Integer.parseInt(round));
+        RaceResultData raceResult = raceResultReader.findByRound(Integer.parseInt(round));
 
         if (raceResult == null) {
             return Collections.emptyList();
@@ -100,14 +96,14 @@ public class ScoringService {
         List<DriversPoints> driversPoints =
                 driversPointsRepository.findByDriverInAndRaceId(
                         drivers,
-                        String.valueOf(raceResult.getId()));
+                        String.valueOf(raceResult.id()));
 
-        Map<String, String> driverNames = ergastService.getDriversInSeason(String.valueOf(raceResult.getSeason()))
+        Map<String, String> driverNames = driverReader.findBySeason(String.valueOf(raceResult.season()))
                 .stream()
-                .filter(driver -> driver.getPermanentNumber() != null)
+            .filter(driver -> driver.permanentNumber() != null)
                 .collect(Collectors.toMap(
-                        driver -> String.valueOf(driver.getPermanentNumber()),
-                        Driver::getFamilyName,
+                driver -> String.valueOf(driver.permanentNumber()),
+                DriverData::familyName,
                         (firstName, secondName) -> firstName));
 
         return driversPoints.stream()
@@ -123,9 +119,9 @@ public class ScoringService {
     }
 
 
-    public void calculateAndSavePoints(RaceResult currentRace) {
+    public void calculateAndSavePoints(RaceResultData currentRace) {
         RaceResultData raceResultData = raceResultReader.findBySeasonAndRound(
-            currentRace.getSeason(), currentRace.getRound());
+            currentRace.season(), currentRace.round());
 
         if (raceResultData == null) {
             return;
@@ -145,8 +141,7 @@ public class ScoringService {
             savePredictionResult(prediction, raceResultData, points);
         }
 
-        currentRace.setPointsCalculated(true);
-        raceResultService.save(currentRace);
+        raceResultWriter.markPointsCalculated(currentRace.id());
     }
 
     private void savePredictionResult(
@@ -231,19 +226,19 @@ public class ScoringService {
 
     public List<TotalPointsDto> getTotalPoints() {
         List<TotalPointsDto> listUsers = new ArrayList<>();
-        List<User> users = userRepository.findAll();
+        List<UserData> users = userReader.findAll();
 
-        for (User user : users) {
-            List<PredictionResult> predictsByUserTemp = predictionResultRepository.findByUserId(user.getId());
+        for (UserData user : users) {
+            List<PredictionResult> predictsByUserTemp = predictionResultRepository.findByUserId(user.id());
             if (!predictsByUserTemp.isEmpty()) {
                 TotalPointsDto tmpP = new TotalPointsDto();
-                tmpP.setUsername(user.getUserName());
-                tmpP.setPoints(String.valueOf(predictionResultRepository.sumPointsByUserId(user.getId())));
+                tmpP.setUsername(user.userName());
+                tmpP.setPoints(String.valueOf(predictionResultRepository.sumPointsByUserId(user.id())));
                 listUsers.add(tmpP);
 
             } else {
                 TotalPointsDto tmp = new TotalPointsDto();
-                tmp.setUsername(user.getUserName());
+                tmp.setUsername(user.userName());
                 tmp.setPoints("0");
                 listUsers.add(tmp);
             }

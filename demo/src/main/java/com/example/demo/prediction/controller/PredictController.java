@@ -38,11 +38,7 @@ public class PredictController {
 
     @GetMapping("/raceSchedule")
     public ResponseEntity<NextRaceInfoDto> getNextRaceInfo(Authentication authentication) throws JsonProcessingException {
-        //TimeUnit.SECONDS.sleep(3);
-        //RaceResult nextRaceInfo = predictService.getNextRaceInfo();
         NextRaceInfoDto nextRaceInfoDto = ergastService.getNextRaceInfo();
-
-
         //checkUserPredictions
         Integer userId = predictService.getAuthenticatedUserId(authentication);
         nextRaceInfoDto = predictService.getUserPrediction(nextRaceInfoDto, userId);

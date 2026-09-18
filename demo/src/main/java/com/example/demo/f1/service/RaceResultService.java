@@ -19,8 +19,8 @@ public class RaceResultService {
         return repository.findBySeasonAndRound(season, round);
     }
 
-    public RaceResult findLastFinishedRace() {
-        return repository.findTopByRaceFinishedTrueOrderByRoundDesc();
+    public RaceResult findById(Integer id) {
+        return repository.findById(id).orElse(null);
     }
 
     public List<RaceResult> findBySeason(Integer season) {

@@ -2,6 +2,7 @@ package com.example.demo.f1.service;
 
 import com.example.demo.f1.model.RaceResultDto;
 import com.example.demo.f1.model.RaceResult;
+import com.example.demo.scoring.port.RaceResultData;
 import com.example.demo.scoring.service.ScoringService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +50,7 @@ public class ScheduleRaceResult {
                 currentRace = updateRaceResult(lastFinishedRaceResult, season, round);
             }
 
-            scoringService.calculateAndSavePoints(currentRace);
+            scoringService.calculateAndSavePoints(toData(currentRace));
         } catch (RestClientException exception) {
             log.warn("Could not retrieve the latest race result; it will be retried", exception);
         } catch (JsonProcessingException exception) {
@@ -57,6 +58,19 @@ public class ScheduleRaceResult {
         } catch (RuntimeException exception) {
             log.error("Unexpected error processing the latest race result", exception);
         }
+    }
+
+    private RaceResultData toData(RaceResult raceResult) {
+        if (raceResult == null) {
+            return null;
+        }
+        return new RaceResultData(raceResult.getId(),
+                raceResult.getSeason(),
+                raceResult.getRound(),
+                raceResult.getFirst(),
+                raceResult.getSecond(),
+                raceResult.getThird(),
+                raceResult.getFastestLap());
     }
 
     private RaceResult updateRaceResult(RaceResultDto apiRaceResult, Integer season, Integer round) {

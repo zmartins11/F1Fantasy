@@ -1,18 +1,27 @@
 package com.example.demo.auth.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.demo.auth.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.auth.model.User;
 import com.example.demo.auth.repository.AuthenticationRepository;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class AuthenticationService {
 	
-	@Autowired
-	private AuthenticationRepository authRepo;
+	private final AuthenticationRepository authRepo;
 
-	
+	private final UserRepository userRepository;
+
+	public AuthenticationService(AuthenticationRepository authRepo, UserRepository userRepository) {
+		this.authRepo = authRepo;
+		this.userRepository = userRepository;
+	}
+
+
 	public User saveUser(User user) {
 		return authRepo.save(user);	
 	}
@@ -23,5 +32,13 @@ public class AuthenticationService {
 	
 	public User fetchUserByEmailAndPassword(String email, String pass) {
 		return authRepo.findByEmailIdAndPassword(email, pass);
+	}
+
+	public Optional<User> findByUsername(String username) {
+		return userRepository.findByUserName(username);
+	}
+
+	public List<User> findAll() {
+		return userRepository.findAll();
 	}
 }
