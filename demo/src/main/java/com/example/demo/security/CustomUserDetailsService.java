@@ -1,8 +1,8 @@
 package com.example.demo.security;
 
-import com.example.demo.model.fantasy.Roles;
-import com.example.demo.model.fantasy.User;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.auth.model.Roles;
+import com.example.demo.auth.model.User;
+import com.example.demo.auth.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

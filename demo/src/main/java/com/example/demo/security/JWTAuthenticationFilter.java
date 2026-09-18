@@ -1,6 +1,5 @@
 package com.example.demo.security;
 
-import com.example.demo.model.fantasy.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
