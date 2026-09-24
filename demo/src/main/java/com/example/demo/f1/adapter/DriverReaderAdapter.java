@@ -2,8 +2,8 @@ package com.example.demo.f1.adapter;
 
 import com.example.demo.f1.model.Driver;
 import com.example.demo.f1.service.ErgastService;
-import com.example.demo.scoring.port.DriverData;
-import com.example.demo.scoring.port.DriverReader;
+import com.example.demo.contracts.driver.DriverData;
+import com.example.demo.contracts.driver.DriverReader;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.stereotype.Component;
 

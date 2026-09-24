@@ -1,11 +1,15 @@
 package com.example.demo.prediction.service;
 
-import com.example.demo.auth.repository.UserRepository;
-import com.example.demo.prediction.dto.NextRaceInfoDto;
+import com.example.demo.f1.dto.NextRaceData;
+import com.example.demo.auth.port.UserReader;
 import com.example.demo.prediction.dto.PredictionDto;
+import com.example.demo.prediction.dto.RaceScheduleResponse;
+import com.example.demo.prediction.dto.UserPredictionData;
 
 import com.example.demo.prediction.model.Prediction;
 import com.example.demo.prediction.repository.PredictRepository;
+import com.example.demo.prediction.port.NextRaceReader;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -14,11 +18,17 @@ import org.springframework.stereotype.Service;
 public class PredictService {
 
     private final PredictRepository predictRepository;
-    private final UserRepository userRepository;
 
-    public PredictService (PredictRepository predictRepository,UserRepository userRepository ) {
+    private final UserReader userReader;
+    private final NextRaceReader nextRaceReader;
+
+
+
+    public PredictService(PredictRepository predictRepository,
+                          UserReader userReader, NextRaceReader nextRaceReader) {
         this.predictRepository = predictRepository;
-        this.userRepository = userRepository;
+        this.userReader = userReader;
+        this.nextRaceReader = nextRaceReader;
     }
 
     public Prediction savePrediction(PredictionDto dto) {
@@ -57,29 +67,29 @@ public class PredictService {
         return prediction;
     }
 
-    public NextRaceInfoDto getUserPrediction(NextRaceInfoDto nextRaceInfoDto, Integer userId) {
-        predictRepository.findByUserIdAndRound(userId, Integer.parseInt(nextRaceInfoDto.getRound()))
-                .ifPresentOrElse(userPrediction -> {
+    public RaceScheduleResponse getRaceSchedule(Integer userId) throws JsonProcessingException {
+        NextRaceData nextRace = nextRaceReader.findNextRace();
+        UserPredictionData prediction = getUserPrediction(nextRace.round(), userId);
+        return new RaceScheduleResponse(nextRace, prediction);
+    }
 
-                    nextRaceInfoDto.setUserHavePrediction(true);
-                    nextRaceInfoDto.setFirst(userPrediction.getFirst());
-                    nextRaceInfoDto.setSecond(userPrediction.getSecond());
-                    nextRaceInfoDto.setThird(userPrediction.getThird());
-
-                    if (Boolean.TRUE.equals(userPrediction.getPredictedFastestLap())) {
-                        nextRaceInfoDto.setFastestLap(userPrediction.getFastestLap());
-                    }
-                    nextRaceInfoDto.setPredictedPodium(userPrediction.getPredictedPodium());
-                    nextRaceInfoDto.setPredictedFastestLap(userPrediction.getPredictedFastestLap());
-
-                }, () -> nextRaceInfoDto.setUserHavePrediction(false));
-        return nextRaceInfoDto;
+    private UserPredictionData getUserPrediction(String round, Integer userId) {
+        return predictRepository.findByUserIdAndRound(userId, Integer.parseInt(round))
+                .map(prediction -> new UserPredictionData(
+                        true,
+                        prediction.getFirst(),
+                        prediction.getSecond(),
+                        prediction.getThird(),
+                        prediction.getFastestLap(),
+                        prediction.getPredictedPodium(),
+                        prediction.getPredictedFastestLap()))
+                .orElseGet(() -> new UserPredictionData(false, null, null, null, null, null, null));
     }
 
 
     public Integer getAuthenticatedUserId(Authentication authentication) {
-        return userRepository.findByUserName(authentication.getName())
+        return userReader.findByUserName(authentication.getName())
                 .orElseThrow(() -> new IllegalStateException("Authenticated user not found"))
-                .getId();
+                .id();
     }
 }

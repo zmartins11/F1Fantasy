@@ -1,11 +1,10 @@
 package com.example.demo.prediction.controller;
 
-import com.example.demo.prediction.dto.NextRaceInfoDto;
 import com.example.demo.prediction.dto.PredictionDto;
+import com.example.demo.prediction.dto.RaceScheduleResponse;
 import com.example.demo.prediction.model.Prediction;
-import com.example.demo.f1.service.ErgastService;
-import com.example.demo.prediction.service.PredictService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.example.demo.prediction.service.PredictService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
@@ -15,11 +14,9 @@ import org.springframework.http.ResponseEntity;
 public class PredictController {
 
     private final PredictService predictService;
-    private final ErgastService ergastService;
 
-    public PredictController(PredictService predictService, ErgastService ergastService) {
+    public PredictController(PredictService predictService) {
         this.predictService = predictService;
-        this.ergastService = ergastService;
     }
 
     @PostMapping("/predict")
@@ -37,13 +34,9 @@ public class PredictController {
 
 
     @GetMapping("/raceSchedule")
-    public ResponseEntity<NextRaceInfoDto> getNextRaceInfo(Authentication authentication) throws JsonProcessingException {
-        NextRaceInfoDto nextRaceInfoDto = ergastService.getNextRaceInfo();
-        //checkUserPredictions
+    public ResponseEntity<RaceScheduleResponse> getNextRaceInfo(Authentication authentication) throws JsonProcessingException {
         Integer userId = predictService.getAuthenticatedUserId(authentication);
-        nextRaceInfoDto = predictService.getUserPrediction(nextRaceInfoDto, userId);
-
-        return ResponseEntity.ok(nextRaceInfoDto);
+        return ResponseEntity.ok(predictService.getRaceSchedule(userId));
     }
 
 }

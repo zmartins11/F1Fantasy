@@ -3,7 +3,6 @@ import { TokenStorageService } from './_services/token-storage.service';
 import { User } from './model/user';
 import { Router } from '@angular/router';
 import { AuthService } from './_services/auth.service';
-import { DateTimeServiceService } from './_services/date-time-service.service';
 
 @Component({
   selector: 'app-root',
@@ -24,7 +23,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   showPropertyName: boolean = true;
 
   constructor(private authService: AuthService, private router: Router,
-    private dateTimeService: DateTimeServiceService,
     private el: ElementRef, private renderer: Renderer2) { }
 
 

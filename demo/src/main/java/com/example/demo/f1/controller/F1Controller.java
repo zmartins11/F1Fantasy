@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.example.demo.f1.dto.RaceInfo;
 import com.example.demo.f1.dto.StandingsDto;
+import com.example.demo.f1.model.Driver;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +35,11 @@ public class F1Controller {
 	public ResponseEntity<RaceResultDto> getRaceResult(@PathVariable String season, @PathVariable String round)
 			throws JsonProcessingException {
 		return ResponseEntity.ok(ergastService.getRaceResult(season, round));
+	}
+
+	@GetMapping("/drivers/{season}")
+	public ResponseEntity<List<Driver>> rawDataDrivers(@PathVariable String season) throws JsonProcessingException {
+		return ResponseEntity.ok(ergastService.getDriversInSeason(season));
 	}
 
 	@GetMapping("/standings")

@@ -1,5 +1,5 @@
 export interface TotalPointsResponse {
     position : string;
-    username : string;
+    nameDriverOrConstructor : string;
     points : string;
 }

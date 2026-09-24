@@ -13,8 +13,7 @@ import { environment } from '../environments/environment';
 export class CalendarService {
 
 
-  private baseApi = environment.apiSpringUrl;
-  private baseUrl = `${this.baseApi}/rawData`;
+  private baseApi = environment.f1ApiUrl;
   
 
     constructor(private httpClient: HttpClient) { }

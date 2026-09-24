@@ -6,9 +6,9 @@ import java.util.*;
 
 import com.example.demo.f1.dto.RaceInfo;
 import com.example.demo.f1.dto.StandingsDto;
+import com.example.demo.f1.dto.NextRaceData;
+import com.example.demo.f1.dto.TotalPointsWC;
 import com.example.demo.f1.model.*;
-import com.example.demo.prediction.dto.NextRaceInfoDto;
-import com.example.demo.scoring.dto.TotalPointsDto;
 import com.example.demo.f1.utils.RaceResultMapper;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -216,7 +216,7 @@ public class ErgastService {
 		return resultSeason;
 	}
 
-	public NextRaceInfoDto getNextRaceInfo() throws JsonProcessingException {
+	public NextRaceData getNextRaceInfo() throws JsonProcessingException {
 
 		ResponseEntity<String> response;
 
@@ -254,7 +254,7 @@ public class ErgastService {
 				.findFirst()
 				.orElseThrow(() -> new RuntimeException("No next race found"));
 
-		NextRaceInfoDto dto = new NextRaceInfoDto();
+		Boolean predictionLocked = false;
 
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
 
@@ -265,14 +265,6 @@ public class ErgastService {
 		LocalDateTime raceDateTime = LocalDateTime.of(
 				nextRace.getDate(),
 				raceTime);
-
-		dto.setTime(raceDateTime.format(formatter));
-		dto.setNameRace(nextRace.getRaceName());
-		dto.setRound(nextRace.getRound());
-		dto.setCountry(nextRace.getCircuit().getLocation().getCountry());
-		dto.setCity(nextRace.getCircuit().getLocation().getLocality());
-		dto.setRaceDate(nextRace.getDate());
-		dto.setRaceTime(nextRace.getTime());
 
 		// Bloquear previsões 24 horas antes da qualificação
 		if (nextRace.getQualifying() != null) {
@@ -285,15 +277,23 @@ public class ErgastService {
 					nextRace.getQualifying().getDate(),
 					qualiTime);
 
-			dto.setPredictionLocked(false);
+			predictionLocked = false;
 
 		} else {
 
-			dto.setPredictionLocked(false);
+			predictionLocked = false;
 
 		}
 
-		return dto;
+		return new NextRaceData(
+				nextRace.getRaceName(),
+				raceDateTime.format(formatter),
+				nextRace.getRound(),
+				nextRace.getCircuit().getLocation().getCountry(),
+				nextRace.getCircuit().getLocation().getLocality(),
+				nextRace.getDate(),
+				nextRace.getTime(),
+				predictionLocked);
 	}
 
 	public Race getNextRace() throws JsonProcessingException {
@@ -341,8 +341,8 @@ public class ErgastService {
 		StandingsDto standingsDto = new StandingsDto();
 		RestTemplate restTemplate = new RestTemplate();
 
-		List<TotalPointsDto> resultDrivers  = new ArrayList<>();
-		List<TotalPointsDto> resultConstructors  = new ArrayList<>();
+		List<TotalPointsWC> resultDrivers  = new ArrayList<>();
+		List<TotalPointsWC> resultConstructors  = new ArrayList<>();
 
 
 		String urlDrivers = "https://api.jolpi.ca/ergast/f1/current/driverstandings.json";
@@ -358,8 +358,8 @@ public class ErgastService {
 		if (racesResponseDrivers != null) {
 			List<DriverStanding> drivers = racesResponseDrivers.getMrData().getStandingsTable().getStandingsLists().get(0).getDriverStandings();
 			for(DriverStanding driverTemp : drivers) {
-				TotalPointsDto tmp = new TotalPointsDto();
-				tmp.setUsername(driverTemp.getDriver().getFamilyName());
+				TotalPointsWC tmp = new TotalPointsWC();
+				tmp.setNameDriverOrConstructor(driverTemp.getDriver().getFamilyName());
 				tmp.setPoints(driverTemp.getPoints());
 				resultDrivers.add(tmp);
 			}
@@ -369,8 +369,8 @@ public class ErgastService {
 		if (racesResponseConstructor != null) {
 			List<ConstructorStandings> constructors = racesResponseConstructor.getMrData().getStandingsTable().getStandingsLists().get(0).getConstructorStandings();
 			for (ConstructorStandings constructorTemp : constructors) {
-				TotalPointsDto tmpC = new TotalPointsDto();
-				tmpC.setUsername(constructorTemp.getConstructor().getName());
+				TotalPointsWC tmpC = new TotalPointsWC();
+				tmpC.setNameDriverOrConstructor(constructorTemp.getConstructor().getName());
 				tmpC.setPoints(constructorTemp.getPoints());
 				resultConstructors.add(tmpC);
 			}
@@ -379,13 +379,13 @@ public class ErgastService {
 
 		resultDrivers.sort((o1, o2) -> Integer.compare(Integer.parseInt(o2.getPoints()), Integer.parseInt(o1.getPoints())));
 		for (int i = 0; i < resultDrivers.size(); i++) {
-			TotalPointsDto tmp = resultDrivers.get(i);
+			TotalPointsWC tmp = resultDrivers.get(i);
 			tmp.setPosition(String.valueOf(i + 1));
 		}
 
 		resultConstructors.sort((o1, o2) -> Integer.compare(Integer.parseInt(o2.getPoints()), Integer.parseInt(o1.getPoints())));
 		for (int i = 0; i < resultConstructors.size(); i++) {
-			TotalPointsDto tmp = resultConstructors.get(i);
+			TotalPointsWC tmp = resultConstructors.get(i);
 			tmp.setPosition(String.valueOf(i + 1));
 		}
 

@@ -1,6 +1,6 @@
 package com.example.demo.f1.service;
 
-import com.example.demo.f1.model.RaceResult;
+import com.example.demo.f1.model.entity.RaceResult;
 import com.example.demo.f1.repository.RaceResultRepository;
 import org.springframework.stereotype.Service;
 

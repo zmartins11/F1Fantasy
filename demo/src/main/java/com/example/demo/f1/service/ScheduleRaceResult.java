@@ -1,9 +1,9 @@
 package com.example.demo.f1.service;
 
+import com.example.demo.contracts.race.RaceFinishedEvent;
 import com.example.demo.f1.model.RaceResultDto;
-import com.example.demo.f1.model.RaceResult;
-import com.example.demo.scoring.port.RaceResultData;
-import com.example.demo.scoring.service.ScoringService;
+import com.example.demo.f1.model.entity.RaceResult;
+import com.example.demo.f1.publisher.RaceFinishedPublisher;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,15 +16,16 @@ public class ScheduleRaceResult {
 
     private final RaceResultService raceResultService;
     private final ErgastService ergastService;
-    private final ScoringService scoringService;
+
+    private final RaceFinishedPublisher raceFinishedPublisher;
+
 
     public ScheduleRaceResult(RaceResultService raceResultService,
-                              ErgastService ergastService,
-                              ScoringService scoringService) {
+                              ErgastService ergastService, RaceFinishedPublisher raceFinishedPublisher) {
 
         this.raceResultService = raceResultService;
         this.ergastService = ergastService;
-        this.scoringService = scoringService;
+        this.raceFinishedPublisher = raceFinishedPublisher;
     }
 
 
@@ -50,7 +51,17 @@ public class ScheduleRaceResult {
                 currentRace = updateRaceResult(lastFinishedRaceResult, season, round);
             }
 
-            scoringService.calculateAndSavePoints(toData(currentRace));
+            RaceFinishedEvent event = new RaceFinishedEvent(
+                    currentRace.getId(),
+                    currentRace.getSeason(),
+                    currentRace.getRound(),
+                    currentRace.getFirst(),
+                    currentRace.getSecond(),
+                    currentRace.getThird(),
+                    currentRace.getFastestLap()
+            );
+
+            raceFinishedPublisher.publish(event);
         } catch (RestClientException exception) {
             log.warn("Could not retrieve the latest race result; it will be retried", exception);
         } catch (JsonProcessingException exception) {
@@ -58,19 +69,6 @@ public class ScheduleRaceResult {
         } catch (RuntimeException exception) {
             log.error("Unexpected error processing the latest race result", exception);
         }
-    }
-
-    private RaceResultData toData(RaceResult raceResult) {
-        if (raceResult == null) {
-            return null;
-        }
-        return new RaceResultData(raceResult.getId(),
-                raceResult.getSeason(),
-                raceResult.getRound(),
-                raceResult.getFirst(),
-                raceResult.getSecond(),
-                raceResult.getThird(),
-                raceResult.getFastestLap());
     }
 
     private RaceResult updateRaceResult(RaceResultDto apiRaceResult, Integer season, Integer round) {

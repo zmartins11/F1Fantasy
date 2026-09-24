@@ -1,6 +1,6 @@
 package com.example.demo.f1.repository;
 
-import com.example.demo.f1.model.RaceResult;
+import com.example.demo.f1.model.entity.RaceResult;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

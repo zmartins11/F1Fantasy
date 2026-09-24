@@ -1,7 +1,9 @@
 export const environment = {
     production: false,
     apiSpringUrl: 'http://localhost:8080',
-    apiPythonUrl: 'http://localhost:5000'
+    apiPythonUrl: 'http://localhost:5000',
+    f1ApiUrl: 'http://localhost:8081',
+    predictApiUrl: 'http://localhost:8083',
     /* apiPythonUrl: 'http://172.17.0.2:5000'   dockker*/
   };
   

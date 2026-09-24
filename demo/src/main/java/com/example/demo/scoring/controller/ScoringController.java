@@ -2,8 +2,7 @@ package com.example.demo.scoring.controller;
 
 import com.example.demo.scoring.dto.PointsInfoDto;
 import com.example.demo.scoring.dto.TotalPointsDto;
-import com.example.demo.f1.model.RaceResult;
-import com.example.demo.scoring.port.RaceResultData;
+import com.example.demo.contracts.race.RaceResultData;
 import com.example.demo.scoring.service.ScoringService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.ResponseEntity;

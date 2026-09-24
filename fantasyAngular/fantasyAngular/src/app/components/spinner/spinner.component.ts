@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { SipnnerService } from 'src/app/_services/SpinnerService';
-import { DateTimeServiceService } from 'src/app/_services/date-time-service.service';
 
 @Component({
   selector: 'app-spinner',

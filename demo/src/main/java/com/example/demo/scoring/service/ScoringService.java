@@ -2,6 +2,7 @@ package com.example.demo.scoring.service;
 
 import com.example.demo.auth.port.UserData;
 import com.example.demo.auth.port.UserReader;
+import com.example.demo.contracts.race.RaceFinishedEvent;
 import com.example.demo.scoring.dto.PointsInfoDto;
 import com.example.demo.scoring.dto.TotalPointsDto;
 import com.example.demo.scoring.model.DriversPoints;
@@ -10,11 +11,11 @@ import com.example.demo.scoring.repository.DriversPointsRepository;
 import com.example.demo.scoring.repository.PredictionResultRepository;
 import com.example.demo.scoring.port.PredictionData;
 import com.example.demo.scoring.port.PredictionReader;
-import com.example.demo.scoring.port.RaceResultData;
+import com.example.demo.contracts.race.RaceResultData;
 import com.example.demo.scoring.port.RaceResultReader;
 import com.example.demo.scoring.port.RaceResultWriter;
-import com.example.demo.scoring.port.DriverData;
-import com.example.demo.scoring.port.DriverReader;
+import com.example.demo.contracts.driver.DriverData;
+import com.example.demo.contracts.driver.DriverReader;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -119,9 +120,9 @@ public class ScoringService {
     }
 
 
-    public void calculateAndSavePoints(RaceResultData currentRace) {
+    public void calculateAndSavePoints(RaceFinishedEvent event) {
         RaceResultData raceResultData = raceResultReader.findBySeasonAndRound(
-            currentRace.season(), currentRace.round());
+                event.season(), event.round());
 
         if (raceResultData == null) {
             return;
@@ -141,7 +142,7 @@ public class ScoringService {
             savePredictionResult(prediction, raceResultData, points);
         }
 
-        raceResultWriter.markPointsCalculated(currentRace.id());
+        raceResultWriter.markPointsCalculated(event.raceResultId());
     }
 
     private void savePredictionResult(

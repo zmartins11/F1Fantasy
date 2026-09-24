@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Prediction } from '../model/Prediction';
+import { NextRaceInfo } from '../model/NextRaceInfo';
 import { environment } from '../environments/environment';
 
 @Injectable({
@@ -9,14 +10,15 @@ import { environment } from '../environments/environment';
 })
 export class PredictService {
 
-  private baseApi = environment.apiSpringUrl;
+  private baseApi = environment.predictApiUrl;
   private baseUrl = `${this.baseApi}/predict`;
   
   
   constructor(private http : HttpClient) { }
 
  
-  savePrediction(first:number, second: number, third:number, fastest:number, userId: number, round: number, season: number): Observable<Prediction> {
+  savePrediction(first:number, second: number, third:number, fastest:number, userId: number, round: number, season: number):
+   Observable<Prediction> {
 
     // Helper function to convert 0 to null
   const convertToNullIfZero = (value: number): string | null => {
@@ -36,7 +38,8 @@ export class PredictService {
     return this.http.post<Prediction>(this.baseUrl, predictionDTO);
   }
 
-  private convertToNullIfZero(value: number): string | null {
-    return value === 0 ? null : value.toString();
+  getNextRaceInfo(): Observable<NextRaceInfo> {
+    return this.http.get<NextRaceInfo>(`${this.baseApi}/raceSchedule`);
   }
+
 }

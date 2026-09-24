@@ -1,23 +1,15 @@
 import { DatePipe, Time } from '@angular/common';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, NgZone, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { AuthService } from 'src/app/_services/auth.service';
-import { DateTimeServiceService } from 'src/app/_services/date-time-service.service';
-import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { UserService } from 'src/app/_services/user.service';
-import { DateTimeResponse } from 'src/app/model/DateTimeResponse';
 import moment from 'moment';
-import { Formula1Driver, Formula1Drivers } from 'src/app/model/Formula1Drivers';
 import { SipnnerService } from 'src/app/_services/SpinnerService';
 import { PredictService } from 'src/app/_services/predict.service';
-import { Prediction } from 'src/app/model/Prediction';
 import { faArrowDown, faArrowUp, faGaugeSimpleMed } from '@fortawesome/free-solid-svg-icons'
 import { TotalPointsResponse } from 'src/app/model/TotalPointsResponse';
 import { PointsInfo } from 'src/app/model/PointsInfo';
-import { DriverMappingService } from 'src/app/_services/driver-mapping-service.service';
-import { Standings } from 'src/app/model/Standings';
 import { Observable } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
-import { NextRaceInfo } from 'src/app/model/NextRaceInfo';
 import { Router } from '@angular/router';
 import { RaceDetailsComponent } from '../race-details/race-details.component';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
@@ -27,6 +19,8 @@ import { WeatherComponent } from '../weather/weather.component';
 import { Weather } from 'src/app/model/Weather';
 import { F1Service } from 'src/app/_services/f1.service';
 import { Driver } from 'src/app/model/Driver';
+import { TotalPointsUsers } from 'src/app/model/TotalPointsUsers';
+import { ScoringService } from 'src/app/_services/scoring.service';
 
 
 
@@ -38,9 +32,8 @@ import { Driver } from 'src/app/model/Driver';
 export class HomeComponent implements OnInit {
 
   constructor(private userService: UserService, private authService: AuthService,
-    private dateTimeService: DateTimeServiceService, private spinnerService: SipnnerService,
+    private scoringService: ScoringService, private spinnerService: SipnnerService,
     private predictService: PredictService,
-    private driverMappingService: DriverMappingService,
     private sanitizer: DomSanitizer,
     private router: Router,
     private modalService: BsModalService,
@@ -85,7 +78,7 @@ export class HomeComponent implements OnInit {
   showAlertSuccess: boolean = false;
   showAlertIncomplete: boolean = false;
   isHighlighted: boolean = false;
-  totalPointsData: TotalPointsResponse[] | null = null;
+  totalPointsData: TotalPointsUsers[] | null = null;
   driversStandings: TotalPointsResponse[] | null = null;
   constructorStandings: TotalPointsResponse[] | null = null;
   safeUrl: any;
@@ -143,6 +136,7 @@ export class HomeComponent implements OnInit {
       this.f1Service.getDriversList(this.currentSeason).subscribe(drivers => {
         this.drivers = drivers;
         this.driverMap.clear();
+        console.log("DRIVERS:", this.drivers);
 
         drivers.forEach(driver => {
           this.driverMap.set(driver.permanentNumber, driver);
@@ -156,29 +150,29 @@ export class HomeComponent implements OnInit {
         return;
       }
 
-      this.dateTimeService.getNextRaceInfo().subscribe(response => {
-        this.raceDate = response.time;
-        this.nameRace = response.nameRace;
-        this.round = response.round;
-        this.country = response.country;
-        this.city = response.city;
-        this.predictionLocked = response.predictionLocked;
-        const date = new Date(response.raceDate);
+      this.predictService.getNextRaceInfo().subscribe(response => {
+        this.raceDate = response.race.time;
+        this.nameRace = response.race.nameRace;
+        this.round = response.race.round;
+        this.country = response.race.country;
+        this.city = response.race.city;
+        this.predictionLocked = response.race.predictionLocked;
+        const date = new Date(response.race.raceDate);
 
 
         this.raceDay = date.getDate();
         this.raceMonth = date.getMonth() + 1;
         //ajust timezone
-        this.raceHour = parseInt(response.raceTime, 10);
+        this.raceHour = parseInt(response.race.raceTime, 10);
         this.populateWeatherWidget();
-        if (response.predictedPodium) {
+        if (response.prediction.predictedPodium) {
           this.pHasPodium = true;
-          this.pFirst = this.getDriverName(Number(response.first));
-          this.pSecond = this.getDriverName(Number(response.second));
-          this.pThird = this.getDriverName(Number(response.third));
-          if (response.predictedFastestLap) {
+          this.pFirst = this.getDriverName(Number(response.prediction.first));
+          this.pSecond = this.getDriverName(Number(response.prediction.second));
+          this.pThird = this.getDriverName(Number(response.prediction.third));
+          if (response.prediction.predictedFastestLap) {
             this.pHasFastestLap = true;
-            this.pFastestLap = this.getDriverName(Number(response.fastestLap));
+            this.pFastestLap = this.getDriverName(Number(response.prediction.fastestLap));
           }
         }
         //testCoundtow
@@ -228,7 +222,7 @@ export class HomeComponent implements OnInit {
 
 
   getStandings() {
-    this.dateTimeService.getStandingsSeason().subscribe(response => {
+    this.f1Service.getStandings().subscribe(response => {
       this.driversStandings = response.drivers;
       this.constructorStandings = response.constructors;
     })
@@ -265,7 +259,7 @@ export class HomeComponent implements OnInit {
 
   populatePointsTables() {
     //populate tables
-    this.dateTimeService.getTotalPoints().subscribe(response => {
+    this.scoringService.getTotalPoints().subscribe(response => {
       if (Array.isArray(response)) {
         this.totalPointsData = response;
 
@@ -276,7 +270,7 @@ export class HomeComponent implements OnInit {
 
           // Add default objects to the array
           for (let i = 0; i < remainingCount; i++) {
-            const defaultObject: TotalPointsResponse = {
+            const defaultObject: TotalPointsUsers = {
               position: '-',
               username: '---',
               points: '-'
@@ -297,7 +291,7 @@ export class HomeComponent implements OnInit {
       return;
     }
 
-    this.dateTimeService.getPointsInfo().subscribe(response => {
+    this.scoringService.getPointsInfo().subscribe(response => {
       this.pointsInfo = response || [];
       if (this.pointsInfo.length !== 0) {
         this.showPopUpDriversPoints = true;
@@ -337,7 +331,7 @@ export class HomeComponent implements OnInit {
   }
 
   openRacePopup() {
-    this.dateTimeService.getNextRaceDetails().subscribe(race => {
+    this.f1Service.getNextRaceDetails().subscribe(race => {
       const initialState = {
         race: race
       };

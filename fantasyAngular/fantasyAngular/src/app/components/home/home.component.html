@@ -366,7 +366,7 @@
                     <tr
                       *ngFor="let driver of getDriversStandings() | paginate:{itemsPerPage:6, currentPage:page, totalItems:totalLength}">
                       <td>{{ driver.position}}</td>
-                      <td>{{ driver.username }}</td>
+                      <td>{{ driver.nameDriverOrConstructor }}</td>
                       <td>{{ driver.points }}</td>
                     </tr>
                   </tbody>
@@ -401,7 +401,7 @@
                     <tr
                       *ngFor="let driver of getConstructoresStandings() | paginate:{itemsPerPage:6, currentPage:page, totalItems:totalLength}">
                       <td>{{ driver.position}}</td>
-                      <td>{{ driver.username }}</td>
+                      <td>{{ driver.nameDriverOrConstructor }}</td>
                       <td>{{ driver.points }}</td>
                     </tr>
                   </tbody>

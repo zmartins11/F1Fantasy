@@ -1,8 +1,8 @@
 package com.example.demo.scoring.adapter;
 
-import com.example.demo.f1.model.RaceResult;
+import com.example.demo.f1.model.entity.RaceResult;
 import com.example.demo.f1.service.RaceResultService;
-import com.example.demo.scoring.port.RaceResultData;
+import com.example.demo.contracts.race.RaceResultData;
 import com.example.demo.scoring.port.RaceResultReader;
 import com.example.demo.scoring.port.RaceResultWriter;
 import org.springframework.stereotype.Component;
