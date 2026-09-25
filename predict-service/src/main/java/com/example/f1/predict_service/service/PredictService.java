@@ -2,7 +2,6 @@ package com.example.f1.predict_service.service;
 
 import com.example.f1.predict_service.contracts.prediction.PredictionData;
 import com.example.f1.predict_service.contracts.race.NextRaceData;
-import com.example.f1.predict_service.contracts.user.UserReader;
 import com.example.f1.predict_service.dto.PredictionDto;
 import com.example.f1.predict_service.dto.RaceScheduleResponse;
 import com.example.f1.predict_service.dto.UserPredictionData;
@@ -22,14 +21,12 @@ public class PredictService {
 
     private final PredictRepository predictRepository;
 
-    private final UserReader userReader;
     private final NextRaceReader nextRaceReader;
 
 
     public PredictService(PredictRepository predictRepository,
-                          UserReader userReader, NextRaceReader nextRaceReader) {
+                          NextRaceReader nextRaceReader) {
         this.predictRepository = predictRepository;
-        this.userReader = userReader;
         this.nextRaceReader = nextRaceReader;
     }
 
@@ -69,9 +66,9 @@ public class PredictService {
         return prediction;
     }
 
-    public RaceScheduleResponse getRaceSchedule(Integer userId) throws JsonProcessingException {
+    public RaceScheduleResponse getRaceSchedule(Long userId) throws JsonProcessingException {
         NextRaceData nextRace = nextRaceReader.findNextRace();
-        UserPredictionData prediction = getUserPrediction(nextRace.round(), userId);
+        UserPredictionData prediction = getUserPrediction(nextRace.round(), userId.intValue());
         return new RaceScheduleResponse(nextRace, prediction);
     }
 
@@ -86,13 +83,6 @@ public class PredictService {
                         prediction.getPredictedPodium(),
                         prediction.getPredictedFastestLap()))
                 .orElseGet(() -> new UserPredictionData(false, null, null, null, null, null, null));
-    }
-
-
-    public Integer getAuthenticatedUserId(Authentication authentication) {
-        return userReader.findByUserName(authentication.getName())
-                .orElseThrow(() -> new IllegalStateException("Authenticated user not found"))
-                .id();
     }
 
     public List<PredictionData> findBySeasonAndRound(Integer season, Integer round) {

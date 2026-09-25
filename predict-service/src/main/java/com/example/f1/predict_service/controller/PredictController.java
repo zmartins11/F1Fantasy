@@ -7,12 +7,12 @@ import com.example.f1.predict_service.service.PredictService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("api/predictions")
 public class PredictController {
 
     private final PredictService predictService;
@@ -36,9 +36,8 @@ public class PredictController {
 
 
     @GetMapping("/raceSchedule")
-    public ResponseEntity<RaceScheduleResponse> getNextRaceInfo(Authentication authentication) throws JsonProcessingException {
-        Integer userId = predictService.getAuthenticatedUserId(authentication);
-        return ResponseEntity.ok(predictService.getRaceSchedule(userId));
+    public ResponseEntity<RaceScheduleResponse> getNextRaceInfo(@AuthenticationPrincipal Jwt jwt) throws JsonProcessingException {
+        return ResponseEntity.ok(predictService.getRaceSchedule(jwt.getClaim("userId")));
     }
 
 }

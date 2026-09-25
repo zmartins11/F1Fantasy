@@ -1,4 +1,4 @@
-package com.example.f1.predict_service.contracts.user;
+package com.example.f1.auth_service.port;
 
 public record UserData(
         Integer id,

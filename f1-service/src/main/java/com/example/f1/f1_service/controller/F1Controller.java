@@ -13,6 +13,7 @@ import com.example.f1.f1_service.service.ErgastService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,6 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 
 @RestController
+@RequestMapping("/api/f1")
 public class F1Controller {
 
 	private final ErgastService ergastService;

@@ -18,7 +18,7 @@ import com.example.f1.scoring_service.contracts.race.RaceResultWriter;
 import com.example.f1.scoring_service.repository.DriversPointsRepository;
 import com.example.f1.scoring_service.repository.PredictionResultRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -56,12 +56,6 @@ public class ScoringService {
 
     public RaceResultData getRacePassed() {
         return raceResultReader.findTopByRaceFinishedTrueOrderByRoundDesc();
-    }
-
-    public Integer getAuthenticatedUserId(Authentication authentication) {
-        return userReader.findByUserName(authentication.name())
-                .orElseThrow(() -> new IllegalStateException("Authenticated user not found"))
-                .id();
     }
 
     public List<PointsInfoDto> getPointsInfo(Integer userId, String round) throws JsonProcessingException {
