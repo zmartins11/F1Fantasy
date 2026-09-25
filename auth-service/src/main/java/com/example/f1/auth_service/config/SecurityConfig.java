@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
 
                 // Ativa CORS com a configuração por defeito
-                .cors(Customizer.withDefaults())
+                .cors(cors -> {})
 
                 // Define a política de sessão como STATELESS
                 .sessionManagement(session -> session

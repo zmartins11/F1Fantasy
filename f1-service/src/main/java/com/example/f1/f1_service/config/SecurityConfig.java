@@ -33,6 +33,7 @@ public class SecurityConfig {
                                 SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers("/internal/f1/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/drivers/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/standings").permitAll()
                         .anyRequest().authenticated()

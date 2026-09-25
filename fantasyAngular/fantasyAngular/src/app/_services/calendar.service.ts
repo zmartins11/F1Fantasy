@@ -13,9 +13,8 @@ import { environment } from '../environments/environment';
 export class CalendarService {
 
 
-  private baseApi = environment.f1ApiUrl;
+  private baseApi = `${environment.apiGatewayUrl}/api/f1`;
   
-
     constructor(private httpClient: HttpClient) { }
 
     raceData : any;

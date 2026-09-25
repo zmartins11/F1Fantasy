@@ -9,7 +9,7 @@ import { environment } from '../environments/environment';
 })
 export class UserService {
 
-  private baseApi = environment.apiSpringUrl;
+  private baseApi = environment.apiGatewayUrl;
   private apiUrl = `${this.baseApi}/api/auth/`;
 
   constructor(private http: HttpClient) { }

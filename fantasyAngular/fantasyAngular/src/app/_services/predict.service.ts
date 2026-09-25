@@ -10,8 +10,8 @@ import { environment } from '../environments/environment';
 })
 export class PredictService {
 
-  private baseApi = environment.predictApiUrl;
-  private baseUrl = `${this.baseApi}/predict`;
+  private baseApi = environment.apiGatewayUrl;
+  private baseUrl = `${this.baseApi}/api/predictions`;
   
   
   constructor(private http : HttpClient) { }
@@ -35,11 +35,11 @@ export class PredictService {
       season: season
     };
 
-    return this.http.post<Prediction>(this.baseUrl, predictionDTO);
+    return this.http.post<Prediction>(`${this.baseUrl}/predict`, predictionDTO);
   }
 
   getNextRaceInfo(): Observable<NextRaceInfo> {
-    return this.http.get<NextRaceInfo>(`${this.baseApi}/raceSchedule`);
+    return this.http.get<NextRaceInfo>(`${this.baseUrl}/raceSchedule`);
   }
 
 }

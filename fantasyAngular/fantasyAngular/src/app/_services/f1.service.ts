@@ -13,8 +13,8 @@ import { RaceInfo } from '../model/RaceInfo';
 })
 export class F1Service {
   
-  private baseApi = environment.f1ApiUrl;
-  private baseUrl = this.baseApi;
+  private baseApi = environment.apiGatewayUrl;
+  private baseUrl = `${this.baseApi}/api/f1`;
 
   constructor(private http: HttpClient) { }
 
@@ -35,19 +35,19 @@ export class F1Service {
 
 
  getRaceResults(season: string, round: string): Observable<RaceResults> {
-    return this.http.get<RaceResults>(`${this.baseApi}/raceResult/${season}/${round}`
+    return this.http.get<RaceResults>(`${this.baseUrl}/raceResult/${season}/${round}`
     );
   }
 
   getStandings(): Observable<Standings> {
-    return this.http.get<Standings>(`${this.baseApi}/standings`);
+    return this.http.get<Standings>(`${this.baseUrl}/standings`);
   }
 
   getNextRaceDetails(): Observable<Race> {
-    return this.http.get<Race>(`${this.baseApi}/nextRaceDetails`);
+    return this.http.get<Race>(`${this.baseUrl}/nextRaceDetails`);
   }
 
   getAllRaces(): Observable<RaceInfo[]> {
-    return this.http.get<RaceInfo[]>(`${this.baseApi}/allRaces`);
+    return this.http.get<RaceInfo[]>(`${this.baseUrl}/allRaces`);
   }
 }

@@ -10,8 +10,7 @@ const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
 
-const baseApi = environment.apiSpringUrl;
-const AUTH_API = `${baseApi}/api/auth/`;
+const baseApi = environment.apiGatewayUrl + '/api/auth';
 const TOKEN_KEY = 'auth-token';
 const USER_KEY = 'user';
 const USER_AUTHORITIES = 'auth-authorities';
@@ -24,14 +23,15 @@ export class AuthService {
   constructor(private http : HttpClient) { }
 
   login(username: string, password: string): Observable<authResponse> {
-    return this.http.post<authResponse>(AUTH_API + 'login', {
+    return this.http.post<authResponse>(`${baseApi}/login`, {
       username,
       password
     }, httpOptions);
   }
+  //
 
   register(username: string, email: string, password: string): Observable<string> {
-    return this.http.post(AUTH_API + 'register', {
+    return this.http.post(`${baseApi}/register`, {
       username,
       email,
       password
