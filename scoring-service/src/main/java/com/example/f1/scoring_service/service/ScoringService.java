@@ -18,7 +18,6 @@ import com.example.f1.scoring_service.contracts.race.RaceResultWriter;
 import com.example.f1.scoring_service.repository.DriversPointsRepository;
 import com.example.f1.scoring_service.repository.PredictionResultRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -54,19 +53,13 @@ public class ScoringService {
         this.driverReader = driverReader;
     }
 
-    public RaceResultData getRacePassed() {
-        return raceResultReader.findTopByRaceFinishedTrueOrderByRoundDesc();
+    public RaceResultData latestRaceFinished() {
+        return raceResultReader.latestRaceFinished();
     }
 
-    public List<PointsInfoDto> getPointsInfo(Integer userId, String round) throws JsonProcessingException {
+    public List<PointsInfoDto> getPointsInfo(Long userId, RaceResultData latestRaceFinished) throws JsonProcessingException {
 
-        RaceResultData raceResult = raceResultReader.findByRound(Integer.parseInt(round));
-
-        if (raceResult == null) {
-            return Collections.emptyList();
-        }
-
-        PredictionData prediction = predictionReader.findByUserIdAndRound(userId, Integer.parseInt(round));
+        PredictionData prediction = predictionReader.findByUserIdAndRound(Math.toIntExact(userId), latestRaceFinished.round());
 
         if (prediction == null) {
             return Collections.emptyList();
@@ -92,9 +85,9 @@ public class ScoringService {
         List<DriversPoints> driversPoints =
                 driversPointsRepository.findByDriverInAndRaceId(
                         drivers,
-                        String.valueOf(raceResult.id()));
+                        String.valueOf(latestRaceFinished.id()));
 
-        Map<String, String> driverNames = driverReader.findBySeason(String.valueOf(raceResult.season()))
+        Map<String, String> driverNames = driverReader.findBySeason(String.valueOf(latestRaceFinished.season()))
                 .stream()
             .filter(driver -> driver.permanentNumber() != null)
                 .collect(Collectors.toMap(

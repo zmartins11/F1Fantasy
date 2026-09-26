@@ -6,10 +6,8 @@ import com.example.f1.scoring_service.dto.TotalPointsDto;
 import com.example.f1.scoring_service.service.ScoringService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,9 +26,9 @@ public class ScoringController {
 
     @GetMapping("/pointsInfo")
     public ResponseEntity<List<PointsInfoDto>> getPointsInfo(@AuthenticationPrincipal Jwt jwt) throws JsonProcessingException {
-        RaceResultData racedPassed = scoringService.getRacePassed();
-        if (racedPassed != null) {
-            return ResponseEntity.ok(scoringService.getPointsInfo(jwt.getClaim("userId"), String.valueOf(racedPassed.round())));
+        RaceResultData latestRaceFinished = scoringService.latestRaceFinished();
+        if (latestRaceFinished != null) {
+            return ResponseEntity.ok(scoringService.getPointsInfo(jwt.getClaim("userId"), latestRaceFinished));
         } else {
             return ResponseEntity.ok(List.of());
         }

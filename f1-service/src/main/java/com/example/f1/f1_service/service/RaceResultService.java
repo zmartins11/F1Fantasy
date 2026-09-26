@@ -1,5 +1,6 @@
 package com.example.f1.f1_service.service;
 
+import com.example.f1.f1_service.contracts.race.RaceResultData;
 import com.example.f1.f1_service.model.entity.RaceResult;
 import com.example.f1.f1_service.repository.RaceResultRepository;
 import org.springframework.stereotype.Service;
@@ -28,8 +29,18 @@ public class RaceResultService {
 
     }
 
-    public RaceResult findTopByRaceFinishedTrueOrderByRoundDesc() {
-        return repository.findTopByRaceFinishedTrueOrderByRoundDesc();
+    public RaceResultData findTopByRaceFinishedTrueOrderByRoundDesc() {
+        return toRaceResultData(repository.findTopByRaceFinishedTrueOrderByRoundDesc());
+    }
+
+    private RaceResultData toRaceResultData(RaceResult raceResult) {
+        return new RaceResultData(raceResult.getId(),
+                raceResult.getSeason(),
+                raceResult.getRound(),
+                raceResult.getFirst(),
+                raceResult.getSecond(),
+                raceResult.getThird(),
+                raceResult.getFastestLap());
     }
 
     public RaceResult findByRound(int round) {
