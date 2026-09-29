@@ -32,6 +32,7 @@ public class ScheduleRaceResult {
     @Scheduled(fixedRate = 30 * 60 * 1000)
     public void populateRaceResult() throws JsonProcessingException {
         try {
+            log.debug("SCHEDULED STARTED......");
             RaceResultDto lastFinishedRaceResult = ergastService.getLastFinishedRaceResult();
             if (lastFinishedRaceResult == null) {
                 log.debug("No finished race found");

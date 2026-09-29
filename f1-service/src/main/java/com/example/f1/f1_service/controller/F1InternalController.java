@@ -6,6 +6,7 @@ import com.example.f1.f1_service.model.Driver;
 import com.example.f1.f1_service.service.ErgastService;
 import com.example.f1.f1_service.service.RaceResultService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,5 +37,11 @@ public class F1InternalController {
     @GetMapping("/latestRaceFinished")
     public RaceResultData latestFinishedRace() throws JsonProcessingException {
         return raceResultService.findTopByRaceFinishedTrueOrderByRoundDesc();
+    }
+
+    @GetMapping("/{raceResultId}/pointsCalculated")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void markPointsCalculated(@PathVariable Integer raceResultId) throws JsonProcessingException {
+        raceResultService.markPointsCalculated(raceResultId);
     }
 }

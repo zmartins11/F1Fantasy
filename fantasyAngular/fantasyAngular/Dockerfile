@@ -20,7 +20,7 @@ RUN npm run build
 FROM nginx:alpine
 
 # Copy the built app from the builder stage to the nginx public directory
-COPY --from=builder /usr/src/app/dist/ /usr/share/nginx/html
+COPY --from=builder /usr/src/app/dist/fantasy-angular/ /usr/share/nginx/html
 
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 

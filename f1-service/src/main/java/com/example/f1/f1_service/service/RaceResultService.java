@@ -3,9 +3,12 @@ package com.example.f1.f1_service.service;
 import com.example.f1.f1_service.contracts.race.RaceResultData;
 import com.example.f1.f1_service.model.entity.RaceResult;
 import com.example.f1.f1_service.repository.RaceResultRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RaceResultService {
@@ -49,5 +52,15 @@ public class RaceResultService {
 
     public RaceResult save(RaceResult raceResult) {
         return repository.save(raceResult);
+    }
+
+    @Transactional
+    public void markPointsCalculated(Integer raceResultId) {
+        RaceResult raceResult = repository.findById(raceResultId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "Race result not found: " + raceResultId));
+
+        raceResult.setPointsCalculated(true);
     }
 }

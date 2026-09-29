@@ -18,6 +18,7 @@ import com.example.f1.scoring_service.contracts.race.RaceResultWriter;
 import com.example.f1.scoring_service.repository.DriversPointsRepository;
 import com.example.f1.scoring_service.repository.PredictionResultRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
+@Slf4j
 public class ScoringService {
 
     private final PredictionResultRepository predictionResultRepository;
@@ -109,6 +111,7 @@ public class ScoringService {
 
 
     public void calculateAndSavePoints(RaceFinishedEvent event) {
+        log.debug("SCORING SERVICE RECEIVED EVENT......");
 
         List<PredictionData> predictions = predictionReader.findBySeasonAndRound(
             event.season(), event.round());

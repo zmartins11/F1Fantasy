@@ -2,21 +2,25 @@ package com.example.f1.f1_service.config;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 
 @Configuration
 public class RabbitMQConfig {
 
-    public static final String RACE_FINISHED_QUEUE = "race.finished";
-    public static final String RACE_EXCHANGE = "f1.exchange";
+    public static final String RACE_FINISHED_EXCHANGE = "race.finished.exchange";
+    public static final String RACE_FINISHED_QUEUE = "race.finished.queue";
     public static final String RACE_FINISHED_ROUTING_KEY = "race.finished";
+
+    @Bean
+    public DirectExchange raceFinishedExchange() {
+        return new DirectExchange(RACE_FINISHED_EXCHANGE);
+    }
 
     @Bean
     public Queue raceFinishedQueue() {
@@ -24,23 +28,20 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public TopicExchange f1Exchange() {
-        return new TopicExchange(RACE_EXCHANGE);
+    public Binding raceFinishedBinding(Queue raceFinishedQueue, DirectExchange raceFinishedExchange) {
+        return BindingBuilder.bind(raceFinishedQueue).to(raceFinishedExchange).with(RACE_FINISHED_ROUTING_KEY);
     }
 
     @Bean
-    public Binding raceFinishedBinding(
-            Queue raceFinishedQueue,
-            TopicExchange f1Exchange) {
-
-        return BindingBuilder
-                .bind(raceFinishedQueue)
-                .to(f1Exchange)
-                .with(RACE_FINISHED_ROUTING_KEY);
+    public MessageConverter jsonMessageConverter() {
+        return new Jackson2JsonMessageConverter();
     }
 
     @Bean
-    public JacksonJsonMessageConverter jacksonJsonMessageConverter() {
-        return new JacksonJsonMessageConverter();
+    public RabbitTemplate rabbitTemplate(org.springframework.amqp.rabbit.connection.ConnectionFactory connectionFactory,
+                                          MessageConverter jsonMessageConverter) {
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+        rabbitTemplate.setMessageConverter(jsonMessageConverter);
+        return rabbitTemplate;
     }
 }
