@@ -7,6 +7,8 @@ import com.example.f1.scoring_service.contracts.race.RaceFinishedEvent;
 import com.example.f1.scoring_service.contracts.race.RaceResultData;
 import com.example.f1.scoring_service.contracts.user.UserData;
 import com.example.f1.scoring_service.contracts.user.UserReader;
+import com.example.f1.scoring_service.dto.CalculationResult;
+import com.example.f1.scoring_service.dto.DriverPointsData;
 import com.example.f1.scoring_service.dto.PointsInfoDto;
 import com.example.f1.scoring_service.dto.TotalPointsDto;
 import com.example.f1.scoring_service.model.DriversPoints;
@@ -20,6 +22,7 @@ import com.example.f1.scoring_service.repository.PredictionResultRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -122,14 +125,28 @@ public class ScoringService {
                 event.round());
 
         for (PredictionData prediction : predictions) {
+            String predictionId = String.valueOf(prediction.id());
 
-            if (!predictionResultRepository.findByPredictionId(String.valueOf(prediction.id())).isEmpty()) {
+            if (predictionResultRepository.existsByPredictionId(predictionId)) {
+                log.info(
+                        "Prediction {} already processed. Skipping.",
+                        predictionId
+                );
                 continue;
             }
+            // 1. CALCULAR
+            CalculationResult calculation =
+                    calculate(prediction, event);
 
-            int points = calculate(prediction, event);
+            // 2. GUARDAR detalhe dos pilotos
+            //saveDriverPoints(calculation.driverPoints());
 
-            savePredictionResult(prediction, event, points);
+            // 3. GUARDAR resultado da prediction
+            savePredictionResult(
+                    prediction,
+                    event,
+                    calculation.totalPoints()
+            );
         }
 
         raceResultWriter.markPointsCalculated(event.raceResultId());
@@ -139,6 +156,16 @@ public class ScoringService {
             PredictionData prediction,
             RaceFinishedEvent raceResultEvent,
             int points) {
+
+        String predictionId = String.valueOf(prediction.id());
+
+        if (predictionResultRepository.existsByPredictionId(predictionId)) {
+            log.info(
+                    "PredictionResult already exists for predictionId={}. Skipping.",
+                    predictionId
+            );
+            return;
+        }
 
         PredictionResult result = new PredictionResult();
         result.setPredictionId(String.valueOf(prediction.id()));
@@ -151,57 +178,112 @@ public class ScoringService {
         predictionResultRepository.save(result);
     }
 
-    private int calculate(PredictionData prediction, RaceFinishedEvent event) {
+    private CalculationResult calculate(
+            PredictionData prediction,
+            RaceFinishedEvent event) {
 
         int points = 0;
+        List<DriverPointsData> driverPoints = new ArrayList<>();
 
         if (Boolean.TRUE.equals(prediction.predictedPodium())) {
 
-            points += processDriver(
+            DriverPointsData first = calculateDriver(
                     "1",
                     event.raceResultId(),
                     prediction.first(),
-                    event.first());
+                    event.first()
+            );
 
-            points += processDriver(
+            DriverPointsData second = calculateDriver(
                     "2",
                     event.raceResultId(),
                     prediction.second(),
-                    event.second());
+                    event.second()
+            );
 
-            points += processDriver(
+            DriverPointsData third = calculateDriver(
                     "3",
                     event.raceResultId(),
                     prediction.third(),
-                    event.third());
+                    event.third()
+            );
+
+            driverPoints.add(first);
+            driverPoints.add(second);
+            driverPoints.add(third);
+
+            points += first.points();
+            points += second.points();
+            points += third.points();
         }
 
         if (Boolean.TRUE.equals(prediction.predictedFastestLap())) {
 
             int fastestLapPoints =
-                    Objects.equals(prediction.fastestLap(), event.fastestLap())
+                    Objects.equals(
+                            prediction.fastestLap(),
+                            event.fastestLap())
                             ? 5
                             : 0;
 
-            createDriversPoints(
-                    prediction.fastestLap(),
-                    event.raceResultId(),
-                    fastestLapPoints,
-                    "fastestLap");
+            driverPoints.add(
+                    new DriverPointsData(
+                            prediction.fastestLap(),
+                            event.raceResultId(),
+                            fastestLapPoints,
+                            "fastestLap"
+                    )
+            );
 
             points += fastestLapPoints;
         }
 
-        return points;
+        return new CalculationResult(points, driverPoints);
     }
 
-    private int processDriver(String position, Integer raceId, String predictedDriver, String resultDriver) {
+    private DriverPointsData calculateDriver(
+            String position,
+            Integer raceId,
+            String predictedDriver,
+            String resultDriver) {
 
-        int points = Objects.equals(predictedDriver, resultDriver) ? 5 : 0;
+        int points =
+                Objects.equals(predictedDriver, resultDriver)
+                        ? 5
+                        : 0;
 
-        createDriversPoints(predictedDriver, raceId, points, position);
+        return new DriverPointsData(
+                predictedDriver,
+                raceId,
+                points,
+                position
+        );
+    }
 
-        return points;
+    private void saveDriverPoints(DriverPointsData data) {
+
+        if (driversPointsRepository
+                .existsByRaceIdAndDriverAndPosition(
+                        String.valueOf(data.raceResultId()),
+                        data.driver(),
+                        data.position())) {
+
+            return;
+        }
+
+        DriversPoints entity = new DriversPoints();
+
+        entity.setDriver(data.driver());
+        entity.setRaceId(data.raceResultId());
+        entity.setPoints(data.points());
+        entity.setPosition(data.position());
+
+        driversPointsRepository.save(entity);
+    }
+
+    private void saveDriverPoints(List<DriverPointsData> driverPoints) {
+
+        driverPoints.forEach(this::saveDriverPoints);
     }
 
     private void createDriversPoints(String driver, Integer raceResultId, int points, String position) {

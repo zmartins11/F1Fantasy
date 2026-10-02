@@ -7,8 +7,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RaceResultService {
@@ -23,15 +21,6 @@ public class RaceResultService {
         return repository.findBySeasonAndRound(season, round);
     }
 
-    public RaceResult findById(Integer id) {
-        return repository.findById(id).orElse(null);
-    }
-
-    public List<RaceResult> findBySeason(Integer season) {
-        return repository.findBySeason(season);
-
-    }
-
     public RaceResultData findTopByRaceFinishedTrueOrderByRoundDesc() {
         return toRaceResultData(repository.findTopByRaceFinishedTrueOrderByRoundDesc());
     }
@@ -44,10 +33,6 @@ public class RaceResultService {
                 raceResult.getSecond(),
                 raceResult.getThird(),
                 raceResult.getFastestLap());
-    }
-
-    public RaceResult findByRound(int round) {
-        return repository.findByRound(round);
     }
 
     public RaceResult save(RaceResult raceResult) {

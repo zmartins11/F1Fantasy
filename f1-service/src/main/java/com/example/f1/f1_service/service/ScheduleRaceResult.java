@@ -15,7 +15,7 @@ public class ScheduleRaceResult {
         this.raceResultProcessingService = raceResultProcessingService;
     }
 
-    @Scheduled(fixedRate = 30 * 60 * 1000)
+    //@Scheduled(fixedRate = 30 * 60 * 1000)
     public void populateRaceResult() throws JsonProcessingException {
         raceResultProcessingService.processLatestFinishedRace();
     }

@@ -14,4 +14,5 @@ public interface PredictionResultRepository extends JpaRepository<PredictionResu
 
     List<PredictionResult> findByPredictionId(String id);
 
+    boolean existsByPredictionId(String predictionId);
 }

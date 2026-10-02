@@ -5,6 +5,13 @@ import lombok.Data;
 
 @Entity
 @Data
+@Table(
+        name = "prediction_result",
+        uniqueConstraints = @UniqueConstraint(
+                name = "uk_prediction_result_prediction",
+                columnNames = "prediction_id"
+        )
+)
 public class PredictionResult {
 
     @Id

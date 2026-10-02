@@ -17,4 +17,6 @@ public interface DriversPointsRepository extends JpaRepository<DriversPoints, In
 
     public List<DriversPoints> findByRaceIdAndDriverAndPosition(String raceId, String driverId, String position);
 
+    boolean existsByRaceIdAndDriverAndPosition(String raceId, String driver, String position);
+
 }
