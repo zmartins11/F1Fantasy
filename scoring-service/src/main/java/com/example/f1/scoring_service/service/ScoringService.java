@@ -111,10 +111,15 @@ public class ScoringService {
 
 
     public void calculateAndSavePoints(RaceFinishedEvent event) {
-        log.debug("SCORING SERVICE RECEIVED EVENT......");
+        log.info("SCORING SERVICE RECEIVED EVENT......");
 
         List<PredictionData> predictions = predictionReader.findBySeasonAndRound(
             event.season(), event.round());
+
+        log.info("Found {} predictions for season {} and round {}",
+                predictions.size(),
+                event.season(),
+                event.round());
 
         for (PredictionData prediction : predictions) {
 

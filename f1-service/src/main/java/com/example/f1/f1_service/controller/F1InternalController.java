@@ -4,9 +4,11 @@ import com.example.f1.f1_service.contracts.race.RaceResultData;
 import com.example.f1.f1_service.dto.NextRaceData;
 import com.example.f1.f1_service.model.Driver;
 import com.example.f1.f1_service.service.ErgastService;
+import com.example.f1.f1_service.service.RaceResultProcessingService;
 import com.example.f1.f1_service.service.RaceResultService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,9 +21,12 @@ public class F1InternalController {
 
     private final RaceResultService raceResultService;
 
-    public F1InternalController(ErgastService ergastService, RaceResultService raceResultService) {
+    private final RaceResultProcessingService raceResultProcessingService;
+
+    public F1InternalController(ErgastService ergastService, RaceResultService raceResultService, RaceResultProcessingService raceResultProcessingService) {
         this.ergastService = ergastService;
         this.raceResultService = raceResultService;
+        this.raceResultProcessingService = raceResultProcessingService;
     }
 
     @GetMapping
@@ -43,5 +48,11 @@ public class F1InternalController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void markPointsCalculated(@PathVariable Integer raceResultId) throws JsonProcessingException {
         raceResultService.markPointsCalculated(raceResultId);
+    }
+
+    @PostMapping("/api/f1/admin/process-latest-race")
+    public ResponseEntity<Void> processLatestRace() throws JsonProcessingException {
+        raceResultProcessingService.processLatestFinishedRace();
+        return ResponseEntity.ok().build();
     }
 }
