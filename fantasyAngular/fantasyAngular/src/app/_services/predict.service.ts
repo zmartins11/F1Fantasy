@@ -3,14 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Prediction } from '../model/Prediction';
 import { NextRaceInfo } from '../model/NextRaceInfo';
-import { environment } from '../environments/environment';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PredictService {
 
-  private baseApi = environment.apiGatewayUrl;
+  private baseApi = `${environment.apiUrl}`;
   private baseUrl = `${this.baseApi}/api/predictions`;
   
   

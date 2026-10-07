@@ -3,17 +3,17 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Driver } from '../model/Driver';
 import { Race } from '../model/Race';
-import { environment } from '../environments/environment';
 import { RaceResults } from '../model/RaceResults';
 import { Standings } from '../model/Standings';
 import { RaceInfo } from '../model/RaceInfo';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class F1Service {
   
-  private baseApi = environment.apiGatewayUrl;
+  private baseApi = `${environment.apiUrl}`;
   private baseUrl = `${this.baseApi}/api/f1`;
 
   constructor(private http: HttpClient) { }

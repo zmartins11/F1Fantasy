@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../environments/environment';
+import { environment } from 'src/environments/environment';
 
 
 @Injectable({
@@ -9,7 +9,7 @@ import { environment } from '../environments/environment';
 })
 export class UserService {
 
-  private baseApi = environment.apiGatewayUrl;
+  private baseApi = `${environment.apiUrl}`;
   private apiUrl = `${this.baseApi}/api/auth/`;
 
   constructor(private http: HttpClient) { }

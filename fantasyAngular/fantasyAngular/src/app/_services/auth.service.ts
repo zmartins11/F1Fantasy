@@ -3,14 +3,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { authResponse } from '../model/authResponse';
 import { User } from '../model/user';
-import { environment } from '../environments/environment';
+import { environment } from 'src/environments/environment';
 
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
 
-const baseApi = environment.apiGatewayUrl + '/api/auth';
+const baseApi = `${environment.apiUrl}/api/auth`;
 const TOKEN_KEY = 'auth-token';
 const USER_KEY = 'user';
 const USER_AUTHORITIES = 'auth-authorities';

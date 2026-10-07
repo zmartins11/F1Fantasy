@@ -2,8 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Race } from '../model/Race';
-import { Driver } from '../model/Driver';
-import { environment } from '../environments/environment';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +12,7 @@ import { environment } from '../environments/environment';
 export class CalendarService {
 
 
-  private baseApi = `${environment.apiGatewayUrl}/api/f1`;
+  private baseApi = `${environment.apiUrl}/api/f1`;
   
     constructor(private httpClient: HttpClient) { }
 
