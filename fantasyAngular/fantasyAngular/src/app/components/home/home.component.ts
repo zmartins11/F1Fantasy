@@ -318,8 +318,8 @@ export class HomeComponent implements OnInit {
             weather: weatherInfo.weather,
             temperature: weatherInfo.temperature,
             humidity: weatherInfo.humidity,
-            wind_speed: weatherInfo.wind_speed,
-            current_weather: weatherInfo.current_weather
+            windSpeed: weatherInfo.windSpeed,
+            currentWeather: weatherInfo.currentWeather
           };
           console.log(this.weatherData);
         }

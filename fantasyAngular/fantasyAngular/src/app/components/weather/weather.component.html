@@ -1,7 +1,7 @@
 <div class="weather-widget" id="weather-widget" *ngIf="weather" (click)="onWeatherWidgetClick()">
   <div class="weather-header">
     <div>
-      <p class="weather-type">{{ weather.current_weather ? 'Current weather' : 'Race day weather' }}</p>
+      <p class="weather-type">{{ weather.currentWeather ? 'Current weather' : 'Race day weather' }}</p>
       <h4 class="weather-location">{{ city || 'Unknown city' }}, {{ country || 'N/A' }}</h4>
     </div>
     <div class="weather-icon">
@@ -21,7 +21,7 @@
     </div>
     <div class="meta-item">
       <i class="fa-solid fa-wind"></i>
-      <span>{{ weather.wind_speed }} m/s</span>
+      <span>{{ weather.windSpeed }} m/s</span>
     </div>
   </div>
 
