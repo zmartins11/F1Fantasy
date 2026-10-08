@@ -40,4 +40,4 @@ jobs:
         run: npm ci
 
       - name: Build Angular
-        run: npm run build -- --configuration production
+        run: npx ng build fantasyAngular --configuration production
