@@ -1,0 +1,51 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.news-panel {
+  height: 100%;
+  padding: 1.35rem 1.4rem;
+  border: 0;
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, .96), rgba(243, 247, 255, .95));
+  box-shadow: 0 20px 50px rgba(15, 23, 42, .12);
+}
+
+.news-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.news-account {
+  color: #2563eb;
+  font-size: .85rem;
+  font-weight: 700;
+}
+
+.timeline-frame {
+  min-height: 500px;
+  overflow: hidden;
+}
+
+.twitter-timeline {
+  display: block;
+  min-height: 500px;
+}
+
+:host-context(body.dark-mode) .news-panel {
+  background: rgba(15, 23, 42, .94);
+}
+
+:host-context(body.dark-mode) .card-title {
+  color: #e2e8f0;
+}
+
+@media (max-width: 576px) {
+  .news-panel {
+    padding: 1.1rem;
+  }
+}

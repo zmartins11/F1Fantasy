@@ -1,0 +1,10 @@
+.race-item {
+    margin-bottom: 10px; /* Adjust the spacing between race items */
+    font-size: 16px; /* Adjust the font size */
+    /* Add any other styles you need */
+  }
+
+ .highlighted {
+    background-color: rgb(7, 112, 182); /* Adjust the styling as needed */
+  }
+

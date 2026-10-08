@@ -1,0 +1,41 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Weather } from '../model/Weather';
+import { environment } from 'src/environments/environment';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class WeatherService {
+
+  constructor(private http : HttpClient) { }
+  private baseApi = `${environment.apiUrl}`;
+  private apiUrl = `${this.baseApi}/api/f1/weather`;
+
+  getWeather(country:string, city: string, hour: number, day: number, month:number, forecast : boolean): Observable<Weather[]> {
+    const params = {
+      country,
+      city,
+      hour: hour.toString(),
+      day: day.toString(),
+      month: month.toString(),
+      forecast: forecast.toString()
+    };
+
+    return this.http.get<Weather[]>(this.apiUrl, { params });
+  }
+
+  getWeatherForecast(country: string, city: string, hour: number, day: number, month: number, forecast: boolean): Observable<Weather[]> {
+    const params = {
+      country,
+      city,
+      hour: hour.toString(),
+      day: day.toString(),
+      month: month.toString(),
+      forecast: forecast.toString()
+    };
+
+    return this.http.get<Weather[]>(this.apiUrl, { params });
+  }
+}

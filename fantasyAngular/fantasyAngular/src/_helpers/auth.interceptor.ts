@@ -2,10 +2,11 @@ import { HTTP_INTERCEPTORS, HttpEvent } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpHandler, HttpRequest } from '@angular/common/http';
 
-import { Observable } from 'rxjs';
+import { Observable, finalize } from 'rxjs';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AuthService } from 'src/app/_services/auth.service';
 import { SipnnerService } from 'src/app/_services/SpinnerService';
+import { SpinnerInterceptor } from './SpinnerInterceptor';
 
 const TOKEN_HEADER_KEY = 'Authorization';       // for Spring Boot back-end
 
@@ -25,6 +26,3 @@ export class AuthInterceptor implements HttpInterceptor {
 }
 
 
-export const authInterceptorProviders = [
-  { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
-];

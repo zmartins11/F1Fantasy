@@ -1,0 +1,6 @@
+Flask==2.0.1
+youtube_search==2.1.2
+requests==2.25.1
+Flask-Cors==4.0.0
+wikipedia==1.4.0
+Werkzeug==2.0.2

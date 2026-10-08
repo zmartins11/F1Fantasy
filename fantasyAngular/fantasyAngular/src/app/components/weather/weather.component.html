@@ -1,0 +1,32 @@
+<div class="weather-widget" id="weather-widget" *ngIf="weather" (click)="onWeatherWidgetClick()">
+  <div class="weather-header">
+    <div>
+      <p class="weather-type">{{ weather.currentWeather ? 'Current weather' : 'Race day weather' }}</p>
+      <h4 class="weather-location">{{ city || 'Unknown city' }}, {{ country || 'N/A' }}</h4>
+    </div>
+    <div class="weather-icon">
+      <i [class]="getWeatherIconClass(weather.weather)"></i>
+    </div>
+  </div>
+
+  <div class="weather-main">
+    <div class="temp-value">{{ weather.temperature }}°C</div>
+    <div class="temp-desc">{{ weather.weather }}</div>
+  </div>
+
+  <div class="weather-meta">
+    <div class="meta-item">
+      <i class="fa-solid fa-droplet"></i>
+      <span>{{ weather.humidity }}%</span>
+    </div>
+    <div class="meta-item">
+      <i class="fa-solid fa-wind"></i>
+      <span>{{ weather.windSpeed }} m/s</span>
+    </div>
+  </div>
+
+  <div class="weather-footer">
+    <span>Tap for 5-day forecast</span>
+    <i class="fa-solid fa-chevron-right"></i>
+  </div>
+</div>

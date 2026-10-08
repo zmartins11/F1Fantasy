@@ -1,0 +1,49 @@
+<section class="calendar-shell">
+  <header class="calendar-topbar">
+    <div>
+      <p class="label">Race Calendar</p>
+      <h2>Season {{ currentSeason }} schedule</h2>
+      <p class="intro">Explore each Grand Prix with circuit details, flag visuals, and round-by-round timing.</p>
+    </div>
+    <div class="calendar-controls">
+      <button class="nav-button" (click)="showPrevSeason(); scrollToTop()">Previous season</button>
+      <button class="nav-button" (click)="showNextSeason(); scrollToTop()" [disabled]="currentSeason === currentYear">
+        <span *ngIf="currentSeason != currentYear">Next season</span>
+        <span *ngIf="currentSeason === currentYear">Current season</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="calendar-grid">
+    <article *ngFor="let race of races" class="race-card" (click)="openRaceDetailsComponent(race)">
+      <div class="race-card-header">
+        <div>
+          <span class="badge">Round {{ race.round }}</span>
+          <h3>{{ race.raceName }}</h3>
+        </div>
+        <img class="flag-icon" src="assets/images/flags/{{ race.Circuit.Location.country }}.png" alt="{{ race.Circuit.Location.country }} flag"/>
+      </div>
+
+      <div class="race-info">
+        <span class="race-date">{{ race.FirstPractice.date | date: 'dd MMM' }} – {{ race.date | date: 'dd MMM' }}</span>
+        <p class="circuit-name">{{ race.Circuit.circuitName }}</p>
+        <p class="race-venue">{{ race.Circuit.Location.locality }}, {{ race.Circuit.Location.country }}</p>
+      </div>
+
+      <div class="race-meta">
+        <div>
+          <span class="meta-title">Start</span>
+          <p>{{ race.time || 'TBD' }}</p>
+        </div>
+        <div>
+          <span class="meta-title">Track</span>
+          <p>{{ race.Circuit.circuitId }}</p>
+        </div>
+      </div>
+
+      <ng-container *ngIf="currentSeason === currentYear">
+        <img class="track-preview" src="assets/images/tracks/{{ race.Circuit.circuitId }}.png" alt="Track preview" />
+      </ng-container>
+    </article>
+  </div>
+</section>

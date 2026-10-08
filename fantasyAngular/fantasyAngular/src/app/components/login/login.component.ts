@@ -34,7 +34,7 @@ onSubmit(): void {
   const { username, password } = this.form;
   this.authService.login(username, password).subscribe(
     data => {
-      const user = new User(data.username, data.accessToken, data.role);
+      const user = new User(data.username, data.accessToken, data.role, data.userId);
       this.authService.saveToken(data.accessToken);
       this.authService.saveUser(user);
 

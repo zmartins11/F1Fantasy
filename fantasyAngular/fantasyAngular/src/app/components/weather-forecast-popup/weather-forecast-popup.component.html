@@ -1,0 +1,41 @@
+<div class="popup-shell">
+  <div class="popup-header">
+    <div>
+      <h3>Forecast for {{ city || 'your location' }}</h3>
+      <p>5-day morning snapshot with wind, humidity and temperature</p>
+    </div>
+    <button type="button" class="close-btn" aria-label="Close" (click)="closePopup()">×</button>
+  </div>
+
+  <div class="forecast-grid" *ngIf="weatherData.length; else noForecast">
+    <div class="forecast-card" *ngFor="let weather of weatherData">
+      <div class="card-top">
+        <div>
+          <div class="forecast-date">{{ weather.date | date:'EEE, d MMM' }}</div>
+          <div class="forecast-subtitle">{{ weather.weather }}</div>
+        </div>
+        <div class="forecast-icon">
+          <i [class]="getWeatherIconClass(weather.weather)"></i>
+        </div>
+      </div>
+
+      <div class="forecast-value">{{ weather.temperature }}°C</div>
+      <div class="forecast-details">
+        <div class="detail-item">
+          <i class="fa-solid fa-droplet"></i>
+          <span>{{ weather.humidity }}%</span>
+        </div>
+        <div class="detail-item">
+          <i class="fa-solid fa-wind"></i>
+          <span>{{ weather.windSpeed }} m/s</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noForecast>
+    <div class="forecast-empty">
+      <p>Forecast data is not available right now.</p>
+    </div>
+  </ng-template>
+</div>

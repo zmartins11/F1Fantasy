@@ -3,13 +3,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { authResponse } from '../model/authResponse';
 import { User } from '../model/user';
+import { environment } from 'src/environments/environment';
 
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
 
-const AUTH_API = 'http://localhost:8080/api/auth/';
+const baseApi = `${environment.apiUrl}/api/auth`;
 const TOKEN_KEY = 'auth-token';
 const USER_KEY = 'user';
 const USER_AUTHORITIES = 'auth-authorities';
@@ -22,23 +23,26 @@ export class AuthService {
   constructor(private http : HttpClient) { }
 
   login(username: string, password: string): Observable<authResponse> {
-    return this.http.post<authResponse>(AUTH_API + 'login', {
+    return this.http.post<authResponse>(`${baseApi}/login`, {
       username,
       password
     }, httpOptions);
   }
+  //
 
-  register(username: string, email: string, password: string): Observable<any> {
-    return this.http.post(AUTH_API + 'register', {
+  register(username: string, email: string, password: string): Observable<string> {
+    return this.http.post(`${baseApi}/register`, {
       username,
       email,
       password
-    }, httpOptions);
+    },{
+      responseType: 'text'
+    });
   }
 
   signOut(): void {
     window.sessionStorage.clear();
-    localStorage.clear
+    localStorage.clear();
   }
 
   public saveToken(token: string): void {

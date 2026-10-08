@@ -3,3 +3,23 @@ demo-angular/node_modules
 demo-angular/.*
 demo-angular/src/assets
 fantasyAngular/fantasyAngular/node_modules
+.env
+
+# Firebase local cache
+**/.firebase/
+
+# Environment files containing secrets
+.env
+.env.*
+!.env.example
+
+# Maven build output
+**/target/
+
+# Angular / Node
+**/node_modules/
+**/dist/
+
+# IDE
+.idea/
+*.iml

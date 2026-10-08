@@ -1,124 +1,433 @@
-<div class="container">
-  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
-    {{ errorMessage}}
-  </div>
-  <div *ngIf="successMessage" class="alert alert-success" role="alert">
-    {{ successMessage }}
-  </div>
-  <div *ngIf="predictionLocked" class="alert alert-warning" role="alert">
-    You no longer can make a prediction. Quali has already started!
-  </div>
-  <header *ngIf="!isLoggedIn" class="jumbotron">
-    <p *ngIf="!isLoggedIn">Welcome to the app. Please log in to access all the content available</p>
-  </header>
-  <div *ngIf="isLoggedIn">
-    <h3 class="text-center mt-3">Next Race: {{ nameRace }} | Round: {{ round }}</h3>
-    <div class="row mt-4" *ngIf="!predictionLocked">
-      <div class="col-md-2 offset-md-2 text-center">
-        <div class="circle">
-          <p class="circle-text">{{ timeRemaining.days }}</p>
-          <p>Days</p>
-        </div>
-      </div>
-      <div class="col-md-2 mb-5 text-center">
-        <div class="circle">
-          <p class="circle-text">{{ timeRemaining.hours }}</p>
-          <p>Hours</p>
-        </div>
-      </div>
-      <div class="col-md-2 text-center">
-        <div class="circle">
-          <p class="circle-text">{{ timeRemaining.minutes }}</p>
-          <p>Minutes</p>
-        </div>
-      </div>
-      <div class="col-md-2 text-center">
-        <div class="circle">
-          <p class="circle-text">{{ timeRemaining.seconds }}</p>
-          <p>Seconds</p>
-        </div>
-      </div>
-    </div>
-    <div class="mt-4" *ngIf="predictionLocked">
-        <h5 class="text-center mt-3">Wait for race to be completed, to get the weekend results!</h5>
-    </div>
-  </div>
-  <div *ngIf="userHasPrediction" class="container mt5">
-    <div class="row">
-      <!-- Highlighted container -->
-      <div class="col-md-5 bg-info p-3 mr-3 rounded">
-        <!-- Three boxes displayed horizontally -->
-        <div class="row">
-          <!-- Left box (Second Driver) -->
-          <div class="col-md-4 text-center">
-            <div class="prediction-box">
-              <p>{{ pSecond }}</p>
-            </div>
+<div class="overlay points-modal-overlay" [ngClass]="{'show': showPopUpDriversPoints}"></div>
+
+  <div class="modal points-modal" #myModal [ngClass]="{'show': showPopUpDriversPoints}" tabindex="-1" role="dialog"
+    aria-modal="true" aria-labelledby="points-modal-title">
+    <div class="modal-dialog points-modal-dialog" role="document">
+      <div class="modal-content points-modal-content">
+        <div class="points-modal-header">
+          <div>
+            <p class="points-modal-eyebrow">Race result</p>
+            <h2 id="points-modal-title">Points earned</h2>
+            <p class="points-modal-subtitle">Your score from the last race</p>
           </div>
-
-          <!-- Middle box (First Driver) -->
-          <div class="col-md-4 text-center">
-            <div class="prediction-box">
-              <p>{{ pFirst }}</p>
-            </div>
-          </div>
-
-          <!-- Right box (Third Driver) -->
-          <div class="col-md-4 text-center">
-            <div class="prediction-box">
-              <p>{{ pThird }}</p>
-            </div>
-          </div>
-
+          <button type="button" class="points-modal-close" aria-label="Close" (click)="closePopup()">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
-
-        <div class="row mt-3">
-          <div class="col-md-12 text-center">
-            <ng-container *ngIf="!showDrivers; else listShown">
-              <div *ngIf="!predictionLocked">
-                <p class="mb-0">Change Prediction</p>
-                <span (click)="showDrivers = !showDrivers">
-                  <fa-icon [icon]="faArrowDown"></fa-icon>
-                </span>
+        <div class="points-modal-body">
+          <div class="points-list">
+            <div class="point-row" *ngFor="let pointInfo of pointsInfo">
+              <div class="point-rank">{{ pointInfo.position }}</div>
+              <div class="point-driver">
+                <strong>{{ pointInfo.familyName }}</strong>
+                <span>Prediction</span>
               </div>
-              <p class="mb-0" *ngIf="predictionLocked">Prediction Locked</p>
-            </ng-container>
-            <ng-template #listShown>
-              <!-- Text and arrow are hidden when the list is shown -->
-              <span (click)="showDrivers = !showDrivers">
-                <fa-icon [icon]="faArrowUp"></fa-icon>
-              </span>
-            </ng-template>
+              <strong class="point-score">{{ pointInfo.points }} <span>pts</span></strong>
+            </div>
+          </div>
+          <div class="points-total">
+            <div>
+              <strong>Total points</strong>
+              <span>Combined score</span>
+            </div>
+            <strong class="points-total-value">{{ totalPoints }} <span>pts</span></strong>
           </div>
         </div>
-
-        <div *ngIf="showDrivers" class="row mt-3">
-          <div class="col-md-6">
-            <ul>
-              <li *ngFor="let driver of drivers.slice(0, 10)" (click)="selectDriver(driver)">
-                {{ driver.name }} {{ driver.selection }}
-              </li>
-            </ul>
-          </div>
-          <div class="col-md-6">
-            <ul>
-              <li *ngFor="let driver of drivers.slice(10)" (click)="selectDriver(driver)">
-                {{ driver.name }} {{ driver.selection }}
-              </li>
-            </ul>
-          </div>
+        <div class="points-modal-footer">
+          <button type="button" class="points-modal-button" (click)="closePopup()">Close</button>
         </div>
-        <button type="button" class="btn btn-outline-light btn-sm mr-3" *ngIf="areAllDriversSelected()"
-          (click)="resetPredictions()">Reset Predictions</button>
-        <button type="button" class="btn btn-outline-light btn-sm" *ngIf="areAllDriversSelected()"
-          (click)="savePredictions()">Save Predictions</button>
-      </div>
-      <div class="col-md-5 bg-info p-3 rounded">
-        <!-- Your table content goes here -->
-        <table class="table">
-          <!-- Table rows and columns -->
-        </table>
       </div>
     </div>
   </div>
-</div>
+
+  <div class="container home-root" [ngClass]="{'fade-out': showPopUpDriversPoints, 'dark-mode': darkMode}">
+    <div *ngIf="errorMessage" class="alert alert-danger font-weight-bold" role="alert">
+      {{ sessionExpiredMessage }}
+    </div>
+    <div *ngIf="errorMessagePopUp" class="alert alert-danger font-weight-bold" role="alert">
+      {{ errorMessagePopUp }}
+    </div>
+
+    <div *ngIf="showAlertSuccess && successMessage" class="alert alert-success fade-out" role="alert">
+      {{ successMessage }}
+      <button type="button" class="close" (click)="closeAlert('success')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div *ngIf="showAlertIncomplete && IncompletePredictionMessage" class="alert alert-warning" role="alert">
+      {{ IncompletePredictionMessage }}
+      <button type="button" class="close" (click)="closeAlert('incomplete')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div *ngIf="predictionLocked" class="alert alert-warning" role="alert">
+      You no longer can make a prediction. Quali has already started!
+    </div>
+
+    <header *ngIf="!isLoggedIn" class="jumbotron">
+      <p *ngIf="!isLoggedIn">Welcome to the app. Please log in to access all the content available: Testing actionsSSS--10000</p>
+    </header>
+    <div *ngIf="isLoggedIn && formattedDate" class="hero-panel">
+      <div class="hero-header" (click)="openRacePopup()" (mouseover)="highlightText()" (mouseout)="removeHighlight()">
+        <div>
+          <p class="prediction-eyebrow">Upcoming event</p>
+          <h3 class="hero-title">Next Race: {{ nameRace }}</h3>
+          <p class="hero-subtitle">
+            <img src="assets/images/flags/{{country}}.png" alt="Flag" class="hero-flag" width="28" height="17">
+            Round {{ round }} • Tap to view the next race details
+          </p>
+        </div>
+        <div class="hero-badge">Open race details</div>
+      </div>
+      <div class="hero-control-row">
+        <div class="theme-toggle">
+          <span class="toggle-label">Dark mode</span>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="darkMode" (change)="emitDarkModeToggle()" />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="row mt-4 align-items-stretch" *ngIf="!predictionLocked">
+        <div class="col-lg-8 col-md-12 mb-3">
+          <div class="countdown-panel">
+            <div class="countdown-header">
+              <div>
+                <p class="countdown-title">Race starts in</p>
+                <p class="countdown-subtitle">Next event: {{ nameRace }}</p>
+              </div>
+            </div>
+            <div class="countdown-row">
+              <div class="countdown-item">
+                <div class="countdown-value">{{ timeRemaining.days }}</div>
+                <div class="countdown-label">Days</div>
+              </div>
+              <div class="countdown-item">
+                <div class="countdown-value">{{ timeRemaining.hours }}</div>
+                <div class="countdown-label">Hours</div>
+              </div>
+              <div class="countdown-item">
+                <div class="countdown-value">{{ timeRemaining.minutes }}</div>
+                <div class="countdown-label">Minutes</div>
+              </div>
+              <div class="countdown-item">
+                <div class="countdown-value">{{ timeRemaining.seconds }}</div>
+                <div class="countdown-label">Seconds</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-12 mb-3">
+          <div class="weather-card">
+            <app-weather [weather]="weatherData" [city]="city" [country]="country"></app-weather>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 hero-locked" *ngIf="predictionLocked">
+        <h5 class="text-center mt-3">Wait for race to be completed, to get the weekend results!</h5>
+      </div>
+    </div>
+
+
+    <div *ngIf="isLoggedIn && !errorMessage" class="mt-5">
+      <div class="row align-items-stretch gx-4">
+        <div class="col-md-6 d-flex">
+          <div class="card prediction-card-shell h-100">
+            <div class="prediction-switcher">
+              <button type="button" class="prediction-switch" (click)="switchPredictionCard('podium')"
+                [class.active]="currentPredictionCard === 'podium'">Podium</button>
+              <button type="button" class="prediction-switch" (click)="switchPredictionCard('fastestLap')"
+                [class.active]="currentPredictionCard === 'fastestLap'">Fastest lap</button>
+            </div>
+
+            <div class="card-body prediction-card-body" *ngIf="currentPredictionCard === 'podium'">
+              <div class="prediction-card-header">
+                <div>
+                  <p class="prediction-eyebrow">Race prediction</p>
+                  <h5 class="card-title">Podium prediction</h5>
+                  <p class="prediction-hint">Choose the three drivers you believe will reach the top step.</p>
+                </div>
+                <div class="prediction-status-pill" [class.is-ready]="areAllDriversSelected()">
+                  <span class="status-dot"></span>
+                  {{ areAllDriversSelected() ? 'Ready to save' : 'Select your trio' }}
+                </div>
+              </div>
+
+              <div class="podium-stage">
+                <div class="podium-slot podium-second">
+                  <span class="podium-label">P2</span>
+                  <strong>{{ pSecond || '—' }}</strong>
+                </div>
+                <div class="podium-slot podium-first">
+                  <span class="podium-label">P1</span>
+                  <strong>{{ pFirst || '—' }}</strong>
+                </div>
+                <div class="podium-slot podium-third">
+                  <span class="podium-label">P3</span>
+                  <strong>{{ pThird || '—' }}</strong>
+                </div>
+              </div>
+
+              <div class="prediction-action-row">
+                <ng-container *ngIf="!showDrivers; else podiumPickerShown">
+                  <div *ngIf="!predictionLocked" class="prediction-action-copy">
+                    <p *ngIf="pHasPodium" class="mb-0">Change your podium prediction</p>
+                    <p *ngIf="!pHasPodium" queroclass="mb-0">Make your podium prediction</p>
+                    <button type="button" class="text-link" (click)="showDrivers = true">
+                      Select drivers
+                    </button>
+                  </div>
+                  <p class="mb-0 prediction-action-copy" *ngIf="predictionLocked">Prediction locked</p>
+                </ng-container>
+                <ng-template #podiumPickerShown>
+                  <button type="button" class="text-link" (click)="showDrivers = false">Cancel selection</button>
+                </ng-template>
+              </div>
+
+              <ng-container *ngIf="showDrivers">
+                <div class="slide-over-backdrop" (click)="showDrivers = false"></div>
+                <aside class="slide-over-panel">
+                  <div class="slide-over-header">
+                    <div>
+                      <p class="prediction-eyebrow">Select podium drivers</p>
+                      <h5 class="card-title">Pick P1, P2 and P3</h5>
+                    </div>
+                    <button type="button" class="slide-over-close" (click)="showDrivers = false">&times;</button>
+                  </div>
+                  <div class="driver-picker-grid slide-over-grid">
+                    <button type="button" *ngFor="let driver of drivers" class="driver-chip"
+                      (click)="selectDriver(driver)"
+                      [ngClass]="{'selected-1st': driver.selection === 1, 'selected-2nd': driver.selection === 2, 'selected-3rd': driver.selection === 3}">
+                      <span class="driver-name">{{ driver.familyName }}</span>
+                      <span class="driver-badge" *ngIf="driver.selection">P{{ driver.selection }}</span>
+                    </button>
+                  </div>
+                  <div class="prediction-footer slide-over-footer">
+                    <button type="button" class="btn action-btn secondary" (click)="resetPredictions()">Reset</button>
+                    <button type="button" class="btn action-btn primary" (click)="showDrivers = false" [disabled]="!areAllDriversSelected()">
+                      Done
+                    </button>
+                  </div>
+                </aside>
+              </ng-container>
+
+              <div class="prediction-footer" *ngIf="areAllDriversSelected()">
+                <button type="button" class="btn action-btn secondary" (click)="resetPredictions()">Reset</button>
+                <button type="button" class="btn action-btn primary" (click)="savePredictions()">
+                  {{ fastest ? 'Save podium + fastest lap' : 'Save podium prediction' }}
+                </button>
+              </div>
+            </div>
+
+            <div class="card-body prediction-card-body" *ngIf="currentPredictionCard === 'fastestLap'">
+              <div class="prediction-card-header">
+                <div>
+                  <p class="prediction-eyebrow">Bonus prediction</p>
+                  <h5 class="card-title">Fastest lap prediction</h5>
+                  <p class="prediction-hint">Choose the driver you expect to set the quickest lap of the weekend.</p>
+                </div>
+                <div class="prediction-status-pill" [class.is-ready]="fastest">
+                  <span class="status-dot"></span>
+                  {{ fastest ? 'Driver selected' : 'Pick a driver' }}
+                </div>
+              </div>
+
+              <div class="fastest-highlight-card">
+                <div class="fastest-icon">⚡</div>
+                <div>
+                  <p class="prediction-eyebrow">Selected driver</p>
+                  <strong>{{ pFastestLap || 'Choose your fastest-lap contender' }}</strong>
+                </div>
+              </div>
+
+              <div class="prediction-action-row">
+                <ng-container *ngIf="!showDriversFastest; else fastestPickerShown">
+                  <div *ngIf="!predictionLocked" class="prediction-action-copy">
+                    <p *ngIf="pHasFastestLap" class="mb-0">Change your fastest-lap prediction</p>
+                    <p *ngIf="!pHasFastestLap" class="mb-0">Make your fastest-lap prediction</p>
+                    <button type="button" class="text-link" (click)="showDriversFastest = true">
+                      Select driver
+                    </button>
+                  </div>
+                  <p class="mb-0 prediction-action-copy" *ngIf="predictionLocked">Prediction locked</p>
+                </ng-container>
+                <ng-template #fastestPickerShown>
+                  <button type="button" class="text-link" (click)="showDriversFastest = false">Cancel selection</button>
+                </ng-template>
+              </div>
+
+              <ng-container *ngIf="showDriversFastest">
+                <div class="slide-over-backdrop" (click)="showDriversFastest = false"></div>
+                <aside class="slide-over-panel">
+                  <div class="slide-over-header">
+                    <div>
+                      <p class="prediction-eyebrow">Select fastest lap driver</p>
+                      <h5 class="card-title">Pick the top qualifier</h5>
+                    </div>
+                    <button type="button" class="slide-over-close" (click)="showDriversFastest = false">&times;</button>
+                  </div>
+                  <div class="driver-picker-grid slide-over-grid">
+                    <button type="button" *ngFor="let driver of drivers" class="driver-chip"
+                      (click)="selectFastestDriver(driver)"
+                      [class.fastest-driver]="driver.permanentNumber === fastest">
+                      <span class="driver-name">{{ driver.familyName }}</span>
+                      <span class="driver-badge" *ngIf="driver.permanentNumber === fastest">Fastest</span>
+                    </button>
+                  </div>
+                  <div class="prediction-footer slide-over-footer">
+                    <button type="button" class="btn action-btn primary" (click)="showDriversFastest = false" [disabled]="!fastest">
+                      Done
+                    </button>
+                  </div>
+                </aside>
+              </ng-container>
+
+              <div class="prediction-footer" *ngIf="fastest">
+                <button type="button" class="btn action-btn primary" (click)="savePredictions()">
+                  {{ areAllDriversSelected() ? 'Save fastest lap + podium' : 'Save fastest lap' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 d-flex">
+          <div class="card leaderboard-card h-100">
+            <div class="leaderboard-switcher">
+              <button type="button" class="leaderboard-switch" (click)="switchTable('userPoints')"
+                [class.active]="currentTable === 'userPoints'">Users</button>
+              <button type="button" class="leaderboard-switch" (click)="switchTable('driverStandings')"
+                [class.active]="currentTable === 'driverStandings'">Drivers</button>
+              <button type="button" class="leaderboard-switch" (click)="switchTable('constructorStandings')"
+                [class.active]="currentTable === 'constructorStandings'">Constructors</button>
+            </div>
+
+            <div class="card-body leaderboard-body"
+              *ngIf="currentTable === 'userPoints' && totalPointsData && totalPointsData.length > 0">
+              <div class="leaderboard-card-header">
+                <div>
+                  <p class="prediction-eyebrow">Community</p>
+                  <h5 class="card-title">User leaderboard</h5>
+                </div>
+                <div class="leaderboard-header-stats">
+                  <span class="leaderboard-pill">Top predictions</span>
+                  <span class="leaderboard-pill subtle">Live ranking</span>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table class="table leaderboard-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Username</th>
+                      <th scope="col">Points</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="let data of totalPointsData | paginate:{itemsPerPage:6, currentPage:page, totalItems:totalLength}">
+                      <td>{{ data.position}}</td>
+                      <td [class.highlighted-text]="user === data.username">{{ data.username }}</td>
+                      <td>{{ data.points }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="pagination">
+                <pagination-controls (pageChange)="page=$event"></pagination-controls>
+              </div>
+            </div>
+
+            <div class="card-body leaderboard-body" *ngIf="currentTable === 'driverStandings'">
+              <div class="leaderboard-card-header">
+                <div>
+                  <p class="prediction-eyebrow">Championship</p>
+                  <h5 class="card-title">Driver standings</h5>
+                </div>
+                <div class="leaderboard-header-stats">
+                  <span class="leaderboard-pill">Current season</span>
+                  <span class="leaderboard-pill subtle">Updated live</span>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table class="table leaderboard-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Driver Name</th>
+                      <th scope="col">Points</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="let driver of getDriversStandings() | paginate:{itemsPerPage:6, currentPage:page, totalItems:totalLength}">
+                      <td>{{ driver.position}}</td>
+                      <td>{{ driver.nameDriverOrConstructor }}</td>
+                      <td>{{ driver.points }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="pagination">
+                <pagination-controls (pageChange)="page=$event"></pagination-controls>
+              </div>
+            </div>
+
+            <div class="card-body leaderboard-body" *ngIf="currentTable === 'constructorStandings'">
+              <div class="leaderboard-card-header">
+                <div>
+                  <p class="prediction-eyebrow">Championship</p>
+                  <h5 class="card-title">Constructor standings</h5>
+                </div>
+                <div class="leaderboard-header-stats">
+                  <span class="leaderboard-pill">Current season</span>
+                  <span class="leaderboard-pill subtle">Updated live</span>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table class="table leaderboard-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Constructor</th>
+                      <th scope="col">Points</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="let driver of getConstructoresStandings() | paginate:{itemsPerPage:6, currentPage:page, totalItems:totalLength}">
+                      <td>{{ driver.position}}</td>
+                      <td>{{ driver.nameDriverOrConstructor }}</td>
+                      <td>{{ driver.points }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="pagination">
+                <pagination-controls (pageChange)="page=$event"></pagination-controls>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="isLoggedIn && !errorMessage" class="container mt-5 mb-5">
+      <div class="row justify-content-center align-items-stretch mb-5">
+        <div class="col-md-6 mb-5">
+          <app-f1-news></app-f1-news>
+        </div>
+        <div class="col-md-6 col-sm-6 mb-5">
+          <!-- YouTube player -->
+          <div style="width: 100%; overflow: hidden;">
+            <youtube-player [videoId]="videoId" suggestedQuality="highres" [height]="500" [width]="610">
+            </youtube-player>
+          </div>
+        </div>
+      </div>
+    </div>
+    

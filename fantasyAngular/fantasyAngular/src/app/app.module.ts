@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -12,10 +13,23 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { BoardAdminComponent } from './components/board-admin/board-admin.component';
 import { BoardModeratorComponent } from './components/board-moderator/board-moderator.component';
 import { BoardUserComponent } from './components/board-user/board-user.component';
-import { authInterceptorProviders } from 'src/_helpers/auth.interceptor';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { NgxSpinnerModule } from 'ngx-spinner';
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { SpinnerInterceptor } from 'src/_helpers/SpinnerInterceptor';
+import { AuthInterceptor } from 'src/_helpers/auth.interceptor';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { CalendarComponent } from './components/calendar/calendar.component';
+import { RaceDetailsComponent } from './components/race-details/race-details.component';
+import { YouTubePlayerModule } from '@angular/youtube-player';
+import { RacePopupComponent } from './components/race-popup/race-popup.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { WeatherComponent } from './components/weather/weather.component';
+import { WeatherForecastPopupComponent } from './components/weather-forecast-popup/weather-forecast-popup.component';
+import { F1NewsComponent } from './components/f1-news/f1-news.component';
 
 
 
@@ -32,16 +46,31 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     BoardModeratorComponent,
     BoardUserComponent,
     NavBarComponent,
-    SpinnerComponent
+    SpinnerComponent,
+    CalendarComponent,
+    RaceDetailsComponent,
+    RacePopupComponent,
+    WeatherComponent,
+    WeatherForecastPopupComponent,
+    F1NewsComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    NgxSpinnerModule,
+    BrowserAnimationsModule,
+    NgxPaginationModule,
+    YouTubePlayerModule,
+    ModalModule.forRoot()
+    
   ],
-  providers: [authInterceptorProviders],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide : HTTP_INTERCEPTORS, useClass: SpinnerInterceptor, multi: true}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
