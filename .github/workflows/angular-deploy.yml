@@ -42,6 +42,13 @@ jobs:
         with:
           workload_identity_provider: projects/549511174259/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider
           service_account: github-actions-deployer@f1-fantasy-510117.iam.gserviceaccount.com
+          create_credentials_file: true
+          export_environment_variables: true
+      
+      - name: Verify Google Cloud authentication
+        run: |
+          gcloud auth list
+          gcloud projects describe f1-fantasy-510117 --format="value(projectId)"
 
       - name: Deploy to Firebase Hosting
         run: npx firebase-tools deploy --only hosting --project f1-fantasy-510117 --non-interactive
