@@ -3,14 +3,14 @@ name: F1 Service CI
 on:
   push:
     branches:
-      - main
+      - off-season
     paths:
       - 'f1-service/**'
       - '.github/workflows/f1-service.yml'
 
   pull_request:
     branches:
-      - main
+      - off-season
     paths:
       - 'f1-service/**'
       - '.github/workflows/f1-service.yml'
