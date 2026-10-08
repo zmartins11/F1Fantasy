@@ -1,0 +1,64 @@
+
+name: Auth Service CD
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'auth-service/**'
+      - '.github/workflows/auth-service-deploy.yml'
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: auth-service/pom.xml
+
+      - name: Build and test
+        working-directory: ./auth-service
+        run: mvn --batch-mode clean verify
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: 'projects/549511174259/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider'
+          service_account: 'github-actions-deployer@f1-fantasy-510117.iam.gserviceaccount.com'
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Configure Docker authentication
+        run: gcloud auth configure-docker europe-west1-docker.pkg.dev --quiet
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t europe-west1-docker.pkg.dev/f1-fantasy-510117/f1-fantasy/auth-service:${{ github.sha }} \
+            ./auth-service
+
+      - name: Push Docker image
+        run: |
+          docker push europe-west1-docker.pkg.dev/f1-fantasy-510117/f1-fantasy/auth-service:${{ github.sha }}
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy auth-service \
+            --image europe-west1-docker.pkg.dev/f1-fantasy-510117/f1-fantasy/auth-service:${{ github.sha }} \
+            --region europe-west1 \
+            --project f1-fantasy-510117 \
+            --quiet
