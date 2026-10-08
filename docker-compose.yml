@@ -1,0 +1,149 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: f1-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - f1-network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: f1-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - f1-network
+
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/f1predict_users?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8084:8084"
+    networks:
+      - f1-network
+
+  f1-service:
+    build: ./f1-service
+    container_name: f1-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/f1predict_f1?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      LOGGING_LEVEL_COM_EXAMPLE_F1: DEBUG
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    ports:
+      - "8081:8081"
+    networks:
+      - f1-network
+
+  predict-service:
+    build: ./predict-service
+    container_name: predict-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/f1predict_predict?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SERVICES_F1_URL: http://f1-service:8081
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8083:8083"
+    networks:
+      - f1-network
+
+  scoring-service:
+    build: ./scoring-service
+    container_name: scoring-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/f1predict_scoring?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SERVICES_F1_URL: http://f1-service:8081
+      SERVICES_PREDICTION_URL: http://predict-service:8083
+      SERVICES_AUTH_URL: http://auth-service:8084
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      LOGGING_LEVEL_COM_EXAMPLE_F1: DEBUG
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    ports:
+      - "8082:8082"
+    networks:
+      - f1-network
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    environment:
+      AUTH_SERVICE_URL: http://auth-service:8084
+      F1_SERVICE_URL: http://f1-service:8081
+      PREDICT_SERVICE_URL: http://predict-service:8083
+      SCORING_SERVICE_URL: http://scoring-service:8082
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      - auth-service
+      - f1-service
+      - predict-service
+      - scoring-service
+    ports:
+      - "8080:8080"
+    networks:
+      - f1-network
+
+  python-service:
+    build: ./pythonF1
+    container_name: python-service
+    ports:
+      - "5000:5000"
+    networks:
+      - f1-network
+
+  angular-frontend:
+    build: ./fantasyAngular/fantasyAngular
+    container_name: angular-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - f1-network
+
+networks:
+  f1-network:
+    driver: bridge
+
+volumes:
+  mysql-data:

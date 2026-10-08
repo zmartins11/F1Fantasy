@@ -1,0 +1,233 @@
+/* Small alignment tweaks to match Upcoming Event padding */
+.leaderboard-card,
+.prediction-card-shell {
+  width: 100%;
+}
+
+.leaderboard-card .card-body {
+  padding-right: 1.4rem;
+}
+
+@media (max-width: 768px) {
+  .leaderboard-card .card-body { padding-right: 1.35rem; }
+}
+
+.hero-control-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.theme-toggle{
+  display: inline-flex;
+  align-items: center;
+  gap: .85rem;
+  padding: .6rem 1rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(148,163,184,.25);
+  box-shadow: 0 10px 30px rgba(15,23,42,.06);
+}
+
+.theme-toggle .toggle-label {
+  font-size: .9rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  border-radius: 999px;
+  transition: background-color .25s ease;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 4px;
+  top: 3px;
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: 0 3px 10px rgba(15,23,42,.18);
+  transition: transform .25s ease;
+}
+
+.switch input:checked + .slider {
+  background-color: #2563eb;
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+.home-root.dark-mode {
+  background: #0b1220;
+  color: #e2e8f0;
+}
+
+.home-root.dark-mode .hero-panel,
+.home-root.dark-mode .card,
+.home-root.dark-mode .countdown-panel,
+.home-root.dark-mode .weather-card,
+.home-root.dark-mode .hero-locked {
+  background: rgba(15,23,42,.92);
+  border-color: rgba(148,163,184,.18);
+  box-shadow: 0 20px 50px rgba(0,0,0,.35);
+}
+
+.home-root.dark-mode .hero-title,
+.home-root.dark-mode .prediction-eyebrow,
+.home-root.dark-mode .countdown-title,
+.home-root.dark-mode .countdown-subtitle,
+.home-root.dark-mode .countdown-label,
+.home-root.dark-mode .hero-subtitle,
+.home-root.dark-mode .leaderboard-pill,
+.home-root.dark-mode .prediction-action-copy,
+.home-root.dark-mode .leaderboard-card-header,
+.home-root.dark-mode .leaderboard-table th,
+.home-root.dark-mode .leaderboard-table td,
+.home-root.dark-mode .theme-toggle .toggle-label {
+  color: #e2e8f0;
+}
+
+.home-root.dark-mode .card {
+  background: rgba(15,23,42,.92);
+}
+
+.home-root.dark-mode .prediction-switch {
+  background: rgba(148,163,184,.14);
+  color: #f8fafc;
+}
+
+.home-root.dark-mode .prediction-switch.active {
+  background: linear-gradient(135deg,#ffb2c4,#ff9f43);
+}
+
+.home-root.dark-mode .btn.action-btn.primary {
+  background: #38bdf8;
+  border-color: transparent;
+  color: #0f172a;
+}
+
+.weather-card {
+  align-items: stretch;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  min-height: 0;
+}
+
+.weather-card app-weather {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.home-root.dark-mode .weather-card {
+  background: transparent;
+  box-shadow: none;
+}
+
+.col-md-6.d-flex {
+  width: 50%;
+}
+
+@media (max-width: 1200px) {
+  .col-md-6.d-flex {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+.home-root.dark-mode .btn.action-btn.secondary,
+.home-root.dark-mode .btn.action-btn.primary {
+  box-shadow: none;
+}
+
+.home-root.dark-mode .slide-over-panel {
+  background: rgba(15,23,42,.96);
+}
+
+.home-root.dark-mode .slide-over-backdrop {
+  background: rgba(0,0,0,.75);
+}
+
+.home-root.dark-mode .driver-chip {
+  background: rgba(255,255,255,.08);
+  color: #e2e8f0;
+}
+
+.home-root.dark-mode .driver-chip.selected-1st,
+.home-root.dark-mode .driver-chip.selected-2nd,
+.home-root.dark-mode .driver-chip.selected-3rd {
+  background: linear-gradient(135deg,#ff9f43,#ff2d55);
+  color: #fff;
+}
+
+.home-root.dark-mode .leaderboard-table {
+  background: rgba(15,23,42,.82);
+}
+
+.home-root.dark-mode .leaderboard-table th,
+.home-root.dark-mode .leaderboard-table td {
+  border-color: rgba(148,163,184,.12);
+}
+
+.home-root.dark-mode .leaderboard-table thead {
+  border-bottom: 1px solid rgba(148,163,184,.15);
+}
+
+.home-root.dark-mode .hero-badge,
+.home-root.dark-mode .leaderboard-pill {
+  background: rgba(56,189,248,.16);
+}
+
+.home-root.dark-mode .hero-panel .hero-badge {
+  color: #cffafe;
+}
+
+.home-root.dark-mode .card-body {
+  border-color: rgba(255,255,255,.05);
+}
+
+.home-root.dark-mode .prediction-status-pill {
+  background: rgba(56,189,248,.12);
+  color: #e2e8f0;
+}
+
+.home-root.dark-mode .prediction-action-copy {
+  color: #cbd5e1;
+}
+
+.home-root.dark-mode .text-link {
+  color: #93c5fd;
+}
+
+.home-root.dark-mode .text-link:hover {
+  color: #bfdbfe;
+}
+
+.home-root.dark-mode .modal-content {
+  background: #111827;
+}
