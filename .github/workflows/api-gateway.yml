@@ -1,0 +1,41 @@
+
+name: API Gateway CI
+
+on:
+  push:
+    branches:
+      - off-season
+    paths:
+      - 'api-gateway/**'
+      - '.github/workflows/api-gateway.yml'
+
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'api-gateway/**'
+      - '.github/workflows/api-gateway.yml'
+      - '.github/workflows/api-gateway-deploy.yml'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./api-gateway
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: api-gateway/pom.xml
+
+      - name: Build and run tests
+        run: mvn --batch-mode clean verify
