@@ -14,7 +14,7 @@ public class CorsConfiguration {
         org.springframework.web.cors.CorsConfiguration config =
                 new org.springframework.web.cors.CorsConfiguration();
 
-        config.setAllowCredentials(true); 
+        config.setAllowCredentials(true);
         // Angular Local
         config.addAllowedOrigin("http://localhost:4200");
         // Angular Firebase
