@@ -1,0 +1,41 @@
+
+name: Predict Service CI
+
+on:
+  push:
+    branches:
+      - off-season
+    paths:
+      - 'predict-service/**'
+      - '.github/workflows/predict-service.yml'
+
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'predict-service/**'
+      - '.github/workflows/predict-service.yml'
+      - '.github/workflows/predict-service-deploy.yml'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./predict-service
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: predict-service/pom.xml
+
+      - name: Build and run tests
+        run: mvn --batch-mode clean verify
