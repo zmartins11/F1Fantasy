@@ -8,6 +8,7 @@ import com.example.f1.f1_service.dto.NextRaceData;
 import com.example.f1.f1_service.dto.RaceInfo;
 import com.example.f1.f1_service.dto.StandingsDto;
 import com.example.f1.f1_service.dto.TotalPointsWC;
+import com.example.f1.f1_service.enums.DriverDisplayType;
 import com.example.f1.f1_service.model.*;
 import com.example.f1.f1_service.utils.RaceResultMapper;
 import org.springframework.http.HttpStatusCode;
@@ -57,7 +58,7 @@ public class ErgastService {
 						.reversed())
 				.map(race -> {
 					try {
-						return getRaceResult(race.getSeason(), race.getRound());
+						return getRaceResult(race.getSeason(), race.getRound(), DriverDisplayType.NUMBER);
 					} catch (JsonProcessingException exception) {
 						throw new RuntimeException(exception);
 					}
@@ -67,7 +68,7 @@ public class ErgastService {
 				.orElse(null);
 	}
 
-	public RaceResultDto getRaceResult(String season, String round)
+	public RaceResultDto getRaceResult(String season, String round, DriverDisplayType displayType)
 			throws JsonProcessingException {
 
 		String urlRaceResult =
@@ -113,7 +114,7 @@ public class ErgastService {
 						.getResults()
 						.get(0);
 
-		dto = resultMapper.map(resultsRace, fastestLap, round, season);
+		dto = resultMapper.map(resultsRace, fastestLap, round, season, displayType);
 		dto.setRaceFinished(true);
 
 		return dto;

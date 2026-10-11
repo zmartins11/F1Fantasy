@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.example.f1.f1_service.dto.RaceInfo;
 import com.example.f1.f1_service.dto.StandingsDto;
+import com.example.f1.f1_service.enums.DriverDisplayType;
 import com.example.f1.f1_service.model.Driver;
 import com.example.f1.f1_service.model.Race;
 import com.example.f1.f1_service.model.RaceResultDto;
@@ -38,7 +39,7 @@ public class F1Controller {
 	@GetMapping("/raceResult/{season}/{round}")
 	public ResponseEntity<RaceResultDto> getRaceResult(@PathVariable String season, @PathVariable String round)
 			throws JsonProcessingException {
-		return ResponseEntity.ok(ergastService.getRaceResult(season, round));
+		return ResponseEntity.ok(ergastService.getRaceResult(season, round, DriverDisplayType.FAMILY_NAME));
 	}
 
 	@GetMapping("/drivers/{season}")
