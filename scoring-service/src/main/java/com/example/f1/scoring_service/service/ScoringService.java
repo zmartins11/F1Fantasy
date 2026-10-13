@@ -7,10 +7,7 @@ import com.example.f1.scoring_service.contracts.race.RaceFinishedEvent;
 import com.example.f1.scoring_service.contracts.race.RaceResultData;
 import com.example.f1.scoring_service.contracts.user.UserData;
 import com.example.f1.scoring_service.contracts.user.UserReader;
-import com.example.f1.scoring_service.dto.CalculationResult;
-import com.example.f1.scoring_service.dto.DriverPointsData;
-import com.example.f1.scoring_service.dto.PointsInfoDto;
-import com.example.f1.scoring_service.dto.TotalPointsDto;
+import com.example.f1.scoring_service.dto.*;
 import com.example.f1.scoring_service.model.DriversPoints;
 import com.example.f1.scoring_service.model.PredictionResult;
 import com.example.f1.scoring_service.contracts.prediction.PredictionData;
@@ -22,7 +19,6 @@ import com.example.f1.scoring_service.repository.PredictionResultRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -323,5 +319,44 @@ public class ScoringService {
             tmp.setPosition(String.valueOf(i + 1));
         }
         return listUsers;
+    }
+
+    public ScoringStatsDto getScoringStatsBySeason(Long userId, int season) {
+
+        Long totalPoints =
+                predictionResultRepository
+                        .getTotalPointsByUserAndSeason(userId.intValue(), season);
+
+        List<UserRankingProjection> ranking =
+                predictionResultRepository.getSeasonRanking(season);
+
+        Integer leaderboardRank = null;
+        Long previousPoints = null;
+        int position = 0;
+
+        for (UserRankingProjection user : ranking) {
+            position++;
+            // Utilizadores com a mesma pontuação partilham o rank.
+            if (previousPoints == null ||
+                    !previousPoints.equals(user.getTotalPoints())) {
+                leaderboardRank = position;
+            }
+
+            if (user.getUserId().equals(userId.intValue())) {
+                return new ScoringStatsDto(
+                        totalPoints,
+                        leaderboardRank,
+                        null
+                );
+            }
+
+            previousPoints = user.getTotalPoints();
+        }
+
+        return new ScoringStatsDto(
+                totalPoints,
+                null,
+                null
+        );
     }
 }

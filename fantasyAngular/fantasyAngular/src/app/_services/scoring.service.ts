@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { TotalPointsUsers } from '../model/TotalPointsUsers';
 import { PointsInfo } from '../model/PointsInfo';
 import { environment } from 'src/environments/environment';
+import { ScoringStats } from '../model/player-stats.model';
 
 @Injectable({
   providedIn: 'root'
@@ -20,4 +21,11 @@ export class ScoringService {
   getPointsInfo(): Observable<PointsInfo[]> {
     return this.http.get<PointsInfo[]>(`${this.baseApi}/pointsInfo`);
   }
+
+  getScoringStats(season: number): Observable<ScoringStats> {
+    return this.http.get<ScoringStats>(
+      `${this.baseApi}/me/stats/${season}`
+    );
+  }
+
 }

@@ -3,6 +3,7 @@ package com.example.f1.predict_service.service;
 import com.example.f1.predict_service.contracts.prediction.PredictionData;
 import com.example.f1.predict_service.contracts.race.NextRaceData;
 import com.example.f1.predict_service.dto.PredictionDto;
+import com.example.f1.predict_service.dto.PredictionStatsDto;
 import com.example.f1.predict_service.dto.RaceScheduleResponse;
 import com.example.f1.predict_service.dto.UserPredictionData;
 import com.example.f1.predict_service.model.Prediction;
@@ -11,6 +12,7 @@ import com.example.f1.predict_service.repository.PredictRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -129,5 +131,10 @@ public class PredictService {
                 prediction.getPredictedPodium(),
                 prediction.getPredictedFastestLap()
         );
+    }
+
+    @Transactional(readOnly = true)
+    public PredictionStatsDto getPredictionStatsBySeason(Long userId, Integer season) {
+        return new PredictionStatsDto(predictRepository.countByUserIdAndSeason(userId.intValue(), season));
     }
 }
