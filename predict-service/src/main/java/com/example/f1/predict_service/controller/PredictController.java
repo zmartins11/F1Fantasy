@@ -1,6 +1,7 @@
 package com.example.f1.predict_service.controller;
 
 import com.example.f1.predict_service.dto.PredictionDto;
+import com.example.f1.predict_service.dto.PredictionStatsDto;
 import com.example.f1.predict_service.dto.RaceScheduleResponse;
 import com.example.f1.predict_service.model.Prediction;
 import com.example.f1.predict_service.service.PredictService;
@@ -39,5 +40,12 @@ public class PredictController {
     public ResponseEntity<RaceScheduleResponse> getNextRaceInfo(@AuthenticationPrincipal Jwt jwt) throws JsonProcessingException {
         return ResponseEntity.ok(predictService.getRaceSchedule(jwt.getClaim("userId")));
     }
+
+
+    @GetMapping("/me/stats/{season}")
+    public ResponseEntity<PredictionStatsDto> getPredictionsStatsBySeason(@PathVariable Integer season, @AuthenticationPrincipal Jwt jwt) throws JsonProcessingException {
+        return ResponseEntity.ok(predictService.getPredictionStatsBySeason(jwt.getClaim("userId"), season));
+    }
+
 
 }
