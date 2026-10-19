@@ -1,64 +1,40 @@
-import { AfterViewInit, Component, ElementRef, Renderer2 } from '@angular/core';
-
-declare global {
-  interface Window {
-    twttr?: {
-      widgets?: {
-        load: (element?: HTMLElement) => void;
-      };
-      ready?: (callback: (twitter: NonNullable<Window['twttr']>) => void) => void;
-    };
-  }
-}
+import { Component, OnInit } from '@angular/core';
+import { F1NewsService } from 'src/app/_services/f1-news.service';
+import { News } from 'src/app/model/News';
 
 @Component({
   selector: 'app-f1-news',
   templateUrl: './f1-news.component.html',
   styleUrls: ['./f1-news.component.css']
 })
-export class F1NewsComponent implements AfterViewInit {
-  private static widgetsScript?: Promise<void>;
+export class F1NewsComponent implements OnInit {
 
-  constructor(private elementRef: ElementRef<HTMLElement>, private renderer: Renderer2) { }
+  news: News[] = [];
+  loading: boolean = true;
+  error: boolean = false;
 
-  ngAfterViewInit(): void {
-    this.loadTwitterWidgets();
+  constructor(
+    private f1NewsService: F1NewsService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadNews();
   }
 
-  private loadTwitterWidgets(): void {
-    if (window.twttr?.widgets) {
-      this.renderTwitterTimeline();
-      return;
-    }
+  private loadNews(): void {
+    this.loading = true;
+    this.error = false;
 
-    F1NewsComponent.widgetsScript ??= new Promise<void>((resolve, reject) => {
-      const existingScript = document.querySelector('script[src="https://platform.twitter.com/widgets.js"]');
-      if (existingScript) {
-        existingScript.addEventListener('load', () => resolve());
-        existingScript.addEventListener('error', () => reject());
-        return;
+    this.f1NewsService.getLatestNews().subscribe({
+      next: (data: News[]) => {
+        this.news = data;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error loading F1 news:', err);
+        this.error = true;
+        this.loading = false;
       }
-
-      const script = this.renderer.createElement('script') as HTMLScriptElement;
-      script.src = 'https://platform.twitter.com/widgets.js';
-      script.async = true;
-      script.charset = 'utf-8';
-      script.onload = () => resolve();
-      script.onerror = () => reject();
-      this.renderer.appendChild(document.body, script);
     });
-
-    F1NewsComponent.widgetsScript
-      .then(() => this.renderTwitterTimeline())
-      .catch(() => undefined);
-  }
-
-  private renderTwitterTimeline(): void {
-    const twitter = window.twttr;
-    if (twitter?.widgets) {
-      twitter.widgets.load(this.elementRef.nativeElement);
-    } else if (twitter?.ready) {
-      twitter.ready((readyTwitter) => readyTwitter.widgets?.load(this.elementRef.nativeElement));
-    }
   }
 }

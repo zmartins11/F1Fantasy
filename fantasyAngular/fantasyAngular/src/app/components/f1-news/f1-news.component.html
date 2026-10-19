@@ -1,14 +1,49 @@
 <section class="news-panel" aria-labelledby="f1-news-title">
+
   <div class="news-panel-header">
     <div>
       <p class="prediction-eyebrow">Formula 1</p>
       <h5 id="f1-news-title" class="card-title">F1 news</h5>
     </div>
-    <a class="news-account" href="https://twitter.com/F1" target="_blank" rel="noopener noreferrer">@F1</a>
+
+    <a class="news-account"
+       href="https://www.bbc.com/sport/formula1"
+       target="_blank"
+       rel="noopener noreferrer">
+      BBC Sport
+    </a>
   </div>
 
-  <div class="timeline-frame">
-    <a class="twitter-timeline" data-tweet-limit="5" data-height="500" data-dnt="true"
-      href="https://twitter.com/F1?ref_src=twsrc%5Etfw">F1 on X</a>
+  <p *ngIf="loading">Loading news...</p>
+
+  <p *ngIf="error">
+    Unable to load F1 news.
+  </p>
+
+  <div *ngIf="!loading && !error" class="news-list">
+
+    <a *ngFor="let item of news"
+       [href]="item.articleUrl"
+       target="_blank"
+       rel="noopener noreferrer"
+       class="news-item">
+
+      <img *ngIf="item.imageUrl"
+           [src]="item.imageUrl"
+           [alt]="item.title"
+           class="news-image">
+
+      <div class="news-content">
+        <h6>{{ item.title }}</h6>
+        <p>{{ item.description }}</p>
+
+        <small>
+          {{ item.publishedAt | date:'dd MMM yyyy, HH:mm' }}
+        </small>
+      </div>
+
+    </a>
+
   </div>
+
 </section>

@@ -1,26 +1,251 @@
-<div class="container" *ngIf="currentUser; else loggedOut">
-    <header class="jumbotron">
-      <h3>
-        <strong>{{ currentUser.username }}</strong> Profile
-      </h3>
-    </header>
-    <p>
-      <strong>Token:</strong>
-      {{ currentUser.accessToken.substring(0, 20) }} ...
-      {{ currentUser.accessToken.substr(currentUser.accessToken.length - 20) }}
-    </p>
-    <p>
-      <strong>Email:</strong>
-      {{ currentUser.email }}
-    </p>
-    <strong>Role:</strong>
-    <ul>
-      <li>
-        currentUser.roles
-      </li>
-    </ul>
+
+<div class="profile-root">
+  <div class="breadcrumbs">Home / <b>Driver Profile</b></div>
+
+  <!-- PROFILE HEADER -->
+  <section class="profile-hero" aria-label="Driver profile">
+    <div class="avatar" aria-hidden="true">
+      {{ (currentUser?.username || 'U').charAt(0) | uppercase }}
+    </div>
+
+    <div class="hero-info">
+      <p class="profile-eyebrow">Driver profile</p>
+
+      <h1 class="profile-title">
+        {{ currentUser?.username || 'Driver' }}
+      </h1>
+
+      <p class="profile-subtitle">
+        Fantasy player &nbsp;·&nbsp; {{ selectedSeason }} Season
+      </p>
+    </div>
+
+    <span class="profile-pill">
+      <span class="dot"></span> Player
+    </span>
+  </section>
+
+  <!-- MY SEASON STATS -->
+  <section class="profile-section" aria-labelledby="stats-heading">
+
+    <div class="section-top">
+      <h2 id="stats-heading">My Season Stats</h2>
+      <p class="hint">{{ selectedSeason }} season overview</p>
+    </div>
+
+    <!-- LOADING STATE -->
+    <div *ngIf="loadingStats" role="status" aria-live="polite">
+      Loading season statistics...
+    </div>
+
+    <!-- ERROR STATE -->
+    <div *ngIf="statsError && !loadingStats"
+         class="alert alert-danger"
+         role="alert">
+      Unable to load season statistics.
+
+      <button type="button"
+              class="text-link"
+              (click)="loadSeasonStats()">
+        Try again
+      </button>
+    </div>
+
+    <div class="stats-grid">
+
+      <!-- TOTAL POINTS -->
+      <article class="stat-card">
+        <div class="stat-head">
+          <span>Total Points</span>
+          <span class="stat-icon" aria-hidden="true">🏆</span>
+        </div>
+
+        <div class="stat-value">
+          {{ loadingStats ? '...' : (playerStats?.totalPoints ?? '—') }}
+        </div>
+
+        <div class="stat-foot">
+          Total points earned this season
+        </div>
+      </article>
+
+      <!-- LEADERBOARD RANK -->
+      <article class="stat-card">
+        <div class="stat-head">
+          <span>Leaderboard Rank</span>
+          <span class="stat-icon" aria-hidden="true">📊</span>
+        </div>
+
+        <div class="stat-value">
+          {{
+            loadingStats
+              ? '...'
+              : (playerStats?.leaderboardRank != null
+                  ? '#' + playerStats?.leaderboardRank
+                  : '—')
+          }}
+        </div>
+
+        <div class="stat-foot">
+          Among all fantasy players
+        </div>
+      </article>
+
+      <!-- PREDICTIONS MADE -->
+      <article class="stat-card">
+        <div class="stat-head">
+          <span>Predictions Made</span>
+          <span class="stat-icon" aria-hidden="true">🏎️</span>
+        </div>
+
+        <div class="stat-value">
+          {{ loadingStats ? '...' : (playerStats?.predictionsMade ?? '—') }}
+        </div>
+
+        <div class="stat-foot">
+          Race weekends predicted
+        </div>
+      </article>
+
+      <!-- CORRECT PODIUMS -->
+      <article class="stat-card">
+        <div class="stat-head">
+          <span>Correct Podiums</span>
+          <span class="stat-icon" aria-hidden="true">🎯</span>
+        </div>
+
+        <div class="stat-value">
+          {{
+            loadingStats
+              ? '...'
+              : (playerStats?.correctPodiums ?? '—')
+          }}
+        </div>
+
+        <div class="stat-foot">
+          {{ playerStats?.correctPodiums != null
+              ? 'Successful podium picks'
+              : 'Coming soon' }}
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- HISTORY AND ACCOUNT SETTINGS -->
+  <div class="content-grid">
+
+    <!-- PREDICTION HISTORY -->
+    <!-- Temporary demo data until the history API is implemented -->
+    <section class="panel" aria-labelledby="history-heading">
+
+      <div class="panel-header">
+        <div>
+          <h2 id="history-heading">Prediction History</h2>
+          <p>See how you've scored in recent races</p>
+        </div>
+
+        <span class="text-link">Demo preview</span>
+      </div>
+
+      <div class="history-item">
+        <div class="round-icon" aria-hidden="true">🏁</div>
+
+        <div class="history-name">
+          <strong>Singapore Grand Prix</strong>
+          <small>Round 18 · Completed</small>
+        </div>
+
+        <div class="history-score">
+          <strong>+18 pts</strong>
+          <small>● Scored</small>
+        </div>
+      </div>
+
+      <div class="history-item">
+        <div class="round-icon" aria-hidden="true">🏁</div>
+
+        <div class="history-name">
+          <strong>Azerbaijan Grand Prix</strong>
+          <small>Round 17 · Completed</small>
+        </div>
+
+        <div class="history-score">
+          <strong>+12 pts</strong>
+          <small>● Scored</small>
+        </div>
+      </div>
+
+      <div class="history-item">
+        <div class="round-icon" aria-hidden="true">🏁</div>
+
+        <div class="history-name">
+          <strong>Italian Grand Prix</strong>
+          <small>Round 16 · Completed</small>
+        </div>
+
+        <div class="history-score">
+          <strong>+21 pts</strong>
+          <small>● Scored</small>
+        </div>
+      </div>
+
+      <div class="panel-footer">
+        <span>
+          Sample prediction history · Demo data
+        </span>
+      </div>
+    </section>
+
+    <!-- ACCOUNT SETTINGS -->
+    <section class="panel" aria-labelledby="settings-heading">
+
+      <div class="panel-header">
+        <div>
+          <h2 id="settings-heading">Account Settings</h2>
+          <p>Manage your personal information</p>
+        </div>
+      </div>
+
+      <div class="settings-row">
+        <div class="settings-icon" aria-hidden="true">✉</div>
+
+        <div class="settings-copy">
+          <strong>Email and account details</strong>
+          <small>{{ currentUser?.email || 'No email available' }}</small>
+        </div>
+
+        <span class="chevron" aria-hidden="true">›</span>
+      </div>
+
+      <div class="settings-row">
+        <div class="settings-icon" aria-hidden="true">🔒</div>
+
+        <div class="settings-copy">
+          <strong>Change password</strong>
+          <small>Manage account security</small>
+        </div>
+
+        <span class="chevron" aria-hidden="true">›</span>
+      </div>
+
+      <div class="settings-row">
+        <div class="settings-icon" aria-hidden="true">⚙</div>
+
+        <div class="settings-copy">
+          <strong>Preferences</strong>
+          <small>Theme and notifications</small>
+        </div>
+
+        <span class="chevron" aria-hidden="true">›</span>
+      </div>
+
+    </section>
   </div>
-  
-  <ng-template #loggedOut>
-    Please login.
-  </ng-template>
+
+  <p class="demo-note">
+    Season statistics are loaded from the F1Fantasy API.
+    Prediction history and account settings are not connected yet.
+  </p>
+
+</div>

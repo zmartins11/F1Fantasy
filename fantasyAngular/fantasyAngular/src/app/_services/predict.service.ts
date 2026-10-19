@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Prediction } from '../model/Prediction';
 import { NextRaceInfo } from '../model/NextRaceInfo';
 import { environment } from 'src/environments/environment';
+import { PredictionStats } from '../model/player-stats.model';
 
 @Injectable({
   providedIn: 'root'
@@ -40,6 +41,12 @@ export class PredictService {
 
   getNextRaceInfo(): Observable<NextRaceInfo> {
     return this.http.get<NextRaceInfo>(`${this.baseUrl}/raceSchedule`);
+  }
+
+  getPredictionStats(season: number): Observable<PredictionStats> {
+    return this.http.get<PredictionStats>(
+      `${this.baseUrl}/me/stats/${season}`
+    );
   }
 
 }

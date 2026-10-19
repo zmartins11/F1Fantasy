@@ -4,6 +4,7 @@ import java.time.Year;
 import java.util.List;
 
 
+import com.example.f1.f1_service.dto.NewsDto;
 import com.example.f1.f1_service.dto.RaceInfo;
 import com.example.f1.f1_service.dto.StandingsDto;
 import com.example.f1.f1_service.enums.DriverDisplayType;
@@ -11,6 +12,7 @@ import com.example.f1.f1_service.model.Driver;
 import com.example.f1.f1_service.model.Race;
 import com.example.f1.f1_service.model.RaceResultDto;
 import com.example.f1.f1_service.service.ErgastService;
+import com.example.f1.f1_service.service.F1NewsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,8 +29,11 @@ public class F1Controller {
 
 	private final ErgastService ergastService;
 
-	public F1Controller(ErgastService ergastService) {
+	private final F1NewsService f1NewsService;
+
+	public F1Controller(ErgastService ergastService, F1NewsService f1NewsService) {
 		this.ergastService = ergastService;
+		this.f1NewsService = f1NewsService;
 	}
 
 	@GetMapping("/{season}")
@@ -60,5 +65,10 @@ public class F1Controller {
 	@GetMapping("/allRaces")
 	public ResponseEntity<List<RaceInfo>> getAllRaces() throws JsonProcessingException {
 		return ResponseEntity.ok(ergastService.getAllRaces(Year.now().toString()));
+	}
+
+	@GetMapping("/news")
+	public ResponseEntity<List<NewsDto>> getLatestNews() throws Exception {
+		return ResponseEntity.ok(f1NewsService.getLatestNews());
 	}
 }
