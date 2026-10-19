@@ -298,7 +298,7 @@
 
                   <span class="podium-label">P2</span>
 
-                  <strong>{{ pSecond || '—' }}</strong>
+                  <strong>{{ displaySecond || '—' }}</strong>
 
                 </div>
 
@@ -306,7 +306,7 @@
 
                   <span class="podium-label">P1</span>
 
-                  <strong>{{ pFirst || '—' }}</strong>
+                  <strong>{{ displayFirst || '—' }}</strong>
 
                 </div>
 
@@ -314,7 +314,7 @@
 
                   <span class="podium-label">P3</span>
 
-                  <strong>{{ pThird || '—' }}</strong>
+                  <strong>{{ displayThird || '—' }}</strong>
 
                 </div>
 
@@ -328,7 +328,7 @@
 
                     <p *ngIf="pHasPodium" class="mb-0">Change your podium prediction</p>
 
-                    <p *ngIf="!pHasPodium" queroclass="mb-0">Make your podium prediction</p>
+                    <p *ngIf="!pHasPodium" class="mb-0">Make your podium prediction</p>
 
                     <button type="button" class="text-link" (click)="showDrivers = true">
 
@@ -352,11 +352,11 @@
 
               <ng-container *ngIf="showDrivers">
 
-                <div class="slide-over-backdrop" (click)="showDrivers = false"></div>
+                <div class="picker-overlay" (click)="showDrivers = false"></div>
 
-                <aside class="slide-over-panel">
+                <div class="picker-sheet" role="dialog" aria-modal="true" aria-label="Select podium drivers">
 
-                  <div class="slide-over-header">
+                  <div class="picker-header">
 
                     <div>
 
@@ -366,27 +366,69 @@
 
                     </div>
 
-                    <button type="button" class="slide-over-close" (click)="showDrivers = false">&times;</button>
+                    <button type="button" class="picker-close" aria-label="Close" (click)="showDrivers = false">&times;</button>
 
                   </div>
 
-                  <div class="driver-picker-grid slide-over-grid">
+                  <div class="picker-progress">
 
-                    <button type="button" *ngFor="let driver of drivers" class="driver-chip"
+                    <div class="progress-slot slot-p1" [class.filled]="first">
+
+                      <span class="slot-label">P1</span>
+
+                      <strong>{{ pendingFirst || '—' }}</strong>
+
+                    </div>
+
+                    <div class="progress-slot slot-p2" [class.filled]="second">
+
+                      <span class="slot-label">P2</span>
+
+                      <strong>{{ pendingSecond || '—' }}</strong>
+
+                    </div>
+
+                    <div class="progress-slot slot-p3" [class.filled]="third">
+
+                      <span class="slot-label">P3</span>
+
+                      <strong>{{ pendingThird || '—' }}</strong>
+
+                    </div>
+
+                  </div>
+
+                  <div class="picker-grid">
+
+                    <button type="button" *ngFor="let driver of drivers; let i = index" class="driver-card"
+
+                      [style.--team-color]="teamColor(driver)"
+
+                      [style.--team-color-soft]="teamColorSoft(driver)"
+
+                      [style.animation-delay]="(i * 25) + 'ms'"
 
                       (click)="selectDriver(driver)"
 
                       [ngClass]="{'selected-1st': driver.selection === 1, 'selected-2nd': driver.selection === 2, 'selected-3rd': driver.selection === 3}">
 
-                      <span class="driver-name">{{ driver.familyName }}</span>
+                      <span class="driver-card-number">{{ driver.permanentNumber }}</span>
 
-                      <span class="driver-badge" *ngIf="driver.selection">P{{ driver.selection }}</span>
+                      <span class="driver-card-info">
+
+                        <strong>{{ driver.givenName }} {{ driver.familyName }}</strong>
+
+                        <span class="driver-card-meta">{{ driver.code }} • {{ driver.nationality }}</span>
+
+                      </span>
+
+                      <span class="driver-card-badge" *ngIf="driver.selection">P{{ driver.selection }}</span>
 
                     </button>
 
                   </div>
 
-                  <div class="prediction-footer slide-over-footer">
+                  <div class="picker-footer">
 
                     <button type="button" class="btn action-btn secondary" (click)="resetPredictions()">Reset</button>
 
@@ -398,7 +440,7 @@
 
                   </div>
 
-                </aside>
+                </div>
 
               </ng-container>
 
@@ -448,7 +490,7 @@
 
                   <p class="prediction-eyebrow">Selected driver</p>
 
-                  <strong>{{ pFastestLap || 'Choose your fastest-lap contender' }}</strong>
+                  <strong>{{ displayFastestLap || 'Choose your fastest-lap contender' }}</strong>
 
                 </div>
 
@@ -486,41 +528,55 @@
 
               <ng-container *ngIf="showDriversFastest">
 
-                <div class="slide-over-backdrop" (click)="showDriversFastest = false"></div>
+                <div class="picker-overlay" (click)="showDriversFastest = false"></div>
 
-                <aside class="slide-over-panel">
+                <div class="picker-sheet" role="dialog" aria-modal="true" aria-label="Select fastest lap driver">
 
-                  <div class="slide-over-header">
+                  <div class="picker-header">
 
                     <div>
 
                       <p class="prediction-eyebrow">Select fastest lap driver</p>
 
-                      <h5 class="card-title">Pick the top qualifier</h5>
+                      <h5 class="card-title">Pick your fastest-lap contender</h5>
 
                     </div>
 
-                    <button type="button" class="slide-over-close" (click)="showDriversFastest = false">&times;</button>
+                    <button type="button" class="picker-close" aria-label="Close" (click)="showDriversFastest = false">&times;</button>
 
                   </div>
 
-                  <div class="driver-picker-grid slide-over-grid">
+                  <div class="picker-grid">
 
-                    <button type="button" *ngFor="let driver of drivers" class="driver-chip"
+                    <button type="button" *ngFor="let driver of drivers; let i = index" class="driver-card driver-card-fastest"
+
+                      [style.--team-color]="teamColor(driver)"
+
+                      [style.--team-color-soft]="teamColorSoft(driver)"
+
+                      [style.animation-delay]="(i * 25) + 'ms'"
 
                       (click)="selectFastestDriver(driver)"
 
                       [class.fastest-driver]="driver.permanentNumber === fastest">
 
-                      <span class="driver-name">{{ driver.familyName }}</span>
+                      <span class="driver-card-number">{{ driver.permanentNumber }}</span>
 
-                      <span class="driver-badge" *ngIf="driver.permanentNumber === fastest">Fastest</span>
+                      <span class="driver-card-info">
+
+                        <strong>{{ driver.givenName }} {{ driver.familyName }}</strong>
+
+                        <span class="driver-card-meta">{{ driver.code }} • {{ driver.nationality }}</span>
+
+                      </span>
+
+                      <span class="driver-card-badge fastest-badge" *ngIf="driver.permanentNumber === fastest">⚡ Fastest</span>
 
                     </button>
 
                   </div>
 
-                  <div class="prediction-footer slide-over-footer">
+                  <div class="picker-footer">
 
                     <button type="button" class="btn action-btn primary" (click)="showDriversFastest = false" [disabled]="!fastest">
 
@@ -530,7 +586,7 @@
 
                   </div>
 
-                </aside>
+                </div>
 
               </ng-container>
 

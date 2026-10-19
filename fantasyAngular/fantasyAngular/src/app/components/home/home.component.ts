@@ -398,27 +398,96 @@ export class HomeComponent implements OnInit {
 
   selectDriver(selectDriver: Driver) {
 
-    const numberOfSelections = this.drivers.filter(driver => driver.selection).length;
-
-    if (numberOfSelections < 3) {
-      // Find the index of the selected driver in the array
-      const index = this.drivers.findIndex(driver => driver === selectDriver);
-
-      // Update the selection for the clicked driver
-      if (this.drivers[index].selection) {
-        // If already selected, remove the selection (if driver is already selectd this if removes the selectd driver)
-        this.drivers[index].selection = undefined;
-        this.removeDriverFromSelection(selectDriver);
-      } else {
-        // Otherwise, assign the appropriate selection (1st, 2nd, or 3rd)
-        this.drivers[index].selection = numberOfSelections + 1;
-        this.addDriverToSelection(selectDriver, numberOfSelections + 1);
-      }
+    const index = this.drivers.findIndex(driver => driver === selectDriver);
+    if (index === -1) {
+      return;
     }
+
+    if (this.drivers[index].selection !== undefined) {
+      // Already selected -> toggle it off
+      this.drivers[index].selection = undefined;
+    } else {
+      const numberOfSelections = this.drivers.filter(driver => driver.selection !== undefined).length;
+      if (numberOfSelections >= 3) {
+        return;
+      }
+      this.drivers[index].selection = numberOfSelections + 1;
+    }
+
+    this.resequenceSelections();
+  }
+
+  // Keep selection values contiguous (1,2,3) and sync first/second/third
+  private resequenceSelections() {
+    const selected = this.drivers
+      .filter(driver => driver.selection !== undefined)
+      .sort((a, b) => (a.selection ?? 0) - (b.selection ?? 0));
+
+    selected.forEach((driver, i) => {
+      driver.selection = i + 1;
+    });
+
+    this.first = selected[0] ? selected[0].permanentNumber : 0;
+    this.second = selected[1] ? selected[1].permanentNumber : 0;
+    this.third = selected[2] ? selected[2].permanentNumber : 0;
   }
 
   selectFastestDriver(selectDriver: Driver) {
     this.fastest = selectDriver.permanentNumber;
+  }
+
+  // Display the pending selection if it exists, otherwise the saved prediction
+  get displayFirst(): string | undefined {
+    return this.first ? this.getDriverName(this.first) : this.pFirst;
+  }
+
+  get displaySecond(): string | undefined {
+    return this.second ? this.getDriverName(this.second) : this.pSecond;
+  }
+
+  get displayThird(): string | undefined {
+    return this.third ? this.getDriverName(this.third) : this.pThird;
+  }
+
+  get displayFastestLap(): string | undefined {
+    return this.fastest ? this.getDriverName(this.fastest) : this.pFastestLap;
+  }
+
+  // Names of the pending (not yet saved) podium selections, for the picker progress slots
+  get pendingFirst(): string {
+    return this.first ? this.getDriverName(this.first) ?? '' : '';
+  }
+
+  get pendingSecond(): string {
+    return this.second ? this.getDriverName(this.second) ?? '' : '';
+  }
+
+  get pendingThird(): string {
+    return this.third ? this.getDriverName(this.third) ?? '' : '';
+  }
+
+  teamColor(driver: Driver): string {
+    const colors: { [key: string]: string } = {
+      red_bull: '#3671c6',
+      racing_bulls: '#6692ff',
+      rb: '#6692ff',
+      ferrari: '#e8002d',
+      mercedes: '#27f4d2',
+      mclaren: '#ff8000',
+      aston_martin: '#229971',
+      alpine: '#0093cc',
+      williams: '#64c4ff',
+      sauber: '#52e252',
+      audi: '#52e252',
+      haas: '#b6babd',
+      cadillac: '#c8a951'
+    };
+    return colors[driver.constructorId] || '#64748b';
+  }
+
+  // Soft translucent variant of the team color for chip backgrounds
+  teamColorSoft(driver: Driver): string {
+    return this.teamColor(driver) + '26';
   }
 
   addDriverToSelection(driver: Driver, position: number) {

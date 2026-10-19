@@ -64,3 +64,27 @@ body.dark-mode .leaderboard-table th,
 body.dark-mode .leaderboard-table td {
   border-color: rgba(148, 163, 184, 0.12);
 }
+
+/* ---------- Mobile safeguards ---------- */
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (max-width: 576px) {
+  .app-content {
+    padding: 1.25rem 0 3rem;
+  }
+}
