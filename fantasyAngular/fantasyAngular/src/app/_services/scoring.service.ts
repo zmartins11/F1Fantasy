@@ -5,6 +5,7 @@ import { TotalPointsUsers } from '../model/TotalPointsUsers';
 import { PointsInfo } from '../model/PointsInfo';
 import { environment } from 'src/environments/environment';
 import { ScoringStats } from '../model/player-stats.model';
+import { ScoringHistoryPage } from '../model/scoring-history.model';
 
 @Injectable({
   providedIn: 'root'
@@ -27,5 +28,23 @@ export class ScoringService {
       `${this.baseApi}/me/stats/${season}`
     );
   }
+
+  getScoringHistory(
+  season: number,
+  page: number = 0,
+  size: number = 5): Observable<ScoringHistoryPage> {
+
+  return this.http.get<ScoringHistoryPage>(
+    `${this.baseApi}/me/stats/history/${season}`,
+    {
+      params: {
+        page: page.toString(),
+        size: size.toString()
+      }
+    }
+  );
+}
+
+
 
 }
