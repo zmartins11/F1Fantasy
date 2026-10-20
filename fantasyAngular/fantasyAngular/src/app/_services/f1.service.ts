@@ -47,7 +47,7 @@ export class F1Service {
     return this.http.get<Race>(`${this.baseUrl}/nextRaceDetails`);
   }
 
-  getAllRaces(): Observable<RaceInfo[]> {
-    return this.http.get<RaceInfo[]>(`${this.baseUrl}/allRaces`);
+  getAllRaces(season: number): Observable<RaceInfo[]> {
+    return this.http.get<RaceInfo[]>(`${this.baseUrl}/allRaces/${season}`);
   }
 }

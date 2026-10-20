@@ -18,6 +18,8 @@ import com.example.f1.scoring_service.repository.DriversPointsRepository;
 import com.example.f1.scoring_service.repository.PredictionResultRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -358,5 +360,23 @@ public class ScoringService {
                 null,
                 null
         );
+    }
+
+    public Page<ScoringHistoryDto> getScoringHistoryBySeason(
+            Integer userId,
+            Integer season,
+            Pageable pageable) {
+
+        return predictionResultRepository
+                .findByUserIdAndSeasonOrderByRoundDesc(
+                        userId,
+                        season,
+                        pageable
+                ).map(result -> new ScoringHistoryDto(
+                        result.getPredictionId(),
+                        result.getSeason(),
+                        result.getRound(),
+                        result.getPoints()
+                ));
     }
 }

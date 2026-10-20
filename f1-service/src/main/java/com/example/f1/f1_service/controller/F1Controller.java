@@ -1,6 +1,5 @@
 package com.example.f1.f1_service.controller;
 
-import java.time.Year;
 import java.util.List;
 
 
@@ -62,9 +61,9 @@ public class F1Controller {
 		return ResponseEntity.ok(ergastService.getNextRace());
 	}
 
-	@GetMapping("/allRaces")
-	public ResponseEntity<List<RaceInfo>> getAllRaces() throws JsonProcessingException {
-		return ResponseEntity.ok(ergastService.getAllRaces(Year.now().toString()));
+	@GetMapping("/allRaces/{season}")
+	public ResponseEntity<List<RaceInfo>> getAllRaces(@PathVariable int season) throws JsonProcessingException {
+		return ResponseEntity.ok(ergastService.getAllRaces(season));
 	}
 
 	@GetMapping("/news")

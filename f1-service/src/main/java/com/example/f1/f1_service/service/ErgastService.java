@@ -169,7 +169,7 @@ public class ErgastService {
 	}
 
 
-	public List<RaceInfo> getAllRaces(String season) throws JsonMappingException, JsonProcessingException {
+	public List<RaceInfo> getAllRaces(int season) throws JsonMappingException, JsonProcessingException {
 		String url = "https://api.jolpi.ca/ergast/f1/" + season + "/races.json";
 		ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 		ObjectMapper mapper = new ObjectMapper();
