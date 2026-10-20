@@ -1,4 +1,3 @@
-
 <div class="profile-root">
   <div class="breadcrumbs">Home / <b>Driver Profile</b></div>
 
@@ -39,14 +38,10 @@
     </div>
 
     <!-- ERROR STATE -->
-    <div *ngIf="statsError && !loadingStats"
-         class="alert alert-danger"
-         role="alert">
+    <div *ngIf="statsError && !loadingStats" class="alert alert-danger" role="alert">
       Unable to load season statistics.
 
-      <button type="button"
-              class="text-link"
-              (click)="loadSeasonStats()">
+      <button type="button" class="text-link" (click)="loadSeasonStats()">
         Try again
       </button>
     </div>
@@ -78,11 +73,11 @@
 
         <div class="stat-value">
           {{
-            loadingStats
-              ? '...'
-              : (playerStats?.leaderboardRank != null
-                  ? '#' + playerStats?.leaderboardRank
-                  : '—')
+          loadingStats
+          ? '...'
+          : (playerStats?.leaderboardRank != null
+          ? '#' + playerStats?.leaderboardRank
+          : '—')
           }}
         </div>
 
@@ -116,22 +111,21 @@
 
         <div class="stat-value">
           {{
-            loadingStats
-              ? '...'
-              : (playerStats?.correctPodiums ?? '—')
+          loadingStats
+          ? '...'
+          : (playerStats?.correctPodiums ?? '—')
           }}
         </div>
 
         <div class="stat-foot">
           {{ playerStats?.correctPodiums != null
-              ? 'Successful podium picks'
-              : 'Coming soon' }}
+          ? 'Successful podium picks'
+          : 'Coming soon' }}
         </div>
       </article>
 
     </div>
   </section>
-
   <!-- HISTORY AND ACCOUNT SETTINGS -->
   <div class="content-grid">
 
@@ -148,46 +142,20 @@
         <span class="text-link">Demo preview</span>
       </div>
 
-      <div class="history-item">
+      <div class="history-item" *ngFor="let history of scoringHistory">
+      
         <div class="round-icon" aria-hidden="true">🏁</div>
-
+      
         <div class="history-name">
-          <strong>Singapore Grand Prix</strong>
-          <small>Round 18 · Completed</small>
+          <strong>{{ history.raceName }}</strong>
+          <small>Round {{ history.round }} · {{ history.season }}</small>
         </div>
-
+      
         <div class="history-score">
-          <strong>+18 pts</strong>
+          <strong>+{{ history.points }} pts</strong>
           <small>● Scored</small>
         </div>
-      </div>
-
-      <div class="history-item">
-        <div class="round-icon" aria-hidden="true">🏁</div>
-
-        <div class="history-name">
-          <strong>Azerbaijan Grand Prix</strong>
-          <small>Round 17 · Completed</small>
-        </div>
-
-        <div class="history-score">
-          <strong>+12 pts</strong>
-          <small>● Scored</small>
-        </div>
-      </div>
-
-      <div class="history-item">
-        <div class="round-icon" aria-hidden="true">🏁</div>
-
-        <div class="history-name">
-          <strong>Italian Grand Prix</strong>
-          <small>Round 16 · Completed</small>
-        </div>
-
-        <div class="history-score">
-          <strong>+21 pts</strong>
-          <small>● Scored</small>
-        </div>
+      
       </div>
 
       <div class="panel-footer">
