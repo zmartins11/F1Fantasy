@@ -1,5 +1,5 @@
 import { DatePipe, Time } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, NgZone, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from 'src/app/_services/auth.service';
 import { UserService } from 'src/app/_services/user.service';
 import moment from 'moment';
@@ -39,8 +39,7 @@ export class HomeComponent implements OnInit {
     private modalService: BsModalService,
     private youtubeService: YoutubeService,
     private weatherService: WeatherService,
-    private f1Service: F1Service,
-    private renderer: Renderer2
+    private f1Service: F1Service
   ) { }
 
   // Reference to the modal element
@@ -103,8 +102,6 @@ export class HomeComponent implements OnInit {
   pFastestLap: string | undefined = "";
   pHasPodium: Boolean = false;
   pHasFastestLap: Boolean = false;
-  @Output() darkModeChange = new EventEmitter<boolean>();
-  darkMode: boolean = false;
   faArrowDown = faArrowDown;
   faArrowUp = faArrowUp;
   faLock = faLock;
@@ -214,11 +211,6 @@ export class HomeComponent implements OnInit {
       this.getStandings();
       this.loadPublicNextRace();
     }
-
-    const storedTheme = localStorage.getItem('homeDarkMode');
-    if (storedTheme !== null) {
-      this.darkMode = JSON.parse(storedTheme);
-    }
   }
 
   private getDriverName(permanentNumber: number): string | undefined {
@@ -233,16 +225,6 @@ export class HomeComponent implements OnInit {
       this.driversStandings = response.drivers;
       this.constructorStandings = response.constructors;
     })
-  }
-
-  emitDarkModeToggle(): void {
-    const body = document.body;
-    if (this.darkMode) {
-      this.renderer.addClass(body, 'dark-mode');
-    } else {
-      this.renderer.removeClass(body, 'dark-mode');
-    }
-    this.darkModeChange.emit(this.darkMode);
   }
 
   getYTBVideo() {
