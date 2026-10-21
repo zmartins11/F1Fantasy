@@ -31,6 +31,12 @@ public class SecurityConfig {
                                 "/actuator/health"
                         ).permitAll()
                         .pathMatchers(HttpMethod.OPTIONS).permitAll()
+                        .pathMatchers(HttpMethod.GET,
+                                "/api/f1/nextRaceDetails",
+                                "/api/f1/weather",
+                                "/api/f1/standings",
+                                "/api/f1/news"
+                        ).permitAll()
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 ->

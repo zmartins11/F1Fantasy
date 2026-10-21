@@ -36,6 +36,11 @@ public class SecurityConfig {
                         .requestMatchers("/internal/f1/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/drivers/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/standings").permitAll()
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/f1/nextRaceDetails",
+                                "/api/f1/weather",
+                                "/api/f1/standings",
+                                "/api/f1/news").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 ->

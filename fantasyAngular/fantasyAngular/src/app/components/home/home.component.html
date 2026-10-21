@@ -122,13 +122,7 @@
 
     </div>
 
-    <header *ngIf="!isLoggedIn" class="jumbotron">
-
-      <p *ngIf="!isLoggedIn">Welcome to the app. Please log in to access all the content available: Testing actionsSSS--10000</p>
-
-    </header>
-
-    <div *ngIf="isLoggedIn && formattedDate" class="hero-panel">
+    <div *ngIf="formattedDate" class="hero-panel">
 
       <div class="hero-header" (click)="openRacePopup()" (mouseover)="highlightText()" (mouseout)="removeHighlight()">
 
@@ -248,13 +242,14 @@
 
     </div>
 
-    <div *ngIf="isLoggedIn && !errorMessage" class="mt-5">
+    <div *ngIf="!errorMessage" class="mt-5">
 
       <div class="row align-items-stretch gx-4">
 
-        <div class="col-md-6 d-flex">
+        <div class="col-md-6 d-flex content-lock-shell">
 
-          <div class="card prediction-card-shell h-100">
+          <div class="card prediction-card-shell h-100" [class.locked-content]="!isLoggedIn"
+            [attr.inert]="isLoggedIn ? null : ''" [attr.aria-hidden]="isLoggedIn ? null : 'true'">
 
             <div class="prediction-switcher">
 
@@ -548,6 +543,15 @@
 
           </div>
 
+          <div class="login-lock-overlay" *ngIf="!isLoggedIn">
+            <div class="login-lock-prompt">
+              <fa-icon [icon]="faLock" aria-hidden="true"></fa-icon>
+              <h3>Unlock the full experience</h3>
+              <p>Log in to make your podium predictions.</p>
+              <a routerLink="/login" class="btn action-btn primary">Log in</a>
+            </div>
+          </div>
+
         </div>
 
         <div class="col-md-6 d-flex">
@@ -556,7 +560,7 @@
 
             <div class="leaderboard-switcher">
 
-              <button type="button" class="leaderboard-switch" (click)="switchTable('userPoints')"
+              <button type="button" class="leaderboard-switch" *ngIf="isLoggedIn" (click)="switchTable('userPoints')"
 
                 [class.active]="currentTable === 'userPoints'">Users</button>
 
@@ -785,7 +789,7 @@
     </div>
 
     <!-- F1 News: full-width section below Predictions and Leaderboard -->
-    <section *ngIf="isLoggedIn && !errorMessage" class="row mt-5 mb-5" aria-label="Latest Formula 1 news">
+    <section *ngIf="!errorMessage" class="row mt-5 mb-5" aria-label="Latest Formula 1 news">
       <div class="col-12">
         <app-f1-news></app-f1-news>
       </div>
