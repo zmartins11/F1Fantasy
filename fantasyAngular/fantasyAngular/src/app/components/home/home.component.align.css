@@ -12,122 +12,195 @@
   .leaderboard-card .card-body { padding-right: 1.35rem; }
 }
 
-.hero-control-row {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 1rem;
+/* ---------- Mid-dark theme ---------- */
+
+.home-root {
+  color: #f1f5f9;
 }
 
-.theme-toggle{
-  display: inline-flex;
-  align-items: center;
-  gap: .85rem;
-  padding: .6rem 1rem;
-  border-radius: 999px;
-  background: rgba(255,255,255,.92);
-  border: 1px solid rgba(148,163,184,.25);
-  box-shadow: 0 10px 30px rgba(15,23,42,.06);
+.home-root .hero-panel,
+.home-root .card,
+.home-root .countdown-panel {
+  background: #3f4d64;
+  border: 1px solid rgba(226, 232, 240, .16);
+  box-shadow: 0 20px 50px rgba(15, 30, 50, .28);
 }
 
-.theme-toggle .toggle-label {
-  font-size: .9rem;
-  font-weight: 700;
-  color: #0f172a;
+.home-root .hero-locked {
+  background: rgba(255, 255, 255, .08);
 }
 
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 28px;
+.home-root .countdown-item {
+  background: rgba(255, 255, 255, .08);
+  border-color: rgba(203, 213, 225, .22);
 }
 
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
+.home-root .hero-title,
+.home-root .card-title,
+.home-root .countdown-title,
+.home-root .countdown-value,
+.home-root .driver-name,
+.home-root .leaderboard-card-header,
+.home-root .leaderboard-table th,
+.home-root .leaderboard-table td {
+  color: #f1f5f9;
 }
 
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #cbd5e1;
-  border-radius: 999px;
-  transition: background-color .25s ease;
+.home-root .prediction-eyebrow,
+.home-root .prediction-hint,
+.home-root .countdown-subtitle,
+.home-root .countdown-label,
+.home-root .hero-subtitle,
+.home-root .prediction-action-copy {
+  color: #cbd5e1;
 }
 
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 22px;
-  width: 22px;
-  left: 4px;
-  top: 3px;
-  background-color: white;
-  border-radius: 50%;
-  box-shadow: 0 3px 10px rgba(15,23,42,.18);
-  transition: transform .25s ease;
+.home-root .hero-badge {
+  background: rgba(147, 197, 253, .2);
+  color: #dbeafe;
 }
 
-.switch input:checked + .slider {
-  background-color: #2563eb;
+.home-root .prediction-switch,
+.home-root .leaderboard-switch {
+  background: rgba(255, 255, 255, .1);
+  color: #f1f5f9;
 }
 
-.switch input:checked + .slider:before {
-  transform: translateX(22px);
+.home-root .prediction-switch.active,
+.home-root .leaderboard-switch.active {
+  color: #fff;
 }
 
-.home-root.dark-mode {
-  background: #0b1220;
-  color: #e2e8f0;
+.home-root .leaderboard-switch.active {
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
 }
 
-.home-root.dark-mode .hero-panel,
-.home-root.dark-mode .card,
-.home-root.dark-mode .countdown-panel,
-.home-root.dark-mode .weather-card,
-.home-root.dark-mode .hero-locked {
-  background: rgba(15,23,42,.92);
-  border-color: rgba(148,163,184,.18);
-  box-shadow: 0 20px 50px rgba(0,0,0,.35);
+.home-root .prediction-status-pill {
+  background: rgba(255, 255, 255, .12);
+  color: #f1f5f9;
 }
 
-.home-root.dark-mode .hero-title,
-.home-root.dark-mode .prediction-eyebrow,
-.home-root.dark-mode .countdown-title,
-.home-root.dark-mode .countdown-subtitle,
-.home-root.dark-mode .countdown-label,
-.home-root.dark-mode .hero-subtitle,
-.home-root.dark-mode .leaderboard-pill,
-.home-root.dark-mode .prediction-action-copy,
-.home-root.dark-mode .leaderboard-card-header,
-.home-root.dark-mode .leaderboard-table th,
-.home-root.dark-mode .leaderboard-table td,
-.home-root.dark-mode .theme-toggle .toggle-label {
-  color: #e2e8f0;
+.home-root .prediction-status-pill.is-ready {
+  background: rgba(52, 211, 153, .2);
+  color: #a7f3d0;
 }
 
-.home-root.dark-mode .card {
-  background: rgba(15,23,42,.92);
+.home-root .fastest-highlight-card {
+  background: rgba(124, 58, 237, .25);
+  color: #f1f5f9;
 }
 
-.home-root.dark-mode .prediction-switch {
-  background: rgba(148,163,184,.14);
-  color: #f8fafc;
+.home-root .driver-picker-card {
+  background: rgba(255, 255, 255, .06);
+  border-color: rgba(203, 213, 225, .2);
 }
 
-.home-root.dark-mode .prediction-switch.active {
-  background: linear-gradient(135deg,#ffb2c4,#ff9f43);
+.home-root .driver-chip {
+  background: rgba(255, 255, 255, .08);
+  border-color: rgba(203, 213, 225, .22);
+  color: #f1f5f9;
 }
 
-.home-root.dark-mode .btn.action-btn.primary {
-  background: #38bdf8;
+.home-root .driver-chip:hover {
+  background: rgba(255, 255, 255, .15);
+}
+
+.home-root .driver-chip.selected-1st,
+.home-root .driver-chip.selected-2nd,
+.home-root .driver-chip.selected-3rd {
+  background: linear-gradient(135deg, #ff9f43, #ff2d55);
   border-color: transparent;
-  color: #0f172a;
+  color: #fff;
+}
+
+.home-root .driver-chip.fastest-driver {
+  background: linear-gradient(135deg, #7c3aed, #a78bfa);
+  border-color: transparent;
+  color: #fff;
+}
+
+.home-root .driver-badge,
+.home-root .leaderboard-pill {
+  background: rgba(147, 197, 253, .2);
+  color: #dbeafe;
+}
+
+.home-root .leaderboard-pill.subtle {
+  background: rgba(255, 255, 255, .1);
+  color: #cbd5e1;
+}
+
+.home-root .action-btn.secondary {
+  background: rgba(255, 255, 255, .1);
+  border-color: rgba(203, 213, 225, .35);
+  color: #f1f5f9;
+}
+
+.home-root .text-link {
+  color: #93c5fd;
+}
+
+.home-root .text-link:hover {
+  color: #bfdbfe;
+}
+
+.home-root .slide-over-panel {
+  background: #3f4d64;
+  border-color: rgba(226, 232, 240, .16);
+}
+
+.home-root .slide-over-close {
+  color: #e2e8f0;
+}
+
+.home-root .slide-over-backdrop {
+  background: rgba(15, 23, 42, .6);
+}
+
+.home-root .leaderboard-table {
+  --bs-table-bg: transparent;
+  --bs-table-color: #f1f5f9;
+  --bs-table-border-color: rgba(203, 213, 225, .15);
+  --bs-table-striped-bg: rgba(255, 255, 255, .04);
+  --bs-table-hover-bg: rgba(255, 255, 255, .1);
+  --bs-table-hover-color: #f1f5f9;
+  background: transparent;
+  color: #f1f5f9;
+}
+
+.home-root .leaderboard-table > :not(caption) > * > * {
+  background-color: transparent;
+  box-shadow: none;
+  color: inherit;
+}
+
+.home-root .leaderboard-table thead th {
+  background: rgba(255, 255, 255, .08);
+  color: #cbd5e1;
+}
+
+.home-root .leaderboard-table tbody tr,
+.home-root .leaderboard-table tbody tr:nth-child(odd) {
+  background: transparent;
+}
+
+.home-root .leaderboard-table tbody tr:nth-child(odd) {
+  background: rgba(255, 255, 255, .04);
+}
+
+.home-root .leaderboard-table tbody tr:hover {
+  background: rgba(255, 255, 255, .1);
+}
+
+.home-root .leaderboard-table tbody td,
+.home-root .leaderboard-table th,
+.home-root .leaderboard-table td {
+  border-color: rgba(203, 213, 225, .15);
+}
+
+.home-root .highlighted-text,
+.home-root .leaderboard-table td.highlighted-text {
+  color: #7dd3fc;
 }
 
 .weather-card {
@@ -144,11 +217,6 @@
   height: 100%;
 }
 
-.home-root.dark-mode .weather-card {
-  background: transparent;
-  box-shadow: none;
-}
-
 .col-md-6.d-flex {
   width: 50%;
 }
@@ -160,74 +228,71 @@
   }
 }
 
-.home-root.dark-mode .btn.action-btn.secondary,
-.home-root.dark-mode .btn.action-btn.primary {
-  box-shadow: none;
+.content-lock-shell {
+  position: relative;
 }
 
-.home-root.dark-mode .slide-over-panel {
-  background: rgba(15,23,42,.96);
+.locked-content {
+  filter: blur(2px);
+  opacity: .62;
+  transition: filter .2s ease, opacity .2s ease;
 }
 
-.home-root.dark-mode .slide-over-backdrop {
-  background: rgba(0,0,0,.75);
+.locked-content:not([inert]) {
+  filter: none;
+  opacity: 1;
 }
 
-.home-root.dark-mode .driver-chip {
-  background: rgba(255,255,255,.08);
-  color: #e2e8f0;
+.login-lock-overlay {
+  position: absolute;
+  z-index: 5;
+  inset: 0 15px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  background: rgba(30, 41, 59, .3);
+  backdrop-filter: blur(2px);
 }
 
-.home-root.dark-mode .driver-chip.selected-1st,
-.home-root.dark-mode .driver-chip.selected-2nd,
-.home-root.dark-mode .driver-chip.selected-3rd {
-  background: linear-gradient(135deg,#ff9f43,#ff2d55);
-  color: #fff;
+.login-lock-prompt {
+  max-width: 28rem;
+  padding: 2rem;
+  border: 1px solid rgba(226, 232, 240, .2);
+  border-radius: 8px;
+  background: #3f4d64;
+  box-shadow: 0 18px 48px rgba(15, 30, 50, .35);
+  text-align: center;
 }
 
-.home-root.dark-mode .leaderboard-table {
-  background: rgba(15,23,42,.82);
+.login-lock-prompt fa-icon {
+  display: block;
+  margin-bottom: .75rem;
+  color: #fb7185;
+  font-size: 1.6rem;
 }
 
-.home-root.dark-mode .leaderboard-table th,
-.home-root.dark-mode .leaderboard-table td {
-  border-color: rgba(148,163,184,.12);
+.login-lock-prompt h3 {
+  margin-bottom: .5rem;
+  color: #f1f5f9;
+  font-size: 1.25rem;
 }
 
-.home-root.dark-mode .leaderboard-table thead {
-  border-bottom: 1px solid rgba(148,163,184,.15);
-}
-
-.home-root.dark-mode .hero-badge,
-.home-root.dark-mode .leaderboard-pill {
-  background: rgba(56,189,248,.16);
-}
-
-.home-root.dark-mode .hero-panel .hero-badge {
-  color: #cffafe;
-}
-
-.home-root.dark-mode .card-body {
-  border-color: rgba(255,255,255,.05);
-}
-
-.home-root.dark-mode .prediction-status-pill {
-  background: rgba(56,189,248,.12);
-  color: #e2e8f0;
-}
-
-.home-root.dark-mode .prediction-action-copy {
+.login-lock-prompt p {
+  margin-bottom: 1rem;
   color: #cbd5e1;
 }
 
-.home-root.dark-mode .text-link {
-  color: #93c5fd;
+.news-preview .card {
+  border-radius: 8px;
 }
 
-.home-root.dark-mode .text-link:hover {
-  color: #bfdbfe;
-}
+@media (max-width: 576px) {
+  .login-lock-overlay {
+    padding: 1rem;
+  }
 
-.home-root.dark-mode .modal-content {
-  background: #111827;
+  .login-lock-prompt {
+    padding: 1.4rem;
+  }
 }

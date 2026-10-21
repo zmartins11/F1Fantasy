@@ -338,47 +338,52 @@
   transform: translateY(-1px);
 }
 
-:host-context(body.dark-mode) .points-modal .points-modal-content {
-  background: #111827;
-  border-color: rgba(148, 163, 184, .18);
+.points-modal .points-modal-content {
+  background: #3f4d64;
+  border-color: rgba(226, 232, 240, .18);
 }
 
-:host-context(body.dark-mode) .points-modal .points-modal-header {
-  background: linear-gradient(135deg, rgba(37, 99, 235, .18), rgba(255, 122, 0, .12));
+.points-modal .points-modal-header {
+  background: linear-gradient(135deg, rgba(37, 99, 235, .22), rgba(255, 122, 0, .14));
 }
 
-:host-context(body.dark-mode) .points-modal .points-modal-header h2,
-:host-context(body.dark-mode) .points-modal .point-driver strong,
-:host-context(body.dark-mode) .points-modal .point-score,
-:host-context(body.dark-mode) .points-modal .points-total strong {
+.points-modal .points-modal-header h2,
+.points-modal .point-driver strong,
+.points-modal .point-score,
+.points-modal .points-total strong {
   color: #f8fafc;
 }
 
-:host-context(body.dark-mode) .points-modal .points-modal-subtitle,
-:host-context(body.dark-mode) .points-modal .point-driver span,
-:host-context(body.dark-mode) .points-modal .points-total span,
-:host-context(body.dark-mode) .points-modal .point-score span {
-  color: #94a3b8;
-}
-
-:host-context(body.dark-mode) .points-modal .points-modal-close {
-  background: rgba(148, 163, 184, .12);
-  border-color: rgba(148, 163, 184, .2);
+.points-modal .points-modal-subtitle,
+.points-modal .point-driver span,
+.points-modal .points-total span,
+.points-modal .point-score span {
   color: #cbd5e1;
 }
 
-:host-context(body.dark-mode) .points-modal .point-row {
-  background: rgba(30, 41, 59, .72);
-  border-color: rgba(148, 163, 184, .15);
+.points-modal .points-modal-close {
+  background: rgba(255, 255, 255, .1);
+  border-color: rgba(226, 232, 240, .22);
+  color: #e2e8f0;
 }
 
-:host-context(body.dark-mode) .points-modal .point-rank {
-  background: rgba(56, 189, 248, .14);
-  color: #bae6fd;
+.points-modal .points-modal-close:hover {
+  background: rgba(255, 255, 255, .2);
+  color: #fff;
 }
 
-:host-context(body.dark-mode) .points-modal .points-total {
-  background: linear-gradient(135deg, rgba(190, 24, 93, .18), rgba(234, 88, 12, .16));
+.points-modal .point-row {
+  background: rgba(255, 255, 255, .08);
+  border-color: rgba(226, 232, 240, .16);
+}
+
+.points-modal .point-rank {
+  background: rgba(147, 197, 253, .2);
+  color: #dbeafe;
+}
+
+.points-modal .points-total {
+  background: linear-gradient(135deg, rgba(190, 24, 93, .28), rgba(234, 88, 12, .24));
 }
 
 @media (max-width: 480px) {
@@ -407,10 +412,6 @@
 @media (max-width: 768px) {
   .hero-header {
     flex-wrap: wrap;
-  }
-
-  .hero-control-row {
-    justify-content: flex-start;
   }
 
   .prediction-card-header,
@@ -720,75 +721,80 @@
   background: #f8fafc;
 }
 
-/* Dark mode */
-.home-root.dark-mode .picker-overlay {
-  background: rgba(0, 0, 0, 0.7);
+/* Picker theme */
+.home-root .picker-overlay {
+  background: rgba(15, 23, 42, 0.6);
 }
 
-.home-root.dark-mode .picker-sheet {
-  background: rgba(15, 23, 42, 0.97);
-  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
+.home-root .picker-sheet {
+  background: #3f4d64;
+  box-shadow: 0 30px 90px rgba(15, 30, 50, 0.5);
 }
 
-.home-root.dark-mode .picker-header {
-  border-color: rgba(148, 163, 184, 0.2);
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(255, 122, 0, 0.12));
+.home-root .picker-header {
+  border-color: rgba(226, 232, 240, 0.2);
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(255, 122, 0, 0.14));
 }
 
-.home-root.dark-mode .picker-header .card-title {
-  color: #e2e8f0;
+.home-root .picker-header .card-title {
+  color: #f1f5f9;
 }
 
-.home-root.dark-mode .picker-close {
-  background: rgba(255, 255, 255, 0.1);
-  color: #e2e8f0;
+.home-root .picker-close {
+  background: rgba(255, 255, 255, 0.12);
+  color: #f1f5f9;
 }
 
-.home-root.dark-mode .progress-slot {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(148, 163, 184, 0.35);
+.home-root .progress-slot {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(203, 213, 225, 0.4);
 }
 
-.home-root.dark-mode .progress-slot.filled {
+.home-root .progress-slot.filled {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.home-root .progress-slot strong {
+  color: #f1f5f9;
+}
+
+.home-root .slot-label,
+.home-root .driver-card-meta {
+  color: #cbd5e1;
+}
+
+.home-root .driver-card {
   background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(203, 213, 225, 0.3);
 }
 
-.home-root.dark-mode .progress-slot strong {
-  color: #e2e8f0;
+.home-root .driver-card:hover {
+  background: rgba(255, 255, 255, 0.14);
 }
 
-.home-root.dark-mode .driver-card {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(148, 163, 184, 0.3);
+.home-root .driver-card-info strong {
+  color: #f1f5f9;
 }
 
-.home-root.dark-mode .driver-card:hover {
-  background: rgba(255, 255, 255, 0.09);
+.home-root .driver-card.selected-1st {
+  background: linear-gradient(135deg, rgba(245, 179, 1, 0.24), rgba(245, 179, 1, 0.08));
 }
 
-.home-root.dark-mode .driver-card-info strong {
-  color: #e2e8f0;
+.home-root .driver-card.selected-2nd {
+  background: linear-gradient(135deg, rgba(203, 213, 225, 0.26), rgba(203, 213, 225, 0.08));
 }
 
-.home-root.dark-mode .driver-card.selected-1st {
-  background: linear-gradient(135deg, rgba(245, 179, 1, 0.18), rgba(245, 179, 1, 0.05));
+.home-root .driver-card.selected-3rd {
+  background: linear-gradient(135deg, rgba(205, 127, 50, 0.26), rgba(205, 127, 50, 0.08));
 }
 
-.home-root.dark-mode .driver-card.selected-2nd {
-  background: linear-gradient(135deg, rgba(148, 163, 184, 0.2), rgba(148, 163, 184, 0.06));
+.home-root .driver-card.fastest-driver {
+  background: linear-gradient(135deg, rgba(255, 122, 0, 0.26), rgba(255, 45, 85, 0.12));
 }
 
-.home-root.dark-mode .driver-card.selected-3rd {
-  background: linear-gradient(135deg, rgba(205, 127, 50, 0.2), rgba(205, 127, 50, 0.05));
-}
-
-.home-root.dark-mode .driver-card.fastest-driver {
-  background: linear-gradient(135deg, rgba(255, 122, 0, 0.2), rgba(255, 45, 85, 0.08));
-}
-
-.home-root.dark-mode .picker-footer {
-  background: rgba(15, 23, 42, 0.9);
-  border-color: rgba(148, 163, 184, 0.2);
+.home-root .picker-footer {
+  background: rgba(30, 41, 59, 0.35);
+  border-color: rgba(226, 232, 240, 0.2);
 }
 
 /* Mobile: bottom sheet */

@@ -19,6 +19,7 @@ export class RaceDetailsComponent implements OnInit {
   constructor(public bsModalRef: BsModalRef, private f1Service: F1Service) { }
 
   getFlagPath(country: string | undefined): string {
+    console.log("COUNTRY SELECTED :" , country) 
     if (!country) {
       return 'assets/images/flags/USA.png';
     }

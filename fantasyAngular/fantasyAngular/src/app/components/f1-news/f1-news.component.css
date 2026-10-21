@@ -8,8 +8,22 @@
   padding: 1.35rem 1.4rem;
   border: 0;
   border-radius: 24px;
-  background: linear-gradient(145deg, rgba(255, 255, 255, .96), rgba(243, 247, 255, .95));
-  box-shadow: 0 20px 50px rgba(15, 23, 42, .12);
+  background: #3f4d64;
+  color: #f1f5f9;
+  box-shadow: 0 20px 50px rgba(15, 30, 50, .28);
+}
+
+.news-panel .prediction-eyebrow {
+  margin-bottom: .3rem;
+  color: #cbd5e1;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.news-panel .card-title {
+  color: #f1f5f9;
 }
 
 .news-panel-header {
@@ -21,7 +35,7 @@
 }
 
 .news-account {
-  color: #2563eb;
+  color: #93c5fd;
   font-size: .85rem;
   font-weight: 700;
 }
@@ -34,14 +48,6 @@
 .twitter-timeline {
   display: block;
   min-height: 500px;
-}
-
-:host-context(body.dark-mode) .news-panel {
-  background: rgba(15, 23, 42, .94);
-}
-
-:host-context(body.dark-mode) .card-title {
-  color: #e2e8f0;
 }
 
 @media (max-width: 576px) {

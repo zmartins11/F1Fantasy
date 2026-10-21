@@ -84,7 +84,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   logout(): void {
     this.authService.signOut();
-    window.location.reload();
+    this.router.navigate(['/home']).then(() => window.location.reload());
   }
 
   checkLogin(): boolean {

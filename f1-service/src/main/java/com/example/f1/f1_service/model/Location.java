@@ -8,7 +8,7 @@ public class Location {
 	@JsonProperty("long")
 	String longi;
 	String locality;
-	String Country;
+	String country;
 
 
 	
@@ -40,11 +40,11 @@ public class Location {
 	}
 
 	public String getCountry() {
-		return Country;
+		return country;
 	}
 
 	public void setCountry(String country) {
-		Country = country;
+		this.country = country;
 	}
 
 }

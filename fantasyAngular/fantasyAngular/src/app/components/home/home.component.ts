@@ -1,11 +1,11 @@
 import { DatePipe, Time } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, NgZone, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from 'src/app/_services/auth.service';
 import { UserService } from 'src/app/_services/user.service';
 import moment from 'moment';
 import { SipnnerService } from 'src/app/_services/SpinnerService';
 import { PredictService } from 'src/app/_services/predict.service';
-import { faArrowDown, faArrowUp, faGaugeSimpleMed } from '@fortawesome/free-solid-svg-icons'
+import { faArrowDown, faArrowUp, faGaugeSimpleMed, faLock } from '@fortawesome/free-solid-svg-icons'
 import { TotalPointsResponse } from 'src/app/model/TotalPointsResponse';
 import { PointsInfo } from 'src/app/model/PointsInfo';
 import { Observable } from 'rxjs';
@@ -39,8 +39,7 @@ export class HomeComponent implements OnInit {
     private modalService: BsModalService,
     private youtubeService: YoutubeService,
     private weatherService: WeatherService,
-    private f1Service: F1Service,
-    private renderer: Renderer2
+    private f1Service: F1Service
   ) { }
 
   // Reference to the modal element
@@ -103,10 +102,9 @@ export class HomeComponent implements OnInit {
   pFastestLap: string | undefined = "";
   pHasPodium: Boolean = false;
   pHasFastestLap: Boolean = false;
-  @Output() darkModeChange = new EventEmitter<boolean>();
-  darkMode: boolean = false;
   faArrowDown = faArrowDown;
   faArrowUp = faArrowUp;
+  faLock = faLock;
   events!: any;
   videoId: string = "";
   weatherData: Weather | null = null;
@@ -208,9 +206,10 @@ export class HomeComponent implements OnInit {
       this.getStandings();
     }
 
-    const storedTheme = localStorage.getItem('homeDarkMode');
-    if (storedTheme !== null) {
-      this.darkMode = JSON.parse(storedTheme);
+    if (!this.isLoggedIn) {
+      this.currentTable = 'driverStandings';
+      this.getStandings();
+      this.loadPublicNextRace();
     }
   }
 
@@ -226,16 +225,6 @@ export class HomeComponent implements OnInit {
       this.driversStandings = response.drivers;
       this.constructorStandings = response.constructors;
     })
-  }
-
-  emitDarkModeToggle(): void {
-    const body = document.body;
-    if (this.darkMode) {
-      this.renderer.addClass(body, 'dark-mode');
-    } else {
-      this.renderer.removeClass(body, 'dark-mode');
-    }
-    this.darkModeChange.emit(this.darkMode);
   }
 
   getYTBVideo() {
@@ -328,6 +317,27 @@ export class HomeComponent implements OnInit {
         console.error('Error fetching weather data:', error.message || error);
       }
     );
+  }
+
+  private loadPublicNextRace(): void {
+    this.f1Service.getNextRaceDetails().subscribe(race => {
+      const raceTime = race.time || '00:00:00';
+      const raceMoment = moment(`${race.date}T${raceTime}`);
+
+      this.raceDate = raceMoment.format('YYYYMMDDHHmm');
+      this.nameRace = race.raceName;
+      this.round = race.round;
+      this.country = race.Circuit.Location.country;
+      this.city = race.Circuit.Location.locality;
+      this.raceDay = raceMoment.date();
+      this.raceMonth = raceMoment.month() + 1;
+      this.raceHour = parseInt(raceTime, 10) || 0;
+      this.predictionLocked = false;
+      this.formattedDate = raceMoment.toDate();
+      this.populateWeatherWidget();
+    }, error => {
+      console.error('Error fetching the next race:', error.message || error);
+    });
   }
 
   openRacePopup() {
