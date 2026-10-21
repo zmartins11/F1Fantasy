@@ -123,7 +123,7 @@ public class ErgastService {
 	public List<Driver> getDriversInSeason(String season) throws JsonProcessingException {
 
 		List<Driver> driversInSeason = null;
-		String urlDriversByYear = "https://api.jolpi.ca/ergast/f1/" + season + "/drivers.json";
+		String urlDriversByYear = "https://api.jolpi.ca/ergast/f1/" + season + "/drivers.json?limit=100";
 		ResponseEntity<String> response = restTemplate.getForEntity(urlDriversByYear, String.class);
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -131,9 +131,9 @@ public class ErgastService {
 
 		driversInSeason = driverResponse.getMrData().getDriverTable().getDrivers();
 
-		//remove drivers without nationality
+		//remove drivers without permanent number
 		driversInSeason.removeIf(driver ->
-				driver.getNationality() == null || driver.getNationality().isBlank());
+				driver.getPermanentNumber() == null);
 
 		getFlagCode(driversInSeason);
 		return driversInSeason;
