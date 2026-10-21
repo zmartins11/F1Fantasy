@@ -43,7 +43,8 @@ export class CalendarComponent {
   getRaces() {
     this.calendarService.getRaces(this.currentSeason).subscribe(data => {
       this.races = data;
-      console.log(this.races);
+      console.log('ALL RACES:', this.races);
+
     })
   }
 
