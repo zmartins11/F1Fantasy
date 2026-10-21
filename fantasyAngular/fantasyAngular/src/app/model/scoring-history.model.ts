@@ -17,5 +17,5 @@ export interface ScoringHistoryPage {
 
 export interface ScoringHistoryView extends ScoringHistory {
   raceName: string;
-   country: string;
+  country: string;
 }
