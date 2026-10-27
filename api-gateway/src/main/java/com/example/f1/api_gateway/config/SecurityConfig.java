@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -21,10 +22,11 @@ public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(
-            ServerHttpSecurity http) {
+            ServerHttpSecurity http, CorsConfigurationSource corsSource) {
 
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .cors(cors -> cors.configurationSource(corsSource))
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers(
                                 "/api/auth/**",
