@@ -66,4 +66,23 @@ public class PredictionRestAdapter implements PredictionReader {
             return null;
         }
     }
+
+    @Override
+    public PredictionData findByUserIdAndSeasonAndRound(int userId, int season, int round) {
+        try {
+            return restClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/internal/predictions/user")
+                            .queryParam("userId", userId)
+                            .queryParam("season", season)
+                            .queryParam("round", round)
+                            .build())
+                    .retrieve()
+                    .body(PredictionData.class);
+        } catch (Exception exception) {
+            log.error("Error fetching prediction for user {}, season {}, round {}",
+                    userId, season, round, exception);
+            throw exception;
+        }
+    }
 }

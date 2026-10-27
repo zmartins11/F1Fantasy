@@ -60,16 +60,26 @@ public class ScoringService {
         return raceResultReader.latestRaceFinished();
     }
 
-    public List<PointsInfoDto> getPointsInfo(Long userId, RaceResultData latestRaceFinished) throws JsonProcessingException {
+    public List<PointsInfoDto> getPointsInfo(
+            Long userId,
+            RaceResultData latestRaceFinished
+    ) throws JsonProcessingException {
 
-        PredictionData prediction = predictionReader.findByUserIdAndRound(Math.toIntExact(userId), latestRaceFinished.round());
+        PredictionData prediction =
+                predictionReader.findByUserIdAndSeasonAndRound(
+                        Math.toIntExact(userId),
+                        latestRaceFinished.season(),
+                        latestRaceFinished.round()
+                );
 
         if (prediction == null) {
             return Collections.emptyList();
         }
 
         List<PredictionResult> predictionResults =
-            predictionResultRepository.findByPredictionId(String.valueOf(prediction.id()));
+                predictionResultRepository.findByPredictionId(
+                        String.valueOf(prediction.id())
+                );
 
         if (!predictionResults.isEmpty()) {
             PredictionResult predictionResult = predictionResults.get(0);
@@ -77,34 +87,39 @@ public class ScoringService {
             predictionResultRepository.save(predictionResult);
         }
 
-        List<String> drivers = Stream.of(
-                        prediction.first(),
-                        prediction.second(),
-                        prediction.third(),
-                        prediction.fastestLap())
-                .filter(Objects::nonNull)
-                .toList();
-
+        // Get driver points for this prediction only
         List<DriversPoints> driversPoints =
-                driversPointsRepository.findByDriverInAndRaceId(
-                        drivers,
-                        String.valueOf(latestRaceFinished.id()));
+                driversPointsRepository.findByPredictionIdOrderByIdAsc(
+                        prediction.id()
+                );
 
-        Map<String, String> driverNames = driverReader.findBySeason(String.valueOf(latestRaceFinished.season()))
-                .stream()
-            .filter(driver -> driver.permanentNumber() != null)
-                .collect(Collectors.toMap(
-                driver -> String.valueOf(driver.permanentNumber()),
-                DriverData::familyName,
-                        (firstName, secondName) -> firstName));
+        // Map driver numbers to family names
+        Map<String, String> driverNames =
+                driverReader.findBySeason(
+                                String.valueOf(latestRaceFinished.season())
+                        )
+                        .stream()
+                        .filter(driver -> driver.permanentNumber() != null)
+                        .collect(Collectors.toMap(
+                                driver -> String.valueOf(driver.permanentNumber()),
+                                DriverData::familyName,
+                                (firstName, secondName) -> firstName
+                        ));
 
         return driversPoints.stream()
                 .map(driver -> {
                     PointsInfoDto dto = new PointsInfoDto();
+
                     dto.setDriver(driver.getDriver());
-                    dto.setFamilyName(driverNames.get(driver.getDriver()));
+                    dto.setFamilyName(
+                            driverNames.getOrDefault(
+                                    driver.getDriver(),
+                                    driver.getDriver()
+                            )
+                    );
                     dto.setPoints(driver.getPoints());
                     dto.setPosition(driver.getPosition());
+
                     return dto;
                 })
                 .toList();
@@ -137,7 +152,7 @@ public class ScoringService {
                     calculate(prediction, event);
 
             // 2. GUARDAR detalhe dos pilotos
-            //saveDriverPoints(calculation.driverPoints());
+            saveDriverPoints(calculation.driverPoints());
 
             // 3. GUARDAR resultado da prediction
             savePredictionResult(
@@ -186,6 +201,7 @@ public class ScoringService {
         if (Boolean.TRUE.equals(prediction.predictedPodium())) {
 
             DriverPointsData first = calculateDriver(
+                    prediction.id(),
                     "1",
                     event.raceResultId(),
                     prediction.first(),
@@ -193,6 +209,7 @@ public class ScoringService {
             );
 
             DriverPointsData second = calculateDriver(
+                    prediction.id(),
                     "2",
                     event.raceResultId(),
                     prediction.second(),
@@ -200,6 +217,7 @@ public class ScoringService {
             );
 
             DriverPointsData third = calculateDriver(
+                    prediction.id(),
                     "3",
                     event.raceResultId(),
                     prediction.third(),
@@ -226,6 +244,7 @@ public class ScoringService {
 
             driverPoints.add(
                     new DriverPointsData(
+                            prediction.id(),
                             prediction.fastestLap(),
                             event.raceResultId(),
                             fastestLapPoints,
@@ -240,6 +259,7 @@ public class ScoringService {
     }
 
     private DriverPointsData calculateDriver(
+            Integer predictionId,
             String position,
             Integer raceId,
             String predictedDriver,
@@ -251,6 +271,7 @@ public class ScoringService {
                         : 0;
 
         return new DriverPointsData(
+                predictionId,
                 predictedDriver,
                 raceId,
                 points,
@@ -261,16 +282,15 @@ public class ScoringService {
     private void saveDriverPoints(DriverPointsData data) {
 
         if (driversPointsRepository
-                .existsByRaceIdAndDriverAndPosition(
-                        String.valueOf(data.raceResultId()),
-                        data.driver(),
+                .existsByPredictionIdAndPosition(
+                        data.predictionId(),
                         data.position())) {
-
             return;
         }
 
         DriversPoints entity = new DriversPoints();
 
+        entity.setPredictionId(data.predictionId());
         entity.setDriver(data.driver());
         entity.setRaceId(data.raceResultId());
         entity.setPoints(data.points());

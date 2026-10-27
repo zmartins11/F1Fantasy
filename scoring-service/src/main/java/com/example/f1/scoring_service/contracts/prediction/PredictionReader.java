@@ -8,4 +8,6 @@ public interface PredictionReader {
     List<PredictionData> findBySeasonAndRound(Integer season, Integer round);
 
     PredictionData findByUserIdAndRound(Integer userId, Integer round);
+
+    PredictionData findByUserIdAndSeasonAndRound(int intExact, int season, int round);
 }

@@ -148,6 +148,7 @@ export class HomeComponent implements OnInit {
         return;
       }
 
+      //get race info and prediction for next race
       this.predictService.getNextRaceInfo().subscribe(response => {
         this.raceDate = response.race.time;
         this.nameRace = response.race.nameRace;
@@ -227,24 +228,6 @@ export class HomeComponent implements OnInit {
     })
   }
 
-  getYTBVideo() {
-    this.youtubeService.searchVideo("formula 1 monaco 2023 highlights tsn").subscribe(
-      (response: any) => {
-        if (response.videoId) {
-          this.videoId = response.videoId;
-          console.log('Video ID:', this.videoId);
-          // Now, this.videoId contains the retrieved videoId
-        } else {
-          console.error('Error:', response.error);
-          // Handle the error if needed
-        }
-      },
-      (error) => {
-        console.error('HTTP Request Error:', error);
-        // Handle the error if needed
-      }
-    );
-  }
 
   populatePointsTables() {
     //populate tables
@@ -277,6 +260,7 @@ export class HomeComponent implements OnInit {
   getPointsInfo() {
     //get info points
     if (this.userId === null) {
+      console.log('User ID is null');
       return;
     }
 

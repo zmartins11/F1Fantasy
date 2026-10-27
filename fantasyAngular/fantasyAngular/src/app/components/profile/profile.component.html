@@ -138,11 +138,12 @@
           <h2 id="history-heading">Prediction History</h2>
           <p>See how you've scored in recent races</p>
         </div>
-
-        <span class="text-link">Demo preview</span>
       </div>
 
-      <div class="history-item" *ngFor="let history of scoringHistory">
+      <div class="history-item clickable" *ngFor="let history of scoringHistory"
+           tabindex="0" role="button"
+           (click)="openRaceDetails(history)"
+           (keydown.enter)="openRaceDetails(history)">
       
         <div class="round-icon" aria-hidden="true">🏁</div>
       
@@ -210,6 +211,122 @@
 
     </section>
   </div>
+
+  <!-- RACE DETAILS MODAL (mock) -->
+  
+<!-- RACE DETAILS MODAL -->
+<div class="modal-backdrop"
+     *ngIf="selectedRace"
+     (click)="closeRaceDetails()">
+
+  <div class="modal-card"
+       role="dialog"
+       aria-modal="true"
+       (click)="$event.stopPropagation()">
+
+    <div class="modal-head">
+      <div>
+        <h2>{{ selectedRace.raceName }}</h2>
+        <small>
+          Round {{ selectedRace.round }} · {{ selectedRace.season }}
+        </small>
+      </div>
+
+      <button type="button"
+              class="modal-close"
+              aria-label="Close"
+              (click)="closeRaceDetails()">
+        ✕
+      </button>
+    </div>
+
+    <!-- LOADING -->
+    <p class="modal-note" *ngIf="loadingRaceDetails">
+      Loading race details...
+    </p>
+
+    <!-- ERROR -->
+    <p class="modal-note" *ngIf="raceDetailsError">
+      Unable to load race details.
+    </p>
+
+    <!-- REAL DATA -->
+    <ng-container *ngIf="raceDetails as details">
+
+      <div class="modal-total">
+        Total: <strong>+{{ selectedRace.points }} pts</strong>
+      </div>
+
+      <div class="modal-cols">
+
+        <!-- ACTUAL RESULT -->
+        <div>
+          <h3>Real result</h3>
+
+          <div class="result-row"
+               *ngFor="let r of details.actual">
+
+            <span class="pos">P{{ r.position }}</span>
+            <span class="drv">{{ r.driver }}</span>
+
+          </div>
+        </div>
+
+        <!-- USER PREDICTION -->
+        <div>
+          <h3>My picks</h3>
+
+          <div class="result-row"
+               *ngFor="let p of details.predicted"
+               [class.hit]="p.hit">
+
+            <span class="pos">P{{ p.position }}</span>
+            <span class="drv">{{ p.driver }}</span>
+            <span class="pts" [class.pts-hit]="p.hit">
+              {{ p.hit ? '+' + pointsPerHit + ' ✓' : '✕' }}
+            </span>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- FASTEST LAP -->
+      <div class="modal-cols">
+
+        <div>
+          <h3>Fastest lap — Real</h3>
+
+          <div class="result-row">
+            <span class="drv">
+              {{ details.fastestLap.actual }}
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <h3>Fastest lap — My pick</h3>
+
+          <div class="result-row"
+               [class.hit]="details.fastestLap.hit">
+
+            <span class="drv">
+              {{ details.fastestLap.predicted }}
+            </span>
+
+            <span class="pts" [class.pts-hit]="details.fastestLap.hit">
+              {{ details.fastestLap.hit ? '+' + pointsPerHit + ' ✓' : '✕' }}
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+    </ng-container>
+
+  </div>
+</div>
+
 
   <p class="demo-note">
     Season statistics are loaded from the F1Fantasy API.

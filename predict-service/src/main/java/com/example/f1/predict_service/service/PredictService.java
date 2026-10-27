@@ -88,33 +88,20 @@ public class PredictService {
     }
 
     public List<PredictionData> findBySeasonAndRound(Integer season, Integer round) {
-        return toPredictionData(predictRepository.findBySeasonAndRound(season, round));
+        return toPredictionDataList(predictRepository.findBySeasonAndRound(season, round));
     }
 
 
-    public Optional<PredictionData> findByUserIdAndRound(Integer userId, Integer round) {
-        return predictRepository.findByUserIdAndRound(userId, round)
+    public Optional<PredictionData> findByUserIdAndSeasonAndRound(Integer userId, Integer season, Integer round) {
+        return predictRepository.findByUserIdAndSeasonAndRound(userId,season, round)
                 .map(this::toPredictionData);
     }
 
-    private List<PredictionData> toPredictionData(List<Prediction> listPrediction) {
-        if (listPrediction == null) {
-            return Collections.emptyList();
-        }
+    private List<PredictionData> toPredictionDataList(
+            List<Prediction> predictions) {
 
-        return listPrediction.stream()
-                .map(prediction -> new PredictionData(
-                        prediction.getId(),
-                        prediction.getUserId(),
-                        prediction.getSeason(),
-                        prediction.getRound(),
-                        prediction.getFirst(),
-                        prediction.getSecond(),
-                        prediction.getThird(),
-                        prediction.getFastestLap(),
-                        prediction.getPredictedPodium(),
-                        prediction.getPredictedFastestLap()
-                ))
+        return predictions.stream()
+                .map(this::toPredictionData)
                 .toList();
     }
 

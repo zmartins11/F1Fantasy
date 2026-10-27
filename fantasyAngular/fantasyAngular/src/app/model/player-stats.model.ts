@@ -14,3 +14,11 @@ export interface PlayerStats {
   predictionsMade: number;
   correctPodiums: number | null;
 }
+
+export interface PredictionDetail {
+  id : number;
+  first : string | null;
+  second: string | null;
+  third: string | null;
+  fastestLap: string | null;
+}
