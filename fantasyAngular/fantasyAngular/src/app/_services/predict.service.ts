@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Prediction } from '../model/Prediction';
+import { PredictionDetail } from '../model/player-stats.model';
 import { NextRaceInfo } from '../model/NextRaceInfo';
 import { environment } from 'src/environments/environment';
 import { PredictionStats } from '../model/player-stats.model';
@@ -48,5 +49,11 @@ export class PredictService {
       `${this.baseUrl}/me/stats/${season}`
     );
   }
+
+  getPredictionByRace(season: number, round: number): Observable<PredictionDetail> {
+      return this.http.get<PredictionDetail>(
+    `${this.baseUrl}/season/${season}/round/${round}`
+  );
+}
 
 }
