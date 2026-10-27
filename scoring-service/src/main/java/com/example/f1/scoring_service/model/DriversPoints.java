@@ -8,10 +8,9 @@ import lombok.Data;
 @Table(
         name = "drivers_points",
         uniqueConstraints = @UniqueConstraint(
-                name = "uk_driver_points_race_driver_position",
+                name = "uk_driver_points_prediction_position",
                 columnNames = {
-                        "race_id",
-                        "driver",
+                        "prediction_id",
                         "position"
                 }
         )

@@ -13,4 +13,6 @@ public interface PredictRepository extends JpaRepository<Prediction, Integer> {
     List<Prediction> findBySeasonAndRound(Integer season, Integer round);
 
     long countByUserIdAndSeason(Integer userId, Integer season);
+
+    Optional<Prediction> findByUserIdAndSeasonAndRound(Integer userId, Integer season, Integer round);
 }

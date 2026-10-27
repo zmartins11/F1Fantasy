@@ -19,4 +19,7 @@ public interface DriversPointsRepository extends JpaRepository<DriversPoints, In
 
     boolean existsByRaceIdAndDriverAndPosition(String raceId, String driver, String position);
 
+    boolean existsByPredictionIdAndPosition(Integer integer, String position);
+
+    List<DriversPoints> findByPredictionIdOrderByIdAsc(Integer id);
 }

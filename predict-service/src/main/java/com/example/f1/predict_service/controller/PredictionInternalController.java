@@ -31,9 +31,10 @@ public class PredictionInternalController {
     @GetMapping("/user")
     public ResponseEntity<PredictionData> findByUserIdAndRound(
             @RequestParam Integer userId,
+            @RequestParam Integer season,
             @RequestParam Integer round) {
 
-        return predictService.findByUserIdAndRound(userId, round)
+        return predictService.findByUserIdAndSeasonAndRound(userId, season, round)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
