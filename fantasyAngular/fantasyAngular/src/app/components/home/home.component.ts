@@ -54,6 +54,14 @@ export class HomeComponent implements OnInit {
   round: string = '';
   timeRemaining: any;
   nameRace: string = '';
+  // Mock data until the backend provides race details
+  raceInfo = [
+    { label: 'Laps', value: '57' },
+    { label: 'Distance', value: '306.6 km' },
+    { label: 'Circuit length', value: '5.38 km' },
+    { label: 'Last winner', value: 'M. Verstappen' },
+    { label: 'Lap record', value: '1:32.608' }
+  ];
   country: string = '';
   city: string = '';
   drivers: Driver[] = [];

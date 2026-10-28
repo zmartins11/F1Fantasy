@@ -25,16 +25,13 @@ public class PredictController {
     }
 
     @PostMapping("/predict")
-    public ResponseEntity<PredictionDto> savePrediction(@RequestBody PredictionDto prediction) {
-        Prediction savedPrediction = predictService.savePrediction(prediction);
-        prediction.setPredictedPodium(savedPrediction.getPredictedPodium());
-        prediction.setPredictedFastestLap(savedPrediction.getPredictedFastestLap());
-        prediction.setFirst(savedPrediction.getFirst());
-        prediction.setSecond(savedPrediction.getSecond());
-        prediction.setThird(savedPrediction.getThird());
-        prediction.setFastestLap(savedPrediction.getFastestLap());
-        prediction.setUserId(savedPrediction.getUserId());
-        return ResponseEntity.ok(prediction);
+    public ResponseEntity<PredictionDto> savePrediction(
+            @RequestBody PredictionDto prediction) {
+
+        PredictionDto savedPrediction =
+                predictService.savePrediction(prediction);
+
+        return ResponseEntity.ok(savedPrediction);
     }
 
 
