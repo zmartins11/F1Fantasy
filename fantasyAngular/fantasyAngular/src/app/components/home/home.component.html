@@ -146,69 +146,41 @@
 
       </div>
 
-      <div class="row mt-4 align-items-stretch" *ngIf="!predictionLocked">
+      <div class="hero-countdown" *ngIf="!predictionLocked">
 
-        <div class="col-lg-8 col-md-12 mb-3">
+        <p class="countdown-title">Race starts in</p>
 
-          <div class="countdown-panel">
+        <div class="countdown-row">
 
-            <div class="countdown-header">
+          <div class="countdown-item">
 
-              <div>
+            <div class="countdown-value">{{ timeRemaining.days }}</div>
 
-                <p class="countdown-title">Race starts in</p>
-
-                <p class="countdown-subtitle">Next event: {{ nameRace }}</p>
-
-              </div>
-
-            </div>
-
-            <div class="countdown-row">
-
-              <div class="countdown-item">
-
-                <div class="countdown-value">{{ timeRemaining.days }}</div>
-
-                <div class="countdown-label">Days</div>
-
-              </div>
-
-              <div class="countdown-item">
-
-                <div class="countdown-value">{{ timeRemaining.hours }}</div>
-
-                <div class="countdown-label">Hours</div>
-
-              </div>
-
-              <div class="countdown-item">
-
-                <div class="countdown-value">{{ timeRemaining.minutes }}</div>
-
-                <div class="countdown-label">Minutes</div>
-
-              </div>
-
-              <div class="countdown-item">
-
-                <div class="countdown-value">{{ timeRemaining.seconds }}</div>
-
-                <div class="countdown-label">Seconds</div>
-
-              </div>
-
-            </div>
+            <div class="countdown-label">Days</div>
 
           </div>
 
-        </div>
+          <div class="countdown-item">
 
-        <div class="col-lg-4 col-md-12 mb-3">
+            <div class="countdown-value">{{ timeRemaining.hours }}</div>
 
-          <div class="weather-card">
+            <div class="countdown-label">Hours</div>
 
-            <app-weather [weather]="weatherData" [city]="city" [country]="country"></app-weather>
+          </div>
+
+          <div class="countdown-item">
+
+            <div class="countdown-value">{{ timeRemaining.minutes }}</div>
+
+            <div class="countdown-label">Minutes</div>
+
+          </div>
+
+          <div class="countdown-item">
+
+            <div class="countdown-value">{{ timeRemaining.seconds }}</div>
+
+            <div class="countdown-label">Seconds</div>
 
           </div>
 
@@ -224,7 +196,38 @@
 
     </div>
 
-    <div *ngIf="!errorMessage" class="mt-5">
+    <div class="row mt-3 align-items-stretch" *ngIf="formattedDate && !predictionLocked">
+
+        <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
+
+          <div class="circuit-card">
+
+            <p class="countdown-title">Circuit info</p>
+
+            <div class="circuit-list">
+              <div class="circuit-row" *ngFor="let info of raceInfo">
+                <span class="race-info-label">{{ info.label }}</span>
+                <span class="race-info-value">{{ info.value }}</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="col-lg-6 col-md-12">
+
+          <div class="weather-card">
+
+            <app-weather [weather]="weatherData" [city]="city" [country]="country"></app-weather>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    <div *ngIf="!errorMessage" class="mt-3">
 
       <div class="row align-items-stretch gx-4">
 

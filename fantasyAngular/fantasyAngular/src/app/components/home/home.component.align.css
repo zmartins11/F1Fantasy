@@ -20,7 +20,8 @@
 
 .home-root .hero-panel,
 .home-root .card,
-.home-root .countdown-panel {
+.home-root .countdown-panel,
+.home-root .weather-card {
   background: #3f4d64;
   border: 1px solid rgba(226, 232, 240, .16);
   box-shadow: 0 20px 50px rgba(15, 30, 50, .28);
@@ -35,7 +36,22 @@
   border-color: rgba(203, 213, 225, .22);
 }
 
-.home-root .hero-title,
+.home-root .circuit-card {
+  background: #3f4d64;
+  border-color: rgba(226, 232, 240, .16);
+  border-left-color: #2563eb;
+  box-shadow: 0 20px 50px rgba(15, 30, 50, .28);
+}
+
+.home-root .circuit-row {
+  border-color: rgba(203, 213, 225, .18);
+}
+
+.home-root .race-info-label {
+  color: #cbd5e1;
+}
+
+.home-root .race-info-value,.home-root .hero-title,
 .home-root .card-title,
 .home-root .countdown-title,
 .home-root .countdown-value,

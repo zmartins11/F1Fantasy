@@ -32,10 +32,14 @@ public class PredictService {
         this.nextRaceReader = nextRaceReader;
     }
 
-    public Prediction savePrediction(PredictionDto dto) {
+    public PredictionDto savePrediction(PredictionDto dto) {
 
         Prediction prediction = predictRepository
-                .findByUserIdAndRound(dto.getUserId(), dto.getRound())
+                .findByUserIdAndSeasonAndRound(
+                        dto.getUserId(),
+                        dto.getSeason(),
+                        dto.getRound()
+                )
                 .orElseGet(() -> createNewPrediction(dto));
 
         if (dto.getFirst() != null) {
@@ -50,7 +54,28 @@ public class PredictService {
             prediction.setPredictedFastestLap(true);
         }
 
-        return predictRepository.save(prediction);
+        Prediction savedPrediction = predictRepository.save(prediction);
+
+        return toPredictionDto(savedPrediction);
+    }
+
+    private PredictionDto toPredictionDto(Prediction prediction) {
+
+        PredictionDto dto = new PredictionDto();
+
+        dto.setUserId(prediction.getUserId());
+        dto.setSeason(prediction.getSeason());
+        dto.setRound(prediction.getRound());
+
+        dto.setFirst(prediction.getFirst());
+        dto.setSecond(prediction.getSecond());
+        dto.setThird(prediction.getThird());
+        dto.setFastestLap(prediction.getFastestLap());
+
+        dto.setPredictedPodium(prediction.getPredictedPodium());
+        dto.setPredictedFastestLap(prediction.getPredictedFastestLap());
+
+        return dto;
     }
 
 
